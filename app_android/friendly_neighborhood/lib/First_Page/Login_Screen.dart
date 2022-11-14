@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/First_Page/Create_Account_Screen.dart';
+import 'package:friendly_neighborhood/utils/checkConnection.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -19,6 +20,33 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
     _passwordVisible = false;
     _iconPassword = Icons.visibility;
+  }
+
+  Future<void> _showAlertDialog({required String text}) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // L'utente deve premere il pulsante
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Avviso'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(text),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Ok'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -103,11 +131,18 @@ class _LoginScreenState extends State<LoginScreen> {
                         Padding(
                             padding: const EdgeInsets.symmetric(vertical: 16.0),
                             child: ElevatedButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 //Controllo se il form è valido
                                 if (_formKey.currentState!.validate()) {
-                                  //TODO inviare richiesta server
-
+                                  //Controllo connessione internet
+                                  bool check = await CheckConnection.check();
+                                  if (check) {
+                                    //TODO inviare richiesta server
+                                  } else {
+                                    _showAlertDialog(
+                                        text:
+                                            "Impossibile connettersi. Verifica la connessione ad internet");
+                                  }
                                 }
                               },
                               child: const Center(
