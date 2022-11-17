@@ -1,4 +1,4 @@
-from config import *
+from server.config import *
 from sqlalchemy import create_engine, text, DDL
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import database_exists, create_database
