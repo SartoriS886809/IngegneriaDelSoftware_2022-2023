@@ -1,6 +1,9 @@
 # friendly_neighborhood
 
 A new Flutter project.
+Link JSON to Dart Model: https://javiercbk.github.io/json_to_dart/
+Mini corso Flutter: https://gitlab.com/divino.marchese/flutter
+Useful Dart & Flutter packages that are neatly categorized: https://fluttergems.dev/
 
 ## Getting Started
 
