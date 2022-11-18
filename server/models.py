@@ -9,6 +9,7 @@ from datetime import date
 
 create_schema()
 
+
 class User(Base, UserMixin):
     __tablename__ = 'users'
 
@@ -17,18 +18,10 @@ class User(Base, UserMixin):
     username = Column(String(length=30), nullable=False)
     name = Column(String(length=30), nullable=False)
     lastname = Column(String(length=30), nullable=False)
-    birth_date = Column(Date)
-    address = Column(String(length=30))
-    family = Column(String(length=30))
-    token = Column(String(length=30))
-
-    artists = relationship('Artist', backref='user')
-    listeners = relationship('Listener', backref='user')
-    playlists = relationship('Playlist', backref='user')
-
-#    __table_args__ = (
-#        CheckConstraint("gender = 'M' or gender = 'F' or gender = ''"),
-#    )
+    birth_date = Column(Date, nullable=False)
+    address = Column(String(length=30), nullable=False)
+    family = Column(String(length=30), nullable=False)
+    token = Column(String, nullable=False)
 
     def get_id(self):
         return self.email
