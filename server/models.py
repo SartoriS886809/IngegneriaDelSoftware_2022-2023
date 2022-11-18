@@ -1,13 +1,23 @@
 from server.engine import *
 from server import login_manager, bcrypt
 from flask_login import UserMixin
-from sqlalchemy import Column, String, Integer, Date, ForeignKey, Boolean, Table, CheckConstraint, Text, UniqueConstraint
+from sqlalchemy import Column, String, Integer, Date, ForeignKey, Float, Boolean, Table, CheckConstraint, Text, UniqueConstraint
 from sqlalchemy.orm import relationship
 import json
 from datetime import date
 
 
 create_schema()
+
+class Neighborhood(Base):
+    __tablename__ = 'neighborhoods'
+    
+    id = Column(Integer, primary_key=True)
+    name = Column(String(length=30), nullable=False)
+    area = Column(Float, nullable=False)
+    
+    def __repr__(self):
+        return json.dumps(__dict__)
 
 
 class User(Base, UserMixin):
@@ -19,9 +29,10 @@ class User(Base, UserMixin):
     name = Column(String(length=30), nullable=False)
     lastname = Column(String(length=30), nullable=False)
     birth_date = Column(Date, nullable=False)
-    address = Column(String(length=30), nullable=False)
+    address = Column(String, nullable=False)
     family = Column(String(length=30), nullable=False)
     token = Column(String, nullable=False)
+    idNeighborhoods = Column(ForeignKey(Neighborhood.id, ondelete='CASCADE'), nullable=False)
 
     def get_id(self):
         return self.email
@@ -38,17 +49,49 @@ class User(Base, UserMixin):
         return bcrypt.check_password_hash(self.hashed_password, psw)
 
     def __repr__(self):
-        ret = {
-            'username': self.username,
-            'password': self.hashed_password,
-            'email': self.email
-        }
-        return json.dumps(ret, indent=4)
+        return json.dumps(__dict__)
 
 
+class Report(Base):
+    __tablename__ = 'reports'
+
+    id = Column(Integer, primary_key=True)
+    title =  Column(String, nullable=False)
+    postDate = Column(Date, nullable=False)
+    IdCreator = Column(ForeignKey(User.email, ondelete='CASCADE'), nullable=False)
+    priority =  Column(Integer, nullable=False)
+    category = Column(String, nullable=False)  
+    address = Column(String, nullable=False)
+    
+    def __repr__(self):
+        return json.dumps(__dict__)
+     
+class Service(Base):
+    __tablename__ = 'services'
+    
+    id = Column(Integer, primary_key=True)
+    title =  Column(String, nullable=False)
+    postDate = Column(Date, nullable=False)
+    IdCreator = Column(ForeignKey(User.email, ondelete='CASCADE'), nullable=False)
+    desc = Column(String, nullable=False)
+    link = Column(String, nullable=False)
+    
+    def __repr__(self):
+        return json.dumps(__dict__)   
+    
+class Need(Base):
+    __tablename__ = 'needs'
+    
+    id = Column(Integer, primary_key=True)
+    title =  Column(String, nullable=False)
+    postDate = Column(Date, nullable=False)
+    IdCreator = Column(ForeignKey(User.email, ondelete='CASCADE'), nullable=False)
+    address = Column(String, nullable=False)
+    desc = Column(String, nullable=False)
+    
+    def __repr__(self):
+        return json.dumps(__dict__)
 
 
-# Base.metadata.create_all()
-
-
-# populate()
+Base.metadata.create_all(engine)
+#populate()
