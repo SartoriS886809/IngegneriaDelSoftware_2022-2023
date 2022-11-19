@@ -2,7 +2,7 @@ from flask import Flask
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 import os
-from server import config
+from project import config
 
 
 def create_app():
