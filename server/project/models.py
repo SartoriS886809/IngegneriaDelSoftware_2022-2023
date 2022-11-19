@@ -1,5 +1,5 @@
-from project.engine import *
-from project import login_manager, bcrypt
+from server.project.engine import *
+from . import login_manager, bcrypt
 from flask_login import UserMixin
 from sqlalchemy import Column, String, Integer, Date, ForeignKey, Float, Boolean, Table, CheckConstraint, Text, UniqueConstraint
 from sqlalchemy.orm import relationship
@@ -9,13 +9,19 @@ from datetime import date
 
 create_schema()
 
+
 class Neighborhood(Base):
     __tablename__ = 'neighborhoods'
     
     id = Column(Integer, primary_key=True)
     name = Column(String(length=30), nullable=False)
     area = Column(Float, nullable=False)
-    
+
+    def __int__(self, id, name, area):
+        self.id = id
+        self.name = name
+        self.area = area
+
     def __repr__(self):
         return json.dumps(__dict__)
 
@@ -30,7 +36,7 @@ class User(Base, UserMixin):
     lastname = Column(String(length=30), nullable=False)
     birth_date = Column(Date, nullable=False)
     address = Column(String, nullable=False)
-    family = Column(String(length=30), nullable=False)
+    family = Column(Integer, nullable=False)
     token = Column(String, nullable=False)
     idNeighborhoods = Column(ForeignKey(Neighborhood.id, ondelete='CASCADE'), nullable=False)
 
@@ -56,21 +62,22 @@ class Report(Base):
     __tablename__ = 'reports'
 
     id = Column(Integer, primary_key=True)
-    title =  Column(String, nullable=False)
+    title = Column(String, nullable=False)
     postDate = Column(Date, nullable=False)
-    IdCreator = Column(ForeignKey(User.email, ondelete='CASCADE'), nullable=False)
-    priority =  Column(Integer, nullable=False)
-    category = Column(String, nullable=False)  
+    idCreator = Column(ForeignKey(User.email, ondelete='CASCADE'), nullable=False)
+    priority = Column(Integer, nullable=False)
+    category = Column(String, nullable=False)
     address = Column(String, nullable=False)
-    
+
     def __repr__(self):
         return json.dumps(__dict__)
-     
+
+
 class Service(Base):
     __tablename__ = 'services'
     
     id = Column(Integer, primary_key=True)
-    title =  Column(String, nullable=False)
+    title = Column(String, nullable=False)
     postDate = Column(Date, nullable=False)
     IdCreator = Column(ForeignKey(User.email, ondelete='CASCADE'), nullable=False)
     desc = Column(String, nullable=False)
@@ -78,14 +85,17 @@ class Service(Base):
     
     def __repr__(self):
         return json.dumps(__dict__)   
-    
+
+
 class Need(Base):
     __tablename__ = 'needs'
     
     id = Column(Integer, primary_key=True)
-    title =  Column(String, nullable=False)
+    title = Column(String, nullable=False)
     postDate = Column(Date, nullable=False)
-    IdCreator = Column(ForeignKey(User.email, ondelete='CASCADE'), nullable=False)
+    # TODO check idAssistant != idCreator
+    idAssistant = Column(ForeignKey(User.email, ondelete='CASCADE'), nullable=True)
+    idCreator = Column(ForeignKey(User.email, ondelete='CASCADE'), nullable=False)
     address = Column(String, nullable=False)
     desc = Column(String, nullable=False)
     
@@ -95,3 +105,4 @@ class Need(Base):
 
 Base.metadata.create_all(engine)
 #populate()
+
