@@ -55,7 +55,7 @@ class User(Base, UserMixin):
         return bcrypt.check_password_hash(self.hashed_password, psw)
 
     def __repr__(self):
-        return json.dumps(__dict__)
+        return json.dumps(self.__dict__)
 
 
 class Report(Base):
