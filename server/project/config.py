@@ -1,5 +1,8 @@
 import os
 
+from dotenv import load_dotenv, find_dotenv
+load_dotenv( find_dotenv() )
+
 owner = os.environ['DB_OWNER']
 password_owner = os.environ['DB_OWNER_PASSWORD']
 

@@ -1,4 +1,4 @@
-from server.project.engine import *
+from project.engine import *
 from . import login_manager, bcrypt
 from flask_login import UserMixin
 from sqlalchemy import Column, String, Integer, Date, ForeignKey, Float, Boolean, Table, CheckConstraint, Text, UniqueConstraint

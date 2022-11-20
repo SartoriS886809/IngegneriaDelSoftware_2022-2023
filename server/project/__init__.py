@@ -19,5 +19,5 @@ login_manager = LoginManager(app)
 login_manager.login_view = "login"
 login_manager.login_message_category = "info"
 
-from server.project.models import *
-from server.project.api import *
+from project.models import *
+from project.api import *
