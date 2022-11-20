@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:friendly_neighborhood/First_Page/Login_Screen.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,8 +15,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     //Nascondo i controlli del sistema
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+    //Blocco la visualizzazione dell'app solo in verticale
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return MaterialApp(
       title: 'Flutter Demo',
+      localizationsDelegates: const [GlobalMaterialLocalizations.delegate],
+      supportedLocales: const [Locale('it'), Locale('en')],
       theme: ThemeData(
         // This is the theme of your application.
         //
