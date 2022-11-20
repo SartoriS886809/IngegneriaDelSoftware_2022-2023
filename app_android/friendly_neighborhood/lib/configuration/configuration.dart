@@ -1,4 +1,4 @@
 class Configuration {
-  //TODO controllare l'età minima
-  static const int minAge = 18;
+  static const int minAge = 16;
+  static const int minLengthPassword = 8;
 }

@@ -191,6 +191,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                 if (value == null ||
                                     value != _controllerPassword.text) {
                                   return "Le password devono corrispondere";
+                                } else if (value.length <
+                                    Configuration.minLengthPassword) {
+                                  return "La password deve essere di almeno {$Configuration.minLengthPassword} caratteri";
                                 } else {
                                   return null;
                                 }
