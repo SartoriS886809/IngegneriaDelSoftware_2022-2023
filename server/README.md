@@ -2,5 +2,5 @@
 
 ```
 cd server/
-python.exe -m pytest
+python.exe -m pytest -s
 ```

@@ -1,13 +1,15 @@
-from project import create_app
-from flask import request, jsonify
-
-
-def test_login_page():
-    flask_app = create_app()
+def test_login_page(client):
+    email = "ciccio@gmail.com"
+    password = "ciaociao123"
+    response = client.post("/login", data={
+            "email": email,
+            "password": password,
+            })
+    assert response.status_code == 200
+    print(response.json)
     
-    with flask_app.test_client() as c:
-        email = 'flask@example.com'
-        rv = c.get('/login')
-        print(rv)
-        json_data = rv.get_json()
-        assert email == json_data['token']
+    assert response.json["email"] == email
+    assert response.json["password"] == password
+
+def test_login_2(client):
+    assert 1 == 1

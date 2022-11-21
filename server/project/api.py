@@ -15,11 +15,11 @@ def signup():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    email = request.args['email']
-    password = request.args['password']
+    email = request.form.get('email')
+    password = request.form.get('password')
     # login operation
     status = 'ok'
-    return {'status': f'{status}'}
+    return {'email': email, 'password' : password, 'status': status}
 
 
 @app.route('/neighborhoods')
