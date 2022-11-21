@@ -37,6 +37,7 @@ class User(Base, UserMixin):
     birth_date = Column(Date, nullable=False)
     address = Column(String, nullable=False)
     family = Column(Integer, nullable=False)
+    house_type = Column(String, nullable=False)
     token = Column(String, nullable=False)
     idNeighborhoods = Column(ForeignKey(Neighborhood.id, ondelete='CASCADE'), nullable=False)
 

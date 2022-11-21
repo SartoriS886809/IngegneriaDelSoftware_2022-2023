@@ -7,6 +7,12 @@ def home():
     return {}
 
 
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    status = 'ok'
+    return {'status': f'{status}'}
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     email = request.args['email']
