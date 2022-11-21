@@ -1,5 +1,5 @@
-from server.project.models import User, Neighborhood, Service, Report, Need
-from server.project.engine import session
+from project.models import User, Neighborhood, Service, Report, Need
+from project.engine import session
 from sqlalchemy.exc import IntegrityError
 
 tables = {'users': User,
