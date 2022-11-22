@@ -1,1 +1,6 @@
-"Codice server" 
+# Run tests
+
+```
+cd server/
+python.exe -m pytest 
+```
