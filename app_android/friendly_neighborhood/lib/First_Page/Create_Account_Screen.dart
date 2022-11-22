@@ -1,10 +1,13 @@
+// ignore_for_file: non_constant_identifier_names, unused_field, constant_identifier_names, prefer_final_fields, file_names
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:friendly_neighborhood/First_Page/Login_Screen.dart';
+import 'package:friendly_neighborhood/First_Page/login_screen.dart';
 import 'package:friendly_neighborhood/configuration/configuration.dart';
-import 'package:friendly_neighborhood/utils/checkConnection.dart';
+import 'package:friendly_neighborhood/utils/check_connection.dart';
 import 'package:intl/intl.dart';
-import 'package:friendly_neighborhood/utils/elaborateData.dart';
+import 'package:friendly_neighborhood/utils/elaborate_data.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 
 class CreateAccountScreen extends StatefulWidget {
   const CreateAccountScreen({super.key});
@@ -14,13 +17,34 @@ class CreateAccountScreen extends StatefulWidget {
 }
 
 class _CreateAccountScreenState extends State<CreateAccountScreen> {
+  //Variabile gestione Form
   final _formKey = GlobalKey<FormState>();
+
+  //Variabili per gestire la visibilità del testo nei campi password
   late bool _passwordVisible;
   late IconData _iconPassword;
   late bool _confirmPasswordVisible;
   late IconData _confirmIconPassword;
+
+  //Sezione controller / variabili gestione contenuto campi
+  final _controllerUsername = TextEditingController();
+  final _controllerEmail = TextEditingController();
   final _controllerPassword = TextEditingController();
+  final _controllerName = TextEditingController();
+  final _controllerLastname = TextEditingController();
+  final _controllerResidence = TextEditingController();
+  final _controllerFamily = TextEditingController();
   final _controllerDate = TextEditingController();
+  String _choice_house_type = "Scegliere una tipologia";
+  String _choice_neighborhood = "Scegli un quartiere";
+
+  //Dati scelta utente
+  static const _house_types = [
+    "Scegliere una tipologia",
+    "Appartamento",
+    "Casa singola"
+  ];
+  late List<String> _neighborhood = ["Scegli un quartiere"];
 
   @override
   void initState() {
@@ -81,6 +105,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 15),
                             child: TextFormField(
+                              controller: _controllerUsername,
                               decoration: const InputDecoration(
                                 hintText: "Inserisci l'username",
                                 labelText: 'Username',
@@ -100,6 +125,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 15),
                             child: TextFormField(
+                              controller: _controllerEmail,
                               decoration: const InputDecoration(
                                 hintText: "Inserisci l'email",
                                 labelText: 'Email',
@@ -149,9 +175,11 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                     },
                                   )),
                               validator: (String? value) {
-                                //TODO INSERIRE MIN LUNGHEZZA PASSWORD
                                 if (value == null || value.isEmpty) {
                                   return "Il campo password non può essere vuoto";
+                                } else if (value.length <
+                                    Configuration.minLengthPassword) {
+                                  return "La password deve essere minimo di ${Configuration.minLengthPassword} caratteri";
                                 } else {
                                   return null;
                                 }
@@ -204,6 +232,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 15),
                             child: TextFormField(
+                              controller: _controllerName,
+                              keyboardType: TextInputType.name,
                               decoration: const InputDecoration(
                                 hintText: "Inserisci il nome",
                                 labelText: 'Nome',
@@ -228,6 +258,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 15),
                             child: TextFormField(
+                              keyboardType: TextInputType.name,
+                              controller: _controllerLastname,
                               decoration: const InputDecoration(
                                 hintText: "Inserisci il cognome",
                                 labelText: 'Cognome',
@@ -257,15 +289,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                 //Se è vuoto dice di inserire la data
                                 if (value == null || value.isEmpty) {
                                   return "Il campo data non può essere vuoto";
-                                  //Controlla che il nome sia stato inserito nel formato corretto
                                 }
-                                //TODO CONVERTIRE TESTO IN DATA
-                                DateTime d = DateTime.parse(value);
-                                int age = calculateAge(d);
+                                int age = calculateAge(_controllerDate.text);
                                 //Data futura o età inferiore al limite
-                                if (d.compareTo(DateTime.now()) > 0 ||
-                                    age < Configuration.minAge ||
-                                    age > 120) {
+                                if (age < Configuration.minAge || age > 120) {
                                   return "Scegliere una data valida";
                                 } else {
                                   return null;
@@ -280,9 +307,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                     context: context,
                                     locale: const Locale("it", "IT"),
                                     initialDate: DateTime.now(),
-                                    firstDate: DateTime(
-                                        1900), //DateTime.now() - not to allow to choose before today.
-                                    lastDate: DateTime(2100));
+                                    firstDate: DateTime(1900),
+                                    //Blocco le date future.
+                                    lastDate: DateTime.now());
 
                                 if (pickedDate != null) {
                                   String formattedDate =
@@ -296,8 +323,107 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                               },
                             ),
                           ),
-
-                          //Pulsante Accedi
+                          //Campo Residenza
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            child: TextFormField(
+                              controller: _controllerResidence,
+                              decoration: const InputDecoration(
+                                hintText: "Inserisci la residenza",
+                                labelText: 'Residenza',
+                              ),
+                              //Validatore Residenza
+                              validator: (String? value) {
+                                //Se è vuoto dice di inserire la residenza
+                                if (value == null || value.isEmpty) {
+                                  return "Il campo residenza non può essere vuoto";
+                                  //TODO inserire se possibile check della residenza
+                                } else {
+                                  return null;
+                                }
+                              },
+                            ),
+                          ),
+                          //Tipologia Casa
+                          //TODO fix glitch grafico all'apertura del menù
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            child: DropdownSearch<String>(
+                              popupProps: const PopupProps.menu(
+                                showSelectedItems: true,
+                              ),
+                              items: _house_types,
+                              validator: (value) {
+                                if (value == _house_types[0]) {
+                                  return "Scegliere una tipologia";
+                                } else {
+                                  return null;
+                                }
+                              },
+                              dropdownDecoratorProps:
+                                  const DropDownDecoratorProps(
+                                dropdownSearchDecoration: InputDecoration(
+                                  labelText: "Tipologia abitazione",
+                                ),
+                              ),
+                              onChanged: ((value) =>
+                                  _choice_house_type = value!),
+                              selectedItem: _house_types[0],
+                            ),
+                          ),
+                          //Campo Nucleo familiare
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            child: TextFormField(
+                              controller: _controllerFamily,
+                              decoration: const InputDecoration(
+                                hintText:
+                                    "Inserisci il numero di membri nel nucleo familiare",
+                                labelText: 'Nucleo familiare',
+                              ),
+                              keyboardType: TextInputType.number,
+                              //Validatore Residenza
+                              validator: (String? value) {
+                                //Se è vuoto dice di inserire la residenza
+                                if (value == null || value.isEmpty) {
+                                  return "Il campo nucleo familiare non può essere vuoto";
+                                } else if (int.parse(value) <= 0 ||
+                                    int.parse(value) > 10) {
+                                  return "Inserisci un numero valido";
+                                } else {
+                                  return null;
+                                }
+                              },
+                            ),
+                          ),
+                          //Quartiere
+                          //TODO fix glitch grafico all'apertura del menù
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            child: DropdownSearch<String>(
+                              popupProps: const PopupProps.menu(
+                                showSelectedItems: true,
+                              ),
+                              items: _neighborhood,
+                              validator: (value) {
+                                if (value == _neighborhood[0]) {
+                                  return "Scegliere un quartiere";
+                                } else {
+                                  return null;
+                                }
+                              },
+                              dropdownDecoratorProps:
+                                  const DropDownDecoratorProps(
+                                dropdownSearchDecoration: InputDecoration(
+                                  labelText: "Quartiere",
+                                ),
+                              ),
+                              onChanged: ((value) =>
+                                  _choice_neighborhood = value!),
+                              selectedItem: _neighborhood[0],
+                            ),
+                          ),
+                          //Pulsante Registrati
                           Padding(
                               padding:
                                   const EdgeInsets.symmetric(vertical: 16.0),
@@ -319,7 +445,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                 child: const Center(
                                     child: Padding(
                                   padding: EdgeInsets.only(top: 16, bottom: 16),
-                                  child: Text('Accedi'),
+                                  child: Text('Registrati'),
                                 )),
                               ))
                         ])),
