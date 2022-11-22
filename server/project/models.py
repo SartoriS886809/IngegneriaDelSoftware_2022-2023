@@ -5,6 +5,8 @@ from sqlalchemy import Column, String, Integer, Date, ForeignKey, Float, Boolean
 from sqlalchemy.orm import relationship
 import json
 from datetime import date
+import inspect
+
 
 
 create_schema()
@@ -17,13 +19,16 @@ class Neighborhood(Base):
     name = Column(String(length=30), nullable=False)
     area = Column(Float, nullable=False)
 
-    def __int__(self, id, name, area):
+    def __init__(self, id, name, area):
         self.id = id
         self.name = name
         self.area = area
 
-    def __repr__(self):
-        return json.dumps(__dict__)
+    #def __repr__(self):
+    #    ret = { "id": self.id, 
+    #            "name": self.name,
+    #            "area" : self.area}
+    #    return json.dumps( ret )
 
 
 class User(Base, UserMixin):
@@ -40,7 +45,20 @@ class User(Base, UserMixin):
     house_type = Column(String, nullable=False)
     token = Column(String, nullable=False)
     idNeighborhoods = Column(ForeignKey(Neighborhood.id, ondelete='CASCADE'), nullable=False)
-
+    
+    def __init__(self, email, hp, username, name, lname, bdate, addr, fam, houset, token, idNeigh):
+        self.id = email
+        self.hashed_password = hp
+        self.username = username
+        self.name = name
+        self.lastname = lname
+        self.birth_date = bdate
+        self.address = addr
+        self.family = fam
+        self.house_type = houset
+        self.token = token
+        self.idNeighborhoods = idNeigh
+        
     def get_id(self):
         return self.email
 
@@ -55,8 +73,8 @@ class User(Base, UserMixin):
     def password_check(self, psw):
         return bcrypt.check_password_hash(self.hashed_password, psw)
 
-    def __repr__(self):
-        return json.dumps(self.__dict__)
+    #def __repr__(self):
+    #    return json.dumps(self.__dict__)
 
 
 class Report(Base):

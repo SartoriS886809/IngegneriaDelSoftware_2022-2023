@@ -6,7 +6,7 @@ def test_login_page(client):
             "password": password,
             })
     assert response.status_code == 200
-    print(response.json)
+    #print(response.json)
     
     assert response.json["email"] == email
     assert response.json["password"] == password
