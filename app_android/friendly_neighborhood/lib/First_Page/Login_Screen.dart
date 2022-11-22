@@ -1,7 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/First_Page/Create_Account_Screen.dart';
-import 'package:friendly_neighborhood/utils/checkConnection.dart';
+import 'package:friendly_neighborhood/configuration/configuration.dart';
+import 'package:friendly_neighborhood/utils/check_connection.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -118,9 +119,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                   },
                                 )),
                             validator: (String? value) {
-                              //TODO INSERIRE MIN LUNGHEZZA PASSWORD
                               if (value == null || value.isEmpty) {
                                 return "Il campo password non può essere vuoto";
+                              } else if (value.length <
+                                  Configuration.minLengthPassword) {
+                                return "La password deve essere minimo di ${Configuration.minLengthPassword} caratteri";
                               } else {
                                 return null;
                               }
