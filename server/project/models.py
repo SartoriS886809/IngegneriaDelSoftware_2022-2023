@@ -47,7 +47,7 @@ class User(Base, UserMixin):
     idNeighborhoods = Column(ForeignKey(Neighborhood.id, ondelete='CASCADE'), nullable=False)
     
     def __init__(self, email, hp, username, name, lname, bdate, addr, fam, houset, token, idNeigh):
-        self.id = email
+        self.email = email
         self.hashed_password = hp
         self.username = username
         self.name = name
@@ -87,9 +87,18 @@ class Report(Base):
     priority = Column(Integer, nullable=False)
     category = Column(String, nullable=False)
     address = Column(String, nullable=False)
-
-    def __repr__(self):
-        return json.dumps(__dict__)
+    
+    def __init__(self, id, title, postDate, idCreator, priority, cat, addr):
+        self.id = id
+        self.title = title
+        self.postDate = postDate
+        self.idCreator = idCreator
+        self.priority = priority
+        self.category = cat
+        self.address = addr
+        
+    #def __repr__(self):
+    #    return json.dumps(__dict__)
 
 
 class Service(Base):
@@ -102,8 +111,16 @@ class Service(Base):
     desc = Column(String, nullable=False)
     link = Column(String, nullable=False)
     
-    def __repr__(self):
-        return json.dumps(__dict__)   
+    def __init__(self, id, title, posDate, idCreator, desc, link):
+        self.id = id
+        self.title = title
+        self.postDate = posDate
+        self.IdCreator = idCreator
+        self.desc = desc
+        self.link = link
+        
+    #def __repr__(self):
+    #    return json.dumps(__dict__)   
 
 
 class Need(Base):
@@ -118,8 +135,16 @@ class Need(Base):
     address = Column(String, nullable=False)
     desc = Column(String, nullable=False)
     
-    def __repr__(self):
-        return json.dumps(__dict__)
+    def __init__(self, id, title, postDate, idAssistant, idCreator, address, desc):
+        self.id = id
+        self.title = title
+        self.postDate = postDate
+        self.IdCreator = idCreator
+        self.desc = desc
+        self.address = address
+        self.idAssistant = idAssistant
+    #def __repr__(self):
+    #    return json.dumps(__dict__)
 
 
 Base.metadata.create_all(engine)
