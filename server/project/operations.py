@@ -11,9 +11,11 @@ tables = {'users': User,
 
 
 def convert_table(table):
-    if table not in tables.keys():
-        return None
-    return tables[table]
+    if table in tables.values():
+        return table
+    if table in tables.keys():
+        return tables[table]
+    return None
 
 
 def commit():

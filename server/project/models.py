@@ -45,6 +45,12 @@ class User(Base, UserMixin):
     house_type = Column(String, nullable=False)
     token = Column(String, nullable=False)
     idNeighborhoods = Column(ForeignKey(Neighborhood.id, ondelete='CASCADE'), nullable=False)
+
+    neigh = relationship('Neighborhood', backref='user')
+    services = relationship('Service', backref='creator')
+    needs = relationship('Need', backref='creator')
+    reports = relationship('Report', backref='creator')
+    assistant_needs = relationship('Need', backref='assistant')
     
     def __init__(self, email, hp, username, name, lname, bdate, addr, fam, houset, token, idNeigh):
         self.email = email
@@ -84,10 +90,10 @@ class Report(Base):
     title = Column(String, nullable=False)
     postDate = Column(Date, nullable=False)
     idCreator = Column(ForeignKey(User.email, ondelete='CASCADE'), nullable=False)
-    priority = Column(Integer, nullable=False)
+    priority = Column(Integer, CheckConstraint('priority >= 1 and priority <= 3'), nullable=False)
     category = Column(String, nullable=False)
     address = Column(String, nullable=False)
-    
+
     def __init__(self, id, title, postDate, idCreator, priority, cat, addr):
         self.id = id
         self.title = title
@@ -148,5 +154,4 @@ class Need(Base):
 
 
 Base.metadata.create_all(engine)
-#populate()
-
+populate()
