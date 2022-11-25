@@ -28,4 +28,4 @@ def test_login_page(client):
     # print(response.json)
 
     assert response.json["token"] == ""
-    assert response.json["status"] == "ok"
+    assert response.json["status"] == "success"

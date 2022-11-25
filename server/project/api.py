@@ -21,7 +21,7 @@ def signup():
     id_neighborhoods = request.form.get('id_neighborhoods')
 
     token = ""  # TODO to generate
-    status = 'ok'
+    status = 'success'
     add_and_commit('users', email=email, hashed_password=password, username=username, name=name, lastname=lastname,
                    birth_date=birth_date, address=address, family=family, house_type=house_type, token=token, id_neighborhoods=id_neighborhoods)
     return {'token': token, 'status': status}
@@ -31,14 +31,19 @@ def signup():
 def login():
     email = request.form.get('email')
     password = request.form.get('password')
-    # login operation
-    status = 'ok'
+    # login operation 
+    if (email == "" or password == ""):
+        status = 'failure'
+    else:
+        # TODO if not present in db
+        # TODO if password or email aren't correct
+        status = 'success'
     return {'email': email, 'password' : password, 'status': status}
 
 
 @app.route('/neighborhoods')
 def get_neighborhoods():
-    status = 'ok'
+    status = 'success'
     neighs = get_all('neighborhoods')
     ans = ''
     if neighs is not None:
