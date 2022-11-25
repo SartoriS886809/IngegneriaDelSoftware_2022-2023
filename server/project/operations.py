@@ -76,3 +76,8 @@ def update_tuple(table, code, **kwargs):
         commit()
     except IntegrityError as e:
         raise e
+
+
+def get_all(table):
+    table = convert_table(table)
+    return session.query(table).all()

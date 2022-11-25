@@ -48,9 +48,7 @@ class User(Base, UserMixin):
 
     neigh = relationship('Neighborhood', backref='user')
     services = relationship('Service', backref='creator')
-    needs = relationship('Need', backref='creator')
     reports = relationship('Report', backref='creator')
-    assistant_needs = relationship('Need', backref='assistant')
     
     def __init__(self, email, hashed_password, username, name, lastname, birth_date, address, family, house_type, token, id_neighborhoods):
         self.email = email
@@ -140,6 +138,9 @@ class Need(Base):
     id_creator = Column(ForeignKey(User.email, ondelete='CASCADE'), nullable=False)
     address = Column(String, nullable=False)
     desc = Column(String, nullable=False)
+
+    creator = relationship('User', backref='needs', foreign_keys=[id_creator])
+    assistant = relationship('User', backref='assistant_needs', foreign_keys=[id_assistant])
     
     def __init__(self, id, title, postdate, id_assistant, id_creator, address, desc):
         self.id = id
