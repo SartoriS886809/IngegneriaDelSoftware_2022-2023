@@ -44,7 +44,7 @@ class User(Base, UserMixin):
     family = Column(Integer, nullable=False)
     house_type = Column(String, nullable=False)
     token = Column(String, nullable=False)
-    idNeighborhoods = Column(ForeignKey(Neighborhood.id, ondelete='CASCADE'), nullable=False)
+    id_neighborhoods = Column(ForeignKey(Neighborhood.id, ondelete='CASCADE'), nullable=False)
 
     neigh = relationship('Neighborhood', backref='user')
     services = relationship('Service', backref='creator')
@@ -52,18 +52,18 @@ class User(Base, UserMixin):
     reports = relationship('Report', backref='creator')
     assistant_needs = relationship('Need', backref='assistant')
     
-    def __init__(self, email, hp, username, name, lname, bdate, addr, fam, houset, token, idNeigh):
+    def __init__(self, email, hashed_password, username, name, lastname, birth_date, address, family, house_type, token, id_neighborhoods):
         self.email = email
-        self.hashed_password = hp
+        self.hashed_password = hashed_password
         self.username = username
         self.name = name
-        self.lastname = lname
-        self.birth_date = bdate
-        self.address = addr
-        self.family = fam
-        self.house_type = houset
+        self.lastname = lastname
+        self.birth_date = birth_date
+        self.address = address
+        self.family = family
+        self.house_type = house_type
         self.token = token
-        self.idNeighborhoods = idNeigh
+        self.id_neighborhoods = id_neighborhoods
         
     def get_id(self):
         return self.email
@@ -88,17 +88,17 @@ class Report(Base):
 
     id = Column(Integer, primary_key=True)
     title = Column(String, nullable=False)
-    postDate = Column(Date, nullable=False)
-    idCreator = Column(ForeignKey(User.email, ondelete='CASCADE'), nullable=False)
+    postdate = Column(Date, nullable=False)
+    id_creator = Column(ForeignKey(User.email, ondelete='CASCADE'), nullable=False)
     priority = Column(Integer, CheckConstraint('priority >= 1 and priority <= 3'), nullable=False)
     category = Column(String, nullable=False)
     address = Column(String, nullable=False)
 
-    def __init__(self, id, title, postDate, idCreator, priority, cat, addr):
+    def __init__(self, id, title, postdate, id_creator, priority, cat, addr):
         self.id = id
         self.title = title
-        self.postDate = postDate
-        self.idCreator = idCreator
+        self.postdate = postdate
+        self.id_creator = id_creator
         self.priority = priority
         self.category = cat
         self.address = addr
@@ -112,16 +112,16 @@ class Service(Base):
     
     id = Column(Integer, primary_key=True)
     title = Column(String, nullable=False)
-    postDate = Column(Date, nullable=False)
-    IdCreator = Column(ForeignKey(User.email, ondelete='CASCADE'), nullable=False)
+    postdate = Column(Date, nullable=False)
+    id_creator = Column(ForeignKey(User.email, ondelete='CASCADE'), nullable=False)
     desc = Column(String, nullable=False)
     link = Column(String, nullable=False)
     
-    def __init__(self, id, title, posDate, idCreator, desc, link):
+    def __init__(self, id, title, postdate, id_creator, desc, link):
         self.id = id
         self.title = title
-        self.postDate = posDate
-        self.IdCreator = idCreator
+        self.postdate = postdate
+        self.id_creator = id_creator
         self.desc = desc
         self.link = link
         
@@ -134,21 +134,21 @@ class Need(Base):
     
     id = Column(Integer, primary_key=True)
     title = Column(String, nullable=False)
-    postDate = Column(Date, nullable=False)
+    postdate = Column(Date, nullable=False)
     # TODO check idAssistant != idCreator
-    idAssistant = Column(ForeignKey(User.email, ondelete='CASCADE'), nullable=True)
-    idCreator = Column(ForeignKey(User.email, ondelete='CASCADE'), nullable=False)
+    id_assistant = Column(ForeignKey(User.email, ondelete='CASCADE'), nullable=True)
+    id_creator = Column(ForeignKey(User.email, ondelete='CASCADE'), nullable=False)
     address = Column(String, nullable=False)
     desc = Column(String, nullable=False)
     
-    def __init__(self, id, title, postDate, idAssistant, idCreator, address, desc):
+    def __init__(self, id, title, postdate, id_assistant, id_creator, address, desc):
         self.id = id
         self.title = title
-        self.postDate = postDate
-        self.IdCreator = idCreator
+        self.postdate = postdate
+        self.is_creator = id_creator
         self.desc = desc
         self.address = address
-        self.idAssistant = idAssistant
+        self.id_assistant = id_assistant
     #def __repr__(self):
     #    return json.dumps(__dict__)
 
