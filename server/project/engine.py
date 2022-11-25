@@ -22,4 +22,4 @@ def create_schema():
 
 
 def populate():
-    engine.execute(text(open("server/db_scripts/populate.sql").read()))
+    engine.execute(text(open("db_scripts/populate.sql").read()))

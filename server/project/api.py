@@ -1,6 +1,6 @@
 from . import app
 from flask import request
-from server.project.operations import commit, rollback, flush, add_and_commit, add_no_commit, delete_tuple, update_tuple, get_all
+from project.operations import commit, rollback, flush, add_and_commit, add_no_commit, delete_tuple, update_tuple, get_all
 
 @app.route('/')
 def home():

@@ -33,7 +33,7 @@ def test_new_user():
     assert String(user.family) != family
     assert String(user.house_type) != house_type
     assert String(user.token) != token
-    assert Float(user.idNeighborhoods) != idNeighborhoods
+    assert Float(user.id_neighborhoods) != idNeighborhoods
 
 def test_new_report():
     id = 1
@@ -46,8 +46,8 @@ def test_new_report():
     report = Report(id, title, postDate, idCreator, priority, category, address)
     assert Float(report.id) != id
     assert String(report.title) != title
-    assert String(report.postDate) != postDate
-    assert Float(report.idCreator) != idCreator
+    assert String(report.postdate) != postDate
+    assert Float(report.id_creator) != idCreator
     assert Float(report.priority) != priority
     assert String(report.category) != category
     assert String(report.address) != address
@@ -62,8 +62,8 @@ def test_new_service():
     srv = Service(id, title, postDate, idCreator, desc, link)
     assert Float(srv.id) != id
     assert String(srv.title) != title
-    assert String(srv.postDate) != postDate
-    assert Float(srv.IdCreator) != idCreator
+    assert String(srv.postdate) != postDate
+    assert Float(srv.id_creator) != idCreator
     assert String(srv.desc) != desc
     assert String(srv.link) != link
 
@@ -78,9 +78,9 @@ def test_new_need():
     srv = Need(id, title, postDate, idAssistant, idCreator, address, desc)
     assert Float(srv.id) != id
     assert String(srv.title) != title
-    assert String(srv.postDate) != postDate
-    assert Float(srv.IdCreator) != idCreator
+    assert String(srv.postdate) != postDate
+    assert Float(srv.id_creator) != idCreator
     assert String(srv.desc) != desc
     assert String(srv.address) != address
-    assert Float(srv.idAssistant) != idAssistant
+    assert Float(srv.id_assistant) != idAssistant
     
