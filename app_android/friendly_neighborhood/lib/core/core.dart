@@ -26,14 +26,22 @@ class _CoreState extends State<Core> {
     super.initState();
     _currentPage = _routes[0];
     _drawer = ConstructDrawer(_routes, _currentPage);
-    _openPage = const DashBoard();
+    _openPage =
+        DashBoard(switchBody: (String route) => switchManualBody(route));
+  }
+
+  void switchManualBody(String s) {
+    print(s);
+    setState(() {
+      _openPage = const Text("you did it :)");
+    });
   }
 
   //Genera la pagina da cambiare
   Widget getBodyPage() {
     switch (_drawer.currentRoute) {
       case "Dashboard":
-        return const DashBoard();
+        return DashBoard(switchBody: (String route) => switchManualBody(route));
       case "Segnalazioni":
         return const Text("TODO");
       case "Bisogni":
