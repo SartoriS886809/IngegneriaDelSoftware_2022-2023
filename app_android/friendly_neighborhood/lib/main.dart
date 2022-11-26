@@ -23,7 +23,10 @@ class MyApp extends StatelessWidget {
     ]);
     return MaterialApp(
       title: 'Flutter Demo',
-      localizationsDelegates: const [GlobalMaterialLocalizations.delegate],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       supportedLocales: const [Locale('it'), Locale('en')],
       theme: ThemeData(
         // This is the theme of your application.

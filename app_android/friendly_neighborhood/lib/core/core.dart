@@ -26,30 +26,31 @@ class _CoreState extends State<Core> {
     super.initState();
     _currentPage = _routes[0];
     _drawer = ConstructDrawer(_routes, _currentPage);
-    _openPage =
-        DashBoard(switchBody: (String route) => switchManualBody(route));
+    _openPage = _getBodyPage(_currentPage);
   }
 
-  void switchManualBody(String s) {
-    print(s);
+  void switchManualBody(String newRoute) {
     setState(() {
-      _openPage = const Text("you did it :)");
+      _openPage = _getBodyPage(newRoute);
+      _currentPage = newRoute;
     });
   }
 
   //Genera la pagina da cambiare
-  Widget getBodyPage() {
-    switch (_drawer.currentRoute) {
+  Widget _getBodyPage(String newRoute) {
+    switch (newRoute) {
       case "Dashboard":
-        return DashBoard(switchBody: (String route) => switchManualBody(route));
+        return DashBoard(
+            switchBody: (String route) => switchManualBody(route),
+            routes: _routes);
       case "Segnalazioni":
-        return const Text("TODO");
+        return const Text("Segnalazioni");
       case "Bisogni":
-        return const Text("TODO");
+        return const Text("Bisogni");
       case "Servizi":
-        return const Text("TODO");
+        return const Text("Servizi");
       case "Profilo":
-        return const Text("TODO");
+        return const Text("Profilo");
       default:
         return const Text("Errore");
     }
@@ -68,7 +69,7 @@ class _CoreState extends State<Core> {
             //Se la pagina è cambiata allora aggiorno la schermata
             setState(() {
               _currentPage = _drawer.currentRoute;
-              _openPage = getBodyPage();
+              _openPage = _getBodyPage(_drawer.currentRoute);
             });
           }
         }
