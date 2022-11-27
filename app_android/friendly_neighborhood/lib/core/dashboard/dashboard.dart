@@ -26,15 +26,3 @@ class DashBoard extends StatelessWidget {
     ]);
   }
 }
-/*
-
-Column(children: [
-      const Text("Hello Dashboard"),
-      TextButton(
-        child: const Text("cambia schermata"),
-        onPressed: () {
-          switchBody("Profilo");
-        },
-      )
-    ])
-*/
