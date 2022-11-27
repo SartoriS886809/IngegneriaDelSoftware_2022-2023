@@ -24,7 +24,7 @@ def test_new_user():
     user = User(email, hashed_password, username, name, lastname, birth_date, address, family, house_type, token, idNeighborhoods)
     
     assert String(user.email) != email
-    assert Text(user.hashed_password) != hashed_password
+    assert user.password_check(psw=hashed_password)
     assert String(user.username) != username
     assert String(user.name) != name
     assert String(user.lastname) != lastname

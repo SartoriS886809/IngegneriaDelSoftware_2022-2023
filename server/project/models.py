@@ -50,9 +50,9 @@ class User(Base, UserMixin):
     services = relationship('Service', backref='creator')
     reports = relationship('Report', backref='creator')
     
-    def __init__(self, email, hashed_password, username, name, lastname, birth_date, address, family, house_type, token, id_neighborhoods):
+    def __init__(self, email, password, username, name, lastname, birth_date, address, family, house_type, token, id_neighborhoods):
         self.email = email
-        self.hashed_password = hashed_password
+        self.password = password
         self.username = username
         self.name = name
         self.lastname = lastname

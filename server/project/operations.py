@@ -81,3 +81,7 @@ def update_tuple(table, code, **kwargs):
 def get_all(table):
     table = convert_table(table)
     return session.query(table).all()
+
+
+def get_user(id):
+    return session.query(User).filter_by(email=id).first()
