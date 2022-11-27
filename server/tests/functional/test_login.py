@@ -1,5 +1,8 @@
+import pytest
+
+@pytest.mark.order(2)
 def test_normal_login(client):
-    email = "ciccio@gmail.com"
+    email = "mario@gmail.com"
     password = "ciaociao123"
     response = client.post("/login", data={
             "email": email,
@@ -12,6 +15,7 @@ def test_normal_login(client):
     assert response.json["password"] == password
     assert response.json["status"] == "success"
 
+@pytest.mark.order(2)
 def test_empty_fields_login(client):
     email = ""
     password = ""
@@ -26,8 +30,9 @@ def test_empty_fields_login(client):
     assert response.json["password"] == password
     assert response.json["status"] == "failure"
     
+@pytest.mark.order(2)
 def test_incorrect_psw_login(client):
-    email = "email1@email.com"
+    email = "mario@gmail.com"
     password = "ciao"
     response = client.post("/login", data={
             "email": email,
@@ -40,9 +45,10 @@ def test_incorrect_psw_login(client):
     assert response.json["password"] == password
     assert response.json["status"] == "failure"
 
+@pytest.mark.order(2)
 def test_login_incorrect_email(client):
     email = "r@gmail.com"
-    password = "ciao"
+    password = "ciaociao123"
     response = client.post("/login", data={
             "email": email,
             "password": password,
