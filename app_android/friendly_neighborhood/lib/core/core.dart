@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/core/dashboard/dashboard.dart';
 import 'package:friendly_neighborhood/core/drawer_template.dart';
+import 'package:friendly_neighborhood/core/need/need_page.dart';
+import 'package:friendly_neighborhood/core/report/report_page.dart';
+import 'package:friendly_neighborhood/core/service/service_page.dart';
+
+typedef NavigationBarCallback = void Function(BottomNavigationBar bnb);
 
 class Core extends StatefulWidget {
   const Core({super.key});
@@ -20,6 +25,7 @@ class _CoreState extends State<Core> {
     "Profilo"
   ];
   late Widget _openPage;
+  late BottomNavigationBar? _bottomNavbar;
 
   @override
   void initState() {
@@ -27,12 +33,19 @@ class _CoreState extends State<Core> {
     _currentPage = _routes[0];
     _drawer = ConstructDrawer(_routes, _currentPage);
     _openPage = _getBodyPage(_currentPage);
+    _bottomNavbar = null;
   }
 
-  void switchManualBody(String newRoute) {
+  void _switchManualBody(String newRoute) {
     setState(() {
       _openPage = _getBodyPage(newRoute);
       _currentPage = newRoute;
+    });
+  }
+
+  void _setNavigationBar(BottomNavigationBar? bnb) {
+    setState(() {
+      _bottomNavbar = bnb;
     });
   }
 
@@ -40,19 +53,21 @@ class _CoreState extends State<Core> {
   Widget _getBodyPage(String newRoute) {
     switch (newRoute) {
       case "Dashboard":
+        _setNavigationBar(null);
         return DashBoard(
-            switchBody: (String route) => switchManualBody(route),
+            switchBody: (String route) => _switchManualBody(route),
             routes: _routes);
       case "Segnalazioni":
-        return const Text("Segnalazioni");
+        return ReportPage(navCallback: ((bnb) => _setNavigationBar(bnb)));
       case "Bisogni":
-        return const Text("Bisogni");
+        return NeedPage(navCallback: ((bnb) => _setNavigationBar(bnb)));
       case "Servizi":
-        return const Text("Servizi");
+        return ServicePage(navCallback: ((bnb) => _setNavigationBar(bnb)));
       case "Profilo":
+        _setNavigationBar(null);
         return const Text("Profilo");
       default:
-        return const Text("Errore");
+        return const Text("Errore interno");
     }
   }
 
@@ -74,6 +89,7 @@ class _CoreState extends State<Core> {
           }
         }
       },
+      bottomNavigationBar: _bottomNavbar,
       body: _openPage,
     );
   }
