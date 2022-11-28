@@ -78,10 +78,18 @@ def update_tuple(table, code, **kwargs):
         raise e
 
 
-def get_all(table):
+def get_all(table, creator=None, not_creator=None):
     table = convert_table(table)
+
+    if creator is not None:
+        return session.query(table).filter(table.id_creator == creator).all()
+
+    if not_creator is not None:
+        return session.query(table).where(table.id_creator != not_creator).all()
+
     return session.query(table).all()
 
 
-def get_user(id):
-    return session.query(User).filter_by(email=id).first()
+def get_table(table, code):
+    table = convert_table(table)
+    return session.query(table).filter_by(email=code).first() if table == User else session.query(table).filter_by(id=code).first()
