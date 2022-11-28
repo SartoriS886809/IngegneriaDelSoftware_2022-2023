@@ -11,22 +11,10 @@ def home():
 
 @app.route('/signup', methods=['POST'])
 def signup():
-    email = request.form.get('email')
-    password = request.form.get('password')
-    username = request.form.get('username')
-    name = request.form.get('name')
-    lastname = request.form.get('lastname')
-    birth_date = request.form.get('birth_date')
-    address = request.form.get('address')
-    family = request.form.get('family')
-    house_type = request.form.get('house_type')
-    id_neighborhoods = request.form.get('id_neighborhoods')
-
-    if get_table('users', email) is not None:
+    if get_table('users', request.form.get('email')) is not None:
         return {'status': 'failure', 'reason': 'user already exists'}
 
-    add_and_commit('users', email=email, password=password, username=username, name=name, lastname=lastname,
-                   birth_date=birth_date, address=address, family=family, house_type=house_type, token='', id_neighborhoods=id_neighborhoods)
+    add_and_commit('users', token='', **request.form)
 
     return {'status': 'success', 'reason': ''}
 
