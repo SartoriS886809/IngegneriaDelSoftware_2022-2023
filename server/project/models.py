@@ -77,6 +77,10 @@ class User(Base, UserMixin):
     def password_check(self, psw):
         return bcrypt.check_password_hash(self.hashed_password, psw)
 
+    def get_all_elements(self):
+        return {'username': self.username, 'name': self.name, 'lastname': self.lastname, 'birth_date': self.birth_date,
+                'address': self.address, 'family': self.family, 'house_type': self.house_type, 'neighborhood': self.neigh.name}
+
     #def __repr__(self):
     #    return json.dumps(self.__dict__)
 

@@ -47,7 +47,7 @@ def login():
 
     if control:
         rand_token = str(uuid4())
-        update_tuple('users', email, token=rand_token)
+        user.token = rand_token
 
     if control and get_user(email).token != rand_token:
         status = 'failure'
@@ -64,7 +64,7 @@ def logout():
     reason = ''
 
     if user:
-        update_tuple('users', email, token='')
+        user.token = ''
     else:
         status = 'failure'
         reason = 'user does not exist'
@@ -81,3 +81,19 @@ def get_neighborhoods():
         for n in neighs:
             ans = ans + n.name + ';'
     return {'neighborhoods': ans, 'status': status}
+
+
+@app.route('/profile/<email>', methods=['GET', 'POST'])
+def profile(email):
+    user = get_user(email)
+
+    if not user:
+        return {'status': 'failure', 'reason': 'user does not exist'}
+
+    if request.method == 'POST':
+        update_tuple('users', user.email, **request.form)
+
+    elems = user.get_all_elements()
+    elems['status'] = 'success'
+    elems['reason'] = ''
+    return elems
