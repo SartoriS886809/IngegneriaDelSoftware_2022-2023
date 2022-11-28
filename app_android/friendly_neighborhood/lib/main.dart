@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:friendly_neighborhood/First_Page/login_screen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:friendly_neighborhood/core/core.dart';
 
 void main() {
   runApp(const MyApp());
@@ -22,7 +23,10 @@ class MyApp extends StatelessWidget {
     ]);
     return MaterialApp(
       title: 'Flutter Demo',
-      localizationsDelegates: const [GlobalMaterialLocalizations.delegate],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       supportedLocales: const [Locale('it'), Locale('en')],
       theme: ThemeData(
         // This is the theme of your application.
@@ -36,7 +40,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const LoginScreen(),
+      home: const Core(),
     );
   }
 }
