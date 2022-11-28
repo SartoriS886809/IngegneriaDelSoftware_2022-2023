@@ -11,7 +11,7 @@ def home():
 
 @app.route('/signup', methods=['POST'])
 def signup():
-    if get_table('users', request.form.get('email')) is not None:
+    if get_table('users', request.form.get('email')):
         return {'status': 'failure', 'reason': 'user already exists'}
 
     add_and_commit('users', token='', **request.form)
@@ -80,11 +80,11 @@ def profile(email):
     return elems
 
 
-def check(elem, email):
+def check(elem, email=None):
     if elem != 'reports' and elem != 'services' and elem != 'needs':
         return {'status': 'failure', 'reason': 'the list must be reports, services or needs'}
 
-    if get_table('users', email) is None:
+    if email is not None and get_table('users', email) is None:
         return {'status': 'failure', 'reason': 'the email does not exist'}
 
     return None
@@ -121,6 +121,18 @@ def new_elem(elem):
         return check(elem, request.form.get('id_creator'))
 
     add_and_commit(elem, **request.form)
+
+
+@app.route('/delete/<elem>/<id>', methods=['DELETE'])
+def delete_elem(elem, id):
+    if check(elem):
+        return check(elem)
+
+    delete_tuple(elem, id)
+    if get_table(elem, id):
+        return {'status': 'failure', 'reason': 'delete does not work'}
+
+    return {'status': 'success', 'reason': ''}
 
 
 @app.route('/assist', methods=['POST'])
