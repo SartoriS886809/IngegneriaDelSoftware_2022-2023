@@ -21,7 +21,7 @@ def test_modify_profile(client):
         "address": "new_address",
         "family": 5
     })
-    print(new_response.json)
+    #print(new_response.json)
     assert new_response.status_code == 200
     assert new_response.json["status"] == "success"
     assert old_response.json["address"] != new_response.json["address"]
