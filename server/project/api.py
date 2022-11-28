@@ -56,6 +56,22 @@ def login():
     return {'token': rand_token, 'status': status, 'reason': reason}
 
 
+@app.route('/logout', methods=['POST'])
+def logout():
+    email = request.form.get('email')
+    user = get_user(email)
+    status = 'success'
+    reason = ''
+
+    if user:
+        update_tuple('users', email, token='')
+    else:
+        status = 'failure'
+        reason = 'user does not exist'
+
+    return {'status': status, 'reason': reason}
+
+
 @app.route('/neighborhoods', methods=['GET'])
 def get_neighborhoods():
     status = 'success'
