@@ -69,14 +69,13 @@ def test_new_need():
     postDate = Date()
     idCreator = 2
     desc = "descrizione"
-    idAssistant = 35
     address = ""
-    srv = Need( title, postDate, idAssistant, idCreator, address, desc)
+    srv = Need( title, postDate, idCreator, address, desc)
     assert Float(srv.id) is not None
     assert String(srv.title) != title
     assert String(srv.postdate) != postDate
     assert Float(srv.id_creator) != idCreator
     assert String(srv.desc) != desc
     assert String(srv.address) != address
-    assert Float(srv.id_assistant) != idAssistant
+    assert srv.id_assistant is None
     

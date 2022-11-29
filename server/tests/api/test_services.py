@@ -14,11 +14,11 @@ def test_create_service(client):
     assert response.json["status"] == "success"
     
 def test_view_my_services(client):
-    old_response = client.get("/mylist/" + elem + "/" + email)
+    response = client.get("/mylist/" + elem + "/" + email)
     #print(old_response.json)
-    assert old_response.status_code == 200
-    assert old_response.json["status"] == "success"
-    assert old_response.json["list"] != []
+    assert response.status_code == 200
+    assert response.json["status"] == "success"
+    assert response.json["list"] != []
     
 def test_modify_my_service(client):
     # get list of elem

@@ -85,13 +85,13 @@ class Report(Base):
     category = Column(String, nullable=False)
     address = Column(String, nullable=False)
 
-    def __init__(self, title, postdate, id_creator, priority, cat, addr):
+    def __init__(self, title, postdate, id_creator, priority, category, address):
         self.title = title
         self.postdate = postdate
         self.id_creator = id_creator
         self.priority = priority
-        self.category = cat
-        self.address = addr
+        self.category = category
+        self.address = address
 
     def get_all_elements(self):
         return {'id': self.id, 'title': self.title, 'postdate': self.postdate, 'creator': self.creator.username,
@@ -135,17 +135,16 @@ class Need(Base):
     creator = relationship('User', backref='needs', foreign_keys=[id_creator])
     assistant = relationship('User', backref='assistant_needs', foreign_keys=[id_assistant])
     
-    def __init__(self, title, postdate, id_assistant, id_creator, address, desc):
+    def __init__(self, title, postdate, id_creator, address, desc):
         self.title = title
         self.postdate = postdate
-        self.is_creator = id_creator
+        self.id_creator = id_creator
         self.desc = desc
         self.address = address
-        self.id_assistant = id_assistant
 
     def get_all_elements(self):
         return {'id': self.id, 'title': self.title, 'postdate': self.postdate, 'creator': self.creator.username,
-                'assistant': self.assistant.username, 'desc': self.desc, 'address': self.address}
+                'assistant': self.assistant.username if self.assistant else "", 'desc': self.desc, 'address': self.address}
 
 
 Base.metadata.create_all(engine)
