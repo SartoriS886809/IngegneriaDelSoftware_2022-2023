@@ -1,5 +1,7 @@
 // ignore_for_file: unnecessary_getters_setters
 
+import '../utils/elaborate_data.dart';
+
 class Service {
   late int _id;
   late DateTime _postDate;
@@ -49,4 +51,17 @@ class Service {
         'description': _description,
         'creator': _creator,
       };
+
+  //Il campo link sarà strutturato come segue:
+  //ContactMethodsType:data     (formato csv)
+  List<Pair<String, String>> getContactMethodsFromLink() {
+    List<String> data = link.split(",");
+    List<Pair<String, String>> contactMethods = [];
+    for (String s in data) {
+      //Verranno restituiti due valori
+      List<String> values = s.split(":");
+      contactMethods.add(Pair(first: values[0], last: values[1]));
+    }
+    return contactMethods;
+  }
 }
