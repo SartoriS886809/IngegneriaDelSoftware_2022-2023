@@ -18,8 +18,7 @@ class Neighborhood(Base):
     name = Column(String(length=30), nullable=False)
     area = Column(Float, nullable=False)
 
-    def __init__(self, id, name, area):
-        self.id = id
+    def __init__(self, name, area):
         self.name = name
         self.area = area
 
@@ -86,8 +85,7 @@ class Report(Base):
     category = Column(String, nullable=False)
     address = Column(String, nullable=False)
 
-    def __init__(self, id, title, postdate, id_creator, priority, cat, addr):
-        self.id = id
+    def __init__(self, title, postdate, id_creator, priority, cat, addr):
         self.title = title
         self.postdate = postdate
         self.id_creator = id_creator
@@ -110,8 +108,7 @@ class Service(Base):
     desc = Column(String, nullable=False)
     link = Column(String, nullable=False)
     
-    def __init__(self, id, title, postdate, id_creator, desc, link):
-        self.id = id
+    def __init__(self, title, postdate, id_creator, desc, link):
         self.title = title
         self.postdate = postdate
         self.id_creator = id_creator
@@ -138,8 +135,7 @@ class Need(Base):
     creator = relationship('User', backref='needs', foreign_keys=[id_creator])
     assistant = relationship('User', backref='assistant_needs', foreign_keys=[id_assistant])
     
-    def __init__(self, id, title, postdate, id_assistant, id_creator, address, desc):
-        self.id = id
+    def __init__(self, title, postdate, id_assistant, id_creator, address, desc):
         self.title = title
         self.postdate = postdate
         self.is_creator = id_creator
@@ -153,4 +149,5 @@ class Need(Base):
 
 
 Base.metadata.create_all(engine)
-populate()
+#populate()
+create_neigh(Neighborhood)

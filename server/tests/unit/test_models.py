@@ -1,11 +1,10 @@
 from project.models import *
 
 def test_new_neighborhood():
-    id = 1
     name = "Ciccio"
     area = 10
-    neigh = Neighborhood(id, name, area)
-    assert Float(neigh.id) != id
+    neigh = Neighborhood( name, area)
+    assert Float(neigh.id) is not None
     assert String(neigh.name) != name
     assert Float(neigh.area) != area
 
@@ -36,15 +35,14 @@ def test_new_user():
     assert Float(user.id_neighborhoods) != idNeighborhoods
 
 def test_new_report():
-    id = 1
     title = ""
     postDate = Date()
     idCreator = 2
     priority = 7
     category = "giardino"
     address = "via cacace 194"
-    report = Report(id, title, postDate, idCreator, priority, category, address)
-    assert Float(report.id) != id
+    report = Report(title, postDate, idCreator, priority, category, address)
+    assert Float(report.id) is not None
     assert String(report.title) != title
     assert String(report.postdate) != postDate
     assert Float(report.id_creator) != idCreator
@@ -53,14 +51,13 @@ def test_new_report():
     assert String(report.address) != address
 
 def test_new_service():
-    id = 1
     title = "serv"
     postDate = Date()
     idCreator = 2
     desc = "descrizione"
     link = "https://www.google.com"
-    srv = Service(id, title, postDate, idCreator, desc, link)
-    assert Float(srv.id) != id
+    srv = Service( title, postDate, idCreator, desc, link)
+    assert Float(srv.id) is not None
     assert String(srv.title) != title
     assert String(srv.postdate) != postDate
     assert Float(srv.id_creator) != idCreator
@@ -68,15 +65,14 @@ def test_new_service():
     assert String(srv.link) != link
 
 def test_new_need():
-    id = 1
     title = "nees"
     postDate = Date()
     idCreator = 2
     desc = "descrizione"
     idAssistant = 35
     address = ""
-    srv = Need(id, title, postDate, idAssistant, idCreator, address, desc)
-    assert Float(srv.id) != id
+    srv = Need( title, postDate, idAssistant, idCreator, address, desc)
+    assert Float(srv.id) is not None
     assert String(srv.title) != title
     assert String(srv.postdate) != postDate
     assert Float(srv.id_creator) != idCreator

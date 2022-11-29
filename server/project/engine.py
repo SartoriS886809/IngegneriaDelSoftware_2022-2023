@@ -23,3 +23,8 @@ def create_schema():
 
 def populate():
     engine.execute(text(open("db_scripts/populate.sql").read()))
+    
+def create_neigh(table):
+    session.add(table(name='neigh1', area=23))
+    session.add(table(name='neigh2', area=23))
+    session.add(table(name='neigh3', area=23))
