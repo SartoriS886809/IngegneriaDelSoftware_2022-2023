@@ -120,8 +120,8 @@ def new_elem(elem):
     if check(elem, request.form.get('id_creator')):
         return check(elem, request.form.get('id_creator'))
 
-    add_and_commit(elem, **request.form)
-    return {'status': 'success', 'reason': ''}
+    id = add_and_commit(elem, **request.form).id
+    return {'id' : id, 'status': 'success', 'reason': ''}
 
 
 @app.route('/delete/<elem>/<id>', methods=['DELETE'])

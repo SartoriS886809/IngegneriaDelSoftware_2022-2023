@@ -149,5 +149,6 @@ class Need(Base):
 
 
 Base.metadata.create_all(engine)
-#populate()
 create_neigh(Neighborhood)
+populate()
+
