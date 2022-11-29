@@ -1,5 +1,11 @@
 // ignore_for_file: unnecessary_getters_setters
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:friendly_neighborhood/configuration/configuration.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import '../utils/elaborate_data.dart';
 
 class Service {
@@ -63,5 +69,23 @@ class Service {
       contactMethods.add(Pair(first: values[0], last: values[1]));
     }
     return contactMethods;
+  }
+
+  Widget getWidgetFromContactMethods(Pair<String, String> contact) {
+    if (!Configuration.supportedContactMethods.containsKey(contact.first)) {
+      throw "Metodo non supportato";
+    }
+    Uri url = Uri.http(
+        Configuration.supportedContactMethods[contact.first]! + contact.last);
+
+    return TextButton(
+        onPressed: () async {
+          if (await canLaunchUrl(url)) {
+            await launchUrl(url);
+          } else {
+            throw 'Could not launch $url';
+          }
+        },
+        child: Text(contact.first + contact.last));
   }
 }

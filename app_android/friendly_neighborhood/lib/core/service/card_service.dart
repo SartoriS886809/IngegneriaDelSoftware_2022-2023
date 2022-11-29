@@ -7,6 +7,35 @@ class ServiceCard extends StatelessWidget {
   final Service service;
   const ServiceCard({super.key, required this.service});
 
+  Future<void> _showMyDialog(BuildContext context, Service s) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(s.title),
+          //Da completare con lista contatti e resto
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text('This is a demo alert dialog.'),
+                Text('Would you like to approve of this message?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Chiudi'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -18,16 +47,7 @@ class ServiceCard extends StatelessWidget {
       Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
         TextButton(
           child: const Text('Più dettagli'),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      CreationOrModificationService.modification(
-                        service: service,
-                      )),
-            );
-          },
+          onPressed: () {},
         ),
         const SizedBox(width: 8),
       ]),
