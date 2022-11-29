@@ -40,6 +40,7 @@ class _CoreState extends State<Core> {
     setState(() {
       _openPage = _getBodyPage(newRoute);
       _currentPage = newRoute;
+      _drawer.changeCurrentRoute(_currentPage);
     });
   }
 
