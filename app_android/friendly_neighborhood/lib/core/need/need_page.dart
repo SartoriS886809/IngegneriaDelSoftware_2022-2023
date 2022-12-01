@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/core/core.dart';
+import 'package:friendly_neighborhood/core/need/create_modify_need.dart';
 import 'package:friendly_neighborhood/core/need/my_assignments.dart';
 import 'package:friendly_neighborhood/core/need/neighbours_needs.dart';
 import 'package:friendly_neighborhood/core/need/my_needs.dart';
@@ -8,8 +9,9 @@ import 'package:friendly_neighborhood/core/need/my_needs.dart';
 //gli StatefulWidget devono essere gestiti con due classi, una per il widget ed una privata per lo stato
 class NeedPage extends StatefulWidget {
   final NavigationBarCallback navCallback;
+  final FloatingCallback fabCallback;
 
-  const NeedPage({super.key, required this.navCallback});
+  const NeedPage({super.key, required this.navCallback, required this.fabCallback});
 
   @override
   State<NeedPage> createState() => _NeedPageState();
@@ -27,6 +29,7 @@ class _NeedPageState extends State<NeedPage> {
   late Widget _currentPage;
   late int _currentIndex;
   late final BottomNavigationBar bnb;
+  late final FloatingActionButton _createNewNeed;
 
   //initState() è il costruttore delle classi stato
   @override
@@ -34,12 +37,22 @@ class _NeedPageState extends State<NeedPage> {
     super.initState();
     _currentIndex=0;
     bnb = _createBottomNavigationBar();
-    //TODO TEMPORANEO
-    //_currentPage = const Text("ciao");
     _currentPage=pagesWidgets[0];
+    _createNewNeed = FloatingActionButton.extended(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => CreationOrModificationNeed()),
+        );
+      },
+      label: const Text('Crea bisogno'),
+      backgroundColor: Colors.orange[900],
+    );
     //Il metodo viene invocato una volta finito il build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.navCallback(bnb);
+      widget.fabCallback(_createNewNeed);
     });
   }
 
