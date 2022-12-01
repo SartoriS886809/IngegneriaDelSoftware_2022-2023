@@ -6,7 +6,7 @@ from uuid import uuid4
 
 @app.route('/')
 def home():
-    return {}
+    return 'Hello, from Neighborhood'
 
 
 @app.route('/signup', methods=['POST'])
