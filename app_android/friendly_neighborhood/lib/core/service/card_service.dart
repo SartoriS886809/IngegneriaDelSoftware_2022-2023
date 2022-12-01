@@ -14,7 +14,7 @@ class ServiceCardNeighborhood extends StatelessWidget {
         title: Text(service.title),
         subtitle: Text('Creato da ${service.creator}'),
       ),
-      Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
+      Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
         TextButton(
           child: const Text('Più dettagli'),
           onPressed: () {
@@ -46,7 +46,7 @@ class ServiceCardMe extends StatelessWidget {
         subtitle: Text(
             "Creata da te il ${service.postDate.day}-${service.postDate.month}-${service.postDate.year}"),
       ),
-      Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
+      Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
         TextButton(
           child: const Text('Più dettagli'),
           onPressed: () {

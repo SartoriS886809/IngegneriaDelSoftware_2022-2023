@@ -7,9 +7,10 @@ import 'package:friendly_neighborhood/core/service/neighborhood_service.dart';
 //gli StatefulWidget devono essere gestiticon due classi, una per il widget ed una privata per lo stato
 class ServicePage extends StatefulWidget {
   final NavigationBarCallback navCallback;
-  //TODO final FloatingCallback fabCallback;
+  final FloatingCallback fabCallback;
 
-  const ServicePage({super.key, required this.navCallback});
+  const ServicePage(
+      {super.key, required this.navCallback, required this.fabCallback});
 
   @override
   State<ServicePage> createState() => _ServicePageState();
@@ -44,6 +45,7 @@ class _ServicePageState extends State<ServicePage> {
     //Il metodo viene invocato una volta finito il build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.navCallback(_createBottomNavigationBar());
+      widget.fabCallback(_createNewService);
     });
   }
 
