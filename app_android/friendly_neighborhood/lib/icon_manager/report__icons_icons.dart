@@ -11,8 +11,10 @@
 ///      fonts:
 ///       - asset: fonts/Report_Icons.ttf
 ///
-/// 
 ///
+///
+// ignore_for_file: camel_case_types, constant_identifier_names
+
 import 'package:flutter/widgets.dart';
 
 class Report_Icons {
@@ -21,9 +23,14 @@ class Report_Icons {
   static const _kFontFam = 'Report_Icons';
   static const String? _kFontPkg = null;
 
-  static const IconData icon_disaster = IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData icons_traffic_accident = IconData(0xe801, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData icons_robber = IconData(0xe802, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData icons_lightning_bolt = IconData(0xe803, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData icons_construction = IconData(0xe804, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData icon_disaster =
+      IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData icons_traffic_accident =
+      IconData(0xe801, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData icons_robber =
+      IconData(0xe802, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData icons_lightning_bolt =
+      IconData(0xe803, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData icons_construction =
+      IconData(0xe804, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }

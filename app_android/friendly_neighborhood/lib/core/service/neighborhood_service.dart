@@ -19,18 +19,42 @@ class _NeighborhoodServicePageState extends State<NeighborhoodServicePage> {
     super.initState();
     //TODO: Temporaneo
     data = [
-      Service(0, DateTime.now(), "Pasticcere", "tel:+396666888",
-          "Torte su ordinazione", "Luigina"),
-      Service(1, DateTime.now(), "Idraulico", "tel:+396666888",
-          "Se perde acqua è da riparare", "Luigi"),
-      Service(2, DateTime.now(), "Pasticcere", "tel:+396666888",
-          "Torte su ordinazione", "Luigina"),
-      Service(3, DateTime.now(), "Idraulico", "tel:+396666888",
-          "Se perde acqua è da riparare", "Luigi"),
-      Service(2, DateTime.now(), "Pasticcere", "tel:+396666888",
-          "Torte su ordinazione", "Luigina"),
-      Service(3, DateTime.now(), "Idraulico", "tel:+396666888",
-          "Se perde acqua è da riparare", "Luigi")
+      Service(
+          postDate: DateTime.now(),
+          title: "Pasticcere",
+          link: "telefono / cellulare:+396666888",
+          description: "Torte su ordinazione",
+          creator: "Luigina"),
+      Service(
+          postDate: DateTime.now(),
+          title: "Idraulico",
+          link: "telefono / cellulare:+396666888",
+          description: "Se perde acqua è da riparare",
+          creator: "Luigi"),
+      Service(
+          postDate: DateTime.now(),
+          title: "Pasticcere",
+          link: "telefono / cellulare:+396666888",
+          description: "Torte su ordinazione",
+          creator: "Luigina"),
+      Service(
+          postDate: DateTime.now(),
+          title: "Idraulico",
+          link: "telefono / cellulare:+396666888",
+          description: "Se perde acqua è da riparare",
+          creator: "Luigi"),
+      Service(
+          postDate: DateTime.now(),
+          title: "Pasticcere",
+          link: "telefono / cellulare:+396666888",
+          description: "Torte su ordinazione",
+          creator: "Luigina"),
+      Service(
+          postDate: DateTime.now(),
+          title: "Idraulico",
+          link: "telefono / cellulare:+396666888",
+          description: "Se perde acqua è da riparare",
+          creator: "Luigi")
     ];
   }
 
@@ -43,7 +67,7 @@ class _NeighborhoodServicePageState extends State<NeighborhoodServicePage> {
           child: ListView.builder(
             itemCount: data.length,
             itemBuilder: (context, index) {
-              return ServiceCard(service: data[index]);
+              return ServiceCardNeighborhood(service: data[index]);
             },
           ),
         ),
@@ -57,7 +81,7 @@ class _NeighborhoodServicePageState extends State<NeighborhoodServicePage> {
               )),
               IconButton(
                   onPressed: (() {
-                    //TODO
+                    //TODO Aggiornamento dati
                     return;
                   }),
                   icon: const Icon(Icons.refresh))

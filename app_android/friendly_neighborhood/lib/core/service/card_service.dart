@@ -1,40 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:friendly_neighborhood/core/service/service_show.dart';
 import 'package:friendly_neighborhood/model/service.dart';
 
-import 'create_modify_service.dart';
-
-class ServiceCard extends StatelessWidget {
+class ServiceCardNeighborhood extends StatelessWidget {
   final Service service;
-  const ServiceCard({super.key, required this.service});
-
-  Future<void> _showMyDialog(BuildContext context, Service s) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(s.title),
-          //Da completare con lista contatti e resto
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: const <Widget>[
-                Text('This is a demo alert dialog.'),
-                Text('Would you like to approve of this message?'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Chiudi'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+  const ServiceCardNeighborhood({super.key, required this.service});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +17,47 @@ class ServiceCard extends StatelessWidget {
       Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
         TextButton(
           child: const Text('Più dettagli'),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ShowService(
+                          service: service,
+                          myService: false,
+                        )));
+          },
+        ),
+        const SizedBox(width: 8),
+      ]),
+    ]));
+  }
+}
+
+class ServiceCardMe extends StatelessWidget {
+  final Service service;
+  const ServiceCardMe({super.key, required this.service});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+        child: Column(children: [
+      ListTile(
+        title: Text(service.title),
+        subtitle: Text(
+            "Creata da te il ${service.postDate.day}-${service.postDate.month}-${service.postDate.year}"),
+      ),
+      Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
+        TextButton(
+          child: const Text('Più dettagli'),
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ShowService(
+                          service: service,
+                          myService: true,
+                        )));
+          },
         ),
         const SizedBox(width: 8),
       ]),

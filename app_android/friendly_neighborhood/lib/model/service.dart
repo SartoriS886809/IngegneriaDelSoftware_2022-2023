@@ -1,7 +1,4 @@
 // ignore_for_file: unnecessary_getters_setters
-
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/configuration/configuration.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -16,8 +13,14 @@ class Service {
   late String _description;
   late String _creator;
 
-  Service(int id, DateTime postDate, String title, String link,
-      String description, String creator) {
+  //Il campo id verrà assegnato dal server, usare il valore di default a -1 se creata dall'applicazione
+  Service(
+      {int id = -1,
+      required DateTime postDate,
+      required String title,
+      required String link,
+      required String description,
+      required String creator}) {
     _id = id;
     _postDate = postDate;
     _title = title;
@@ -75,10 +78,16 @@ class Service {
     if (!Configuration.supportedContactMethods.containsKey(contact.first)) {
       throw "Metodo non supportato";
     }
-    Uri url = Uri.http(
+    Uri url = Uri.parse(
         Configuration.supportedContactMethods[contact.first]! + contact.last);
 
-    return TextButton(
+    return TextButton.icon(
+        icon: Icon(Configuration.iconFromContactMethods[contact.first]),
+        style: ButtonStyle(
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0),
+                    side: const BorderSide(color: Colors.blue)))),
         onPressed: () async {
           if (await canLaunchUrl(url)) {
             await launchUrl(url);
@@ -86,6 +95,8 @@ class Service {
             throw 'Could not launch $url';
           }
         },
-        child: Text(contact.first + contact.last));
+        label: Text(
+          "${contact.first}: ${contact.last}",
+        ));
   }
 }
