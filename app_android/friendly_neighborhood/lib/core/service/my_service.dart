@@ -20,7 +20,8 @@ class _MyServicePageState extends State<MyServicePage> {
       Service(
           postDate: DateTime.now(),
           title: "Pasticcere",
-          link: "telefono / cellulare:+396666888",
+          link:
+              "telefono / cellulare:+396666888,telefono / cellulare:+396666888,telefono / cellulare:+396666888",
           description: "Torte su ordinazione",
           creator: "Beppe"),
       Service(

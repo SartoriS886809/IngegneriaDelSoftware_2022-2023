@@ -68,8 +68,10 @@ class Service {
     List<Pair<String, String>> contactMethods = [];
     for (String s in data) {
       //Verranno restituiti due valori
-      List<String> values = s.split(":");
-      contactMethods.add(Pair(first: values[0], last: values[1]));
+      if (s != "") {
+        List<String> values = s.split(":");
+        contactMethods.add(Pair(first: values[0], last: values[1]));
+      }
     }
     return contactMethods;
   }
