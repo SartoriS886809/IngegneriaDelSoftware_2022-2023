@@ -72,7 +72,9 @@ class _CoreState extends State<Core> {
         return ReportPage(navCallback: ((bnb) => _setNavigationBar(bnb)));
       case "Bisogni":
         _setFloatingButton(null);
-        return NeedPage(navCallback: ((bnb) => _setNavigationBar(bnb)));
+        return NeedPage(
+          navCallback: ((bnb) => _setNavigationBar(bnb)),
+          fabCallback: ((fab) => _setFloatingButton(fab)));
       case "Servizi":
         return ServicePage(
             navCallback: ((bnb) => _setNavigationBar(bnb)),
@@ -93,6 +95,7 @@ class _CoreState extends State<Core> {
         title: Text(_currentPage),
       ),
       drawer: _drawer,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: _floatingButton,
       onDrawerChanged: (isOpened) {
         if (!isOpened) {
