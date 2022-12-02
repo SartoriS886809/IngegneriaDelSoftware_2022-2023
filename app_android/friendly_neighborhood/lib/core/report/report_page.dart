@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/core/core.dart';
+import 'package:friendly_neighborhood/core/report/neighbours_reports.dart';
+import 'package:friendly_neighborhood/core/report/my_reports.dart';
 
-//gli StatefulWidget devono essere gestiticon due classi, una per il widget ed una privata per lo stato
+//gli StatefulWidget devono essere gestiti con due classi, una per il widget ed una privata per lo stato
 class ReportPage extends StatefulWidget {
   final NavigationBarCallback navCallback;
 
@@ -16,17 +18,24 @@ class _ReportPageState extends State<ReportPage> {
     "Segnalazioni": Icons.supervised_user_circle,
     "Mie segnalazioni": Icons.account_circle
   };
-  late Widget _currentPage;
 
+  final List<Widget> pagesWidgets = [
+    const NeighboursReports(),
+    const MyReports()
+  ];
+  late Widget _currentPage;
+  late int _currentIndex;
   late final BottomNavigationBar bnb;
+  late final FloatingActionButton _createNewReport;
 
   //initState() è il costruttore delle classi stato
   @override
   void initState() {
     super.initState();
+    _currentIndex = 0;
     bnb = _createBottomNavigationBar();
     //TODO TEMPORANEO
-    _currentPage = const Text("ciao");
+    _currentPage = pagesWidgets[0];
     //Il metodo viene invocato una volta finito il build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.navCallback(bnb);
@@ -44,7 +53,9 @@ class _ReportPageState extends State<ReportPage> {
 
   //Cambia la pagina visualizzata in base al indice
   void _changeCurrentPage(int index) {
-    setState(() {});
+    setState(() {
+      _currentPage = pagesWidgets[index];
+    });
   }
 
   BottomNavigationBar _createBottomNavigationBar() {
@@ -55,9 +66,14 @@ class _ReportPageState extends State<ReportPage> {
         unselectedItemColor: Colors.white.withOpacity(.60),
         selectedFontSize: 14,
         unselectedFontSize: 14,
+        currentIndex: _currentIndex,
         onTap: (value) {
           //VALUE => 0 o 1
+          _currentIndex = value;
           _changeCurrentPage(value);
+          //debug
+          debugPrint(value.toString());
+          widget.navCallback(_createBottomNavigationBar());
         },
         items: _createListBNB(pages));
   }
