@@ -76,7 +76,15 @@ class Service {
     return contactMethods;
   }
 
-  Widget getWidgetFromContactMethods(Pair<String, String> contact) {
+  static String getLinkFromContactMethods(List<Pair<String, String>> contact) {
+    String c = "";
+    for (Pair<String, String> s in contact) {
+      c += "${s.first}:${s.last},";
+    }
+    return c;
+  }
+
+  static Widget getWidgetFromContactMethods(Pair<String, String> contact) {
     if (!Configuration.supportedContactMethods.containsKey(contact.first)) {
       throw "Metodo non supportato";
     }

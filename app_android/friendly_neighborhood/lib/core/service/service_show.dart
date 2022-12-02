@@ -15,7 +15,7 @@ class ShowService extends StatefulWidget {
 }
 
 class _ShowServiceState extends State<ShowService> {
-  late final BuildContext _context;
+  late BuildContext _context;
   void removeService() {
     //TODO Richiesta di rimuovere al server
     Navigator.pop(_context);
@@ -64,7 +64,7 @@ class _ShowServiceState extends State<ShowService> {
         itemBuilder: (BuildContext context, int i) {
           return Container(
             margin: const EdgeInsets.only(bottom: 10.0),
-            child: widget.service.getWidgetFromContactMethods(contact[i]),
+            child: Service.getWidgetFromContactMethods(contact[i]),
           );
         });
   }

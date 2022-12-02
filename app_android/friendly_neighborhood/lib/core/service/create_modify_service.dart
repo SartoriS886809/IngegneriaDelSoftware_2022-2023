@@ -38,7 +38,60 @@ class _CreationOrModificationServiceState
   final _controllerDescription = TextEditingController();
   late List<Pair<String, String>> _listContact;
   late BuildContext _context;
+
+  Future<void> _showAlertDialog(
+      {required String title,
+      required String message,
+      required String buttonMessage,
+      required Function f}) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // L'utente deve premere il pulsante
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(message),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Annulla'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text(buttonMessage),
+              onPressed: () {
+                Navigator.of(context).pop();
+                f();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void updateService() {
+    widget.service!.title = _controllerTitle.text;
+    widget.service!.description = _controllerDescription.text;
+    widget.service!.title = Service.getLinkFromContactMethods(_listContact);
+    Navigator.pop(_context);
+  }
+
+  void createService() {
+    //TODO Creator da assegnare
+    widget.service = Service(
+        postDate: DateTime.now(),
+        title: _controllerTitle.text,
+        link: Service.getLinkFromContactMethods(_listContact),
+        description: _controllerDescription.text,
+        creator: "creator");
     Navigator.pop(_context);
   }
 
@@ -228,7 +281,7 @@ class _CreationOrModificationServiceState
                         Row(
                           children: [
                             Expanded(
-                                child: //Pulsante Registrati
+                                child: //Pulsante Annulla
                                     Padding(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 16.0),
@@ -253,11 +306,22 @@ class _CreationOrModificationServiceState
                                             //Controllo se il form è valido
                                             if (_formKey.currentState!
                                                 .validate()) {
-                                              //TODO aggiornare dati su Service+alert di conferma
                                               if (widget.modification) {
                                                 //aggiornare
+                                                _showAlertDialog(
+                                                    title: "Aggiornamento",
+                                                    message:
+                                                        "Sei sicuro di voler aggiornare il servizio?",
+                                                    buttonMessage: "Aggiorna",
+                                                    f: updateService);
                                               } else {
                                                 //creare da zero
+                                                _showAlertDialog(
+                                                    title: "Creazione",
+                                                    message:
+                                                        "Sei sicuro di voler creare il servizio?",
+                                                    buttonMessage: "Crea",
+                                                    f: createService);
                                               }
                                             }
                                           },
