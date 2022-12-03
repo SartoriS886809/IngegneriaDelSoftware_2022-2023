@@ -18,12 +18,12 @@ class _NeighboursReportsState extends State<NeighboursReports> {
         'problemi ambientali', 'via papa luciani', 'paolino'),
     Report(2, DateTime(2022, 11, 23, 14, 20), 'tombino rotto', 1,
         'problemi ambientali', 'via cristo', 'creator'),
-    Report(3, DateTime(2022, 11, 23, 14, 20), 'voglio fare a botte', 1,
-        'crimine', 'via Giorgia Meloni', 'Zaia Luca'),
-    Report(4, DateTime(2022, 11, 23, 14, 20), 'IL MIO CANE HA SCORRATO', 1,
-        'animali', 'via Giorgia Meloni', 'Zaia Luca'),
-    Report(65, DateTime(2022, 02, 02, 2, 2), 'MAMMA CALDA VICINO A TE', 3,
-        'lavori in corso', 'via Terraglio', 'Tua mamma')
+    Report(3, DateTime(2022, 11, 23, 14, 20), 'ladri in casa', 1, 'crimine',
+        'via Col Vento', 'Lucio Wolf'),
+    Report(4, DateTime(2022, 11, 23, 14, 20), 'Cane randagio nel quartiere', 1,
+        'animali', 'via Montalbano', 'Zaia Luca'),
+    Report(65, DateTime(2022, 02, 02, 2, 2), 'Strada chiusa per lavori', 3,
+        'lavori in corso', 'via Monte Marmolada', 'Sandro')
   ];
 
   //initState() è il costruttore delle classi stato
