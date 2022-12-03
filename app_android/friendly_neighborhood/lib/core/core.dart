@@ -69,12 +69,14 @@ class _CoreState extends State<Core> {
             routes: _routes);
       case "Segnalazioni":
         _setFloatingButton(null);
-        return ReportPage(navCallback: ((bnb) => _setNavigationBar(bnb)));
+        return ReportPage(
+            navCallback: ((bnb) => _setNavigationBar(bnb)),
+            fabCallback: ((fab) => _setFloatingButton(fab)));
       case "Bisogni":
         _setFloatingButton(null);
         return NeedPage(
-          navCallback: ((bnb) => _setNavigationBar(bnb)),
-          fabCallback: ((fab) => _setFloatingButton(fab)));
+            navCallback: ((bnb) => _setNavigationBar(bnb)),
+            fabCallback: ((fab) => _setFloatingButton(fab)));
       case "Servizi":
         return ServicePage(
             navCallback: ((bnb) => _setNavigationBar(bnb)),

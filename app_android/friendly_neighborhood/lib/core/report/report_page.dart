@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/core/core.dart';
 import 'package:friendly_neighborhood/core/report/neighbours_reports.dart';
 import 'package:friendly_neighborhood/core/report/my_reports.dart';
+import 'package:friendly_neighborhood/core/report/create_report.dart';
 
 //gli StatefulWidget devono essere gestiti con due classi, una per il widget ed una privata per lo stato
 class ReportPage extends StatefulWidget {
   final NavigationBarCallback navCallback;
+  final FloatingCallback fabCallback;
 
-  const ReportPage({super.key, required this.navCallback});
+  const ReportPage(
+      {super.key, required this.fabCallback, required this.navCallback});
 
   @override
   State<ReportPage> createState() => _ReportPageState();
@@ -36,9 +39,21 @@ class _ReportPageState extends State<ReportPage> {
     bnb = _createBottomNavigationBar();
     //TODO TEMPORANEO
     _currentPage = pagesWidgets[0];
+    _createNewReport = FloatingActionButton.extended(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => CreationReport()),
+        );
+      },
+      label: const Text('Crea bisogno'),
+      backgroundColor: Colors.orange[900],
+    );
+
     //Il metodo viene invocato una volta finito il build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.navCallback(bnb);
+      widget.fabCallback(_createNewReport);
     });
   }
 
