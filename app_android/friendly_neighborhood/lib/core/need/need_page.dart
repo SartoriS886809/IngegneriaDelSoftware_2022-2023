@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/core/core.dart';
 import 'package:friendly_neighborhood/core/need/create_modify_need.dart';
 import 'package:friendly_neighborhood/core/need/my_assignments.dart';
-import 'package:friendly_neighborhood/core/need/neighbours_needs.dart';
+import 'package:friendly_neighborhood/core/need/neighbors_needs.dart';
 import 'package:friendly_neighborhood/core/need/my_needs.dart';
 
 
@@ -24,7 +24,7 @@ class _NeedPageState extends State<NeedPage> {
     "Miei incarichi": Icons.assignment_turned_in
   };
   //TODO mappare insieme su pages anche le pagine
-  final List<Widget> pagesWidgets= [const NeighboursNeeds(), const MyNeeds(), const MyAssignments()];
+  final List<Widget> pagesWidgets= [const NeighborsNeeds(), const MyNeeds(), const MyAssignments()];
 
   late Widget _currentPage;
   late int _currentIndex;

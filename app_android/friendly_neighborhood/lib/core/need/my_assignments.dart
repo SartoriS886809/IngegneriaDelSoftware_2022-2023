@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:friendly_neighborhood/core/need/card_need.dart';
 import '../../model/need.dart';
 
 class MyAssignments extends StatefulWidget {
@@ -11,7 +12,7 @@ class MyAssignments extends StatefulWidget {
 
 class _MyAssignments extends State<MyAssignments> {
 
-  List<Need> Needslist=[];
+  List<Need> Needslist=[Need(5, new DateTime(2022,11,27,17,30), "esempio mio incarico 1", "via carlevaris 10", "descrizione mio incarico 1", "Sebastiano Sartori" , 1 , "Samuele Sartori")];
   //initState() è il costruttore delle classi stato
   @override
   void initState() {
@@ -27,33 +28,7 @@ class _MyAssignments extends State<MyAssignments> {
       itemCount: Needslist.length,
       itemBuilder: (context, index){
         final Need need_i=Needslist.elementAt(index);
-        final String date_i=need_i.postDate.day.toString()+"-"+need_i.postDate.month.toString()+"-"+need_i.postDate.year.toString()+" "+need_i.postDate.hour.toString()+":"+need_i.postDate.minute.toString();
-        return Card(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Row(
-              children:[
-              Expanded(
-                //width: 150,
-                child: 
-                ListTile(
-                  //leading: Icon(Icons.album),
-                  title: Text(need_i.title),
-                  subtitle: Text(
-                    "Luogo: "+need_i.address+"\n"+
-                    "Data creazione: "+date_i+"\n"+//.toString()+"\n"+
-                    "Autore: "+need_i.creator),
-                ),
-              ),
-              TextButton(
-                child: const Text('Apri descrizione'),
-                onPressed: () {/* ... */},
-              )
-            ])
-          ],
-        ),
-      );
+        return NeedCard(need: need_i, isItMine: false, assistedByMe: true);
       } ,
     )
     :
