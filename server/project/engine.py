@@ -4,8 +4,8 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import database_exists, create_database
 from sqlalchemy.ext.declarative import declarative_base
 
-url = f"postgresql://{owner}:{password_owner}@{db_ip}:{db_port}/{db_name}"
-
+#url = f"postgresql://{owner}:{password_owner}@{db_ip}:{db_port}/{db_name}"
+url = "postgresql://postgres%40neighdb:games_123@neighdb.postgres.database.azure.com:5432/neighdb"
 if not database_exists(url):
     create_database(url)
 
@@ -22,4 +22,10 @@ def create_schema():
 
 
 def populate():
-    engine.execute(text(open("server/db_scripts/populate.sql").read()))
+    engine.execute(text(open("db_scripts/populate.sql").read()))
+    
+def create_neigh(table):
+    session.add(table(name='neigh1', area=23))
+    session.add(table(name='neigh2', area=23))
+    session.add(table(name='neigh3', area=23))
+    session.commit()

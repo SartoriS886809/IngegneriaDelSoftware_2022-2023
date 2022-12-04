@@ -1,22 +1,314 @@
 from . import app
 from flask import request
+from project.operations import commit, rollback, flush, add_and_commit, add_no_commit, delete_tuple, update_tuple, get_all, get_table
+from uuid import uuid4
 
 
 @app.route('/')
 def home():
-    return {}
+    return 'Hello, from Neighborhood'
 
 
-@app.route('/login', methods=['GET', 'POST'])
+'''
+Method: POST
+Route: '/signup'
+Desc: signup the new user with the data specified in the post request
+
+Need: {'email': email,
+        'password': string,
+        'username': string,
+        'name': string,
+        'lastname': string,
+        'birth_date': date,
+        'address': string,
+        'family': int,
+        'house_type': string,
+        'id_neighborhoods': int}
+
+Return success: {'status': 'success'}
+Return failure: {'status': 'failure', 'reason': string}
+'''
+@app.route('/signup', methods=['POST'])
+def signup():
+    if get_table('users', request.form.get('email')):
+        return {'status': 'failure', 'reason': 'user already exists'}
+
+    add_and_commit('users', token='', **request.form)
+
+    return {'status': 'success', 'reason': ''}
+
+
+'''
+Method: POST
+Route: '/login'
+Desc: login the user with the data specified in the post request, return the session token of the user
+
+Need: {'email': string, 'password': string}
+
+Return success: {'token': string, 'status': 'success'}
+Return failure: {'status': 'failure', 'reason': string} 
+'''
+@app.route('/login', methods=['POST'])
 def login():
-    email = request.args['email']
-    password = request.args['password']
-    # login operation
-    status = 'ok'
-    return {'status': f'{status}'}
+    email = request.form.get('email')
+    password = request.form.get('password')
+    rand_token = ''
+
+    user = get_table('users', email)
+    control = (email != "" and password != "" and user is not None and user.password_check(psw=password))
+    status = 'success' if control else 'failure'
+    reason = '' if control else 'email or password are wrong'
+
+    if control:
+        rand_token = str(uuid4())
+        user.token = rand_token
+
+    if control and get_table('users', email).token != rand_token:
+        status = 'failure'
+        reason = 'update does not work'
+
+    return {'token': rand_token, 'status': status, 'reason': reason}
 
 
-@app.route('/neighborhoods')
+'''
+Method: POST
+Route: '/logout'
+Desc: logout the user with the email specified in the post request
+
+Need: {'email': email}
+
+Return success: {'status': 'success'}
+Return failure: {'status': 'failure', 'reason': string}
+'''
+@app.route('/logout', methods=['POST'])
+def logout():
+    email = request.form.get('email')
+    user = get_table('users', email)
+
+    if not user:
+        return {'status': 'failure', 'reason': 'user does not exist'}
+
+    user.token = ''
+
+    return {'status': 'success', 'reason': ''}
+
+
+'''
+Method: GET
+Route: '/neighborhoods'
+Desc: return a list of all the neighborhoods present in the app, in the format 'neigh1;neigh2;neigh3'
+
+Return success: {'neighborhoods': string, 'status': 'success'}
+Return failure: {'status': 'failure', 'reason': string}
+'''
+@app.route('/neighborhoods', methods=['GET'])
 def get_neighborhoods():
-    status = 'ok'
-    return {'neighborhoods': 'neigh1;neigh2;neigh3', 'status': f'{status}'}
+    neighs = get_all('neighborhoods')
+    ans = ''
+    if neighs is not None:
+        for n in neighs:
+            ans = ans + n.name + ';'
+    return {'neighborhoods': ans, 'status': 'success'}
+
+
+'''
+Method: GET
+Route: '/profile/<email>'
+Desc: get the information of the user with <email>
+
+Return success: {'username': string,
+                'name': string,
+                'lastname': string,
+                'birth_date': date,
+                'address': string,
+                'family': int,
+                'house_type': string,
+                'id_neighborhoods': int,
+                'status': 'success'}
+Return failure: {'status': 'failure', 'reason': string}
+
+
+Method: POST
+Route: '/profile/<email>'
+Desc: update the specified fields in the profile of the user with <email>
+
+You can choose how many arguments want to change
+Need: {'username': string,
+        'name': string,
+        'lastname': string,
+        'birth_date': date,
+        'address': string,
+        'family': int,
+        'house_type': string,
+        'id_neighborhoods': int}
+        
+Return success: Return success: {'username': string,
+                'name': string,
+                'lastname': string,
+                'birth_date': date,
+                'address': string,
+                'family': int,
+                'house_type': string,
+                'id_neighborhoods': int,
+                'status': 'success'}
+Return failure: {'status': 'failure', 'reason': string}
+'''
+@app.route('/profile/<email>', methods=['GET', 'POST'])
+def profile(email):
+    user = get_table('users', email)
+
+    if not user:
+        return {'status': 'failure', 'reason': 'user does not exist'}
+
+    if request.method == 'POST':
+        update_tuple('users', user.email, **request.form)
+
+    elems = user.get_all_elements()
+    elems['status'] = 'success'
+    elems['reason'] = ''
+    return elems
+
+
+# aux function to check if elem and email are correct
+def check(elem, email=None):
+    if elem != 'reports' and elem != 'services' and elem != 'needs':
+        return {'status': 'failure', 'reason': 'the list must be reports, services or needs'}
+
+    if email is not None and get_table('users', email) is None:
+        return {'status': 'failure', 'reason': 'the email does not exist'}
+
+    return None
+
+
+'''
+Method: GET
+Route: '/list/<elem>/<email>'
+Desc: get a list of <elem> (services, needs, reports) for the user with <email>
+
+Return success: {'list': [dict], 'status': 'success'}
+Return failure: {'status': 'failure', 'reason': string}
+'''
+@app.route('/list/<elem>/<email>', methods=['GET'])
+def get_list(elem, email):
+    if check(elem, email):
+        return check(elem, email)
+
+    return {'list': [get_table(elem, x.id).get_all_elements() for x in get_all(table=elem, not_creator=email)],
+            'status': 'success', 'reason': ''}
+
+
+'''
+Method: GET
+Route: '/mylist/<elem>/<email>'
+Desc: get the list of <elem> (services, needs, reports) for the current user with <email>
+
+Return success: {'list': [dict], 'status': 'success'}
+Return failure: {'status': 'failure', 'reason': string}
+
+
+Method: POST
+Route: '/mylist/<elem>/<email>'
+Desc: update the specified fields in the list of type <elem> (services, needs, reports) for the current user with <email>
+
+You can choose how many arguments want to change
+Need: {'id': int (not nullable),
+        'title': string,
+        ...}
+
+Return success: {'status': 'success'}
+Return failure: {'status': 'failure', 'reason': string}
+'''
+@app.route('/mylist/<elem>/<email>', methods=['GET', 'POST'])
+def get_mylist(elem, email):
+    if check(elem, email):
+        return check(elem, email)
+
+    if request.method == 'GET':
+        return {'list': [get_table(elem, x.id).get_all_elements() for x in get_all(table=elem, creator=email)],
+                'status': 'success', 'reason': ''}
+
+    update_tuple(elem, request.form.get('id'), **request.form)
+    elems = get_table(elem, request.form.get('id')).get_all_elements()
+    elems['status'] = 'success'
+    elems['reason'] = ''
+    return elems
+
+
+'''
+Method: POST
+Route: '/new/<elem>'
+Desc: create a new element of type <elem> (services, needs, reports), return the id of the new element
+
+Need (one of these types):
+- services: {'title': string, 
+        'id_creator': string, 
+        'desc': string,
+        'link': string} 
+         
+- needs: {'title': string, 
+        'id_creator': string, 
+        'desc' : string,
+        'address' : string}
+        
+- reports: {'title': string, 
+        'id_creator': string, 
+        'priority' : int (1 or 2 or 3),
+        'address' : string,
+        'category' : string}
+
+
+Return success: {'id': int, 'status': 'success'}
+Return failure: {'status': 'failure', 'reason': string}
+'''
+@app.route('/new/<elem>', methods=['POST'])
+def new_elem(elem):
+    if check(elem, request.form.get('id_creator')):
+        return check(elem, request.form.get('id_creator'))
+
+    id = add_and_commit(elem, **request.form).id
+    return {'id': id, 'status': 'success', 'reason': ''}
+
+
+'''
+Method: DELETE
+Route: '/delete/<elem>/<id>'
+Desc: delete element of type <elem> (services, needs, reports) with <id> 
+
+Return success: {'status': 'success'}
+Return failure: {'status': 'failure', 'reason': string}
+'''
+@app.route('/delete/<elem>/<id>', methods=['DELETE'])
+def delete_elem(elem, id):
+    if check(elem):
+        return check(elem)
+
+    delete_tuple(elem, id)
+    if get_table(elem, id):
+        return {'status': 'failure', 'reason': 'delete does not work'}
+
+    return {'status': 'success', 'reason': ''}
+
+
+'''
+Method: POST
+Route: '/assist'
+Desc: the user with <email> can solve the need with <id>
+
+Need: {'id': string, 'email': string}
+
+Return success: {'status': 'success'}
+Return failure: {'status': 'failure', 'reason': string}
+'''
+@app.route('/assist', methods=['POST'])
+def assist():
+    if not get_table('needs', request.form.get('id')):
+        return {'status': 'failure', 'reason': 'the id is not correct'}
+
+    if not get_table('users', request.form.get('email')):
+        return {'status': 'failure', 'reason': 'the user does not exist'}
+
+    if get_table('needs', request.form.get('id')).id_creator == request.form.get('email'):
+        return {'status': 'failure', 'reason': 'creator and assistant must be different'}
+
+    get_table('needs', request.form.get('id')).id_assistant = request.form.get('email')
+    return {'status': 'success', 'reason': ''}
