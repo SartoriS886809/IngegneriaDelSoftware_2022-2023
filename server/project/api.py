@@ -9,6 +9,25 @@ def home():
     return 'Hello, from Neighborhood'
 
 
+'''
+Method: POST
+Route: '/signup'
+Desc: signup the new user with the data specified in the post request
+
+Need: {'email': email,
+        'password': string,
+        'username': string,
+        'name': string,
+        'lastname': string,
+        'birth_date': date,
+        'address': string,
+        'family': int,
+        'house_type': string,
+        'id_neighborhoods': int}
+
+Return success: {'status': 'success'}
+Return failure: {'status': 'failure', 'reason': string}
+'''
 @app.route('/signup', methods=['POST'])
 def signup():
     if get_table('users', request.form.get('email')):
@@ -19,6 +38,16 @@ def signup():
     return {'status': 'success', 'reason': ''}
 
 
+'''
+Method: POST
+Route: '/login'
+Desc: login the user with the data specified in the post request, return the session token of the user
+
+Need: {'email': string, 'password': string}
+
+Return success: {'token': string, 'status': 'success'}
+Return failure: {'status': 'failure', 'reason': string} 
+'''
 @app.route('/login', methods=['POST'])
 def login():
     email = request.form.get('email')
@@ -41,6 +70,16 @@ def login():
     return {'token': rand_token, 'status': status, 'reason': reason}
 
 
+'''
+Method: POST
+Route: '/logout'
+Desc: logout the user with the email specified in the post request
+
+Need: {'email': email}
+
+Return success: {'status': 'success'}
+Return failure: {'status': 'failure', 'reason': string}
+'''
 @app.route('/logout', methods=['POST'])
 def logout():
     email = request.form.get('email')
@@ -54,6 +93,14 @@ def logout():
     return {'status': 'success', 'reason': ''}
 
 
+'''
+Method: GET
+Route: '/neighborhoods'
+Desc: return a list of all the neighborhoods present in the app, in the format 'neigh1;neigh2;neigh3'
+
+Return success: {'neighborhoods': string, 'status': 'success'}
+Return failure: {'status': 'failure', 'reason': string}
+'''
 @app.route('/neighborhoods', methods=['GET'])
 def get_neighborhoods():
     neighs = get_all('neighborhoods')
@@ -64,6 +111,48 @@ def get_neighborhoods():
     return {'neighborhoods': ans, 'status': 'success'}
 
 
+'''
+Method: GET
+Route: '/profile/<email>'
+Desc: get the information of the user with <email>
+
+Return success: {'username': string,
+                'name': string,
+                'lastname': string,
+                'birth_date': date,
+                'address': string,
+                'family': int,
+                'house_type': string,
+                'id_neighborhoods': int,
+                'status': 'success'}
+Return failure: {'status': 'failure', 'reason': string}
+
+
+Method: POST
+Route: '/profile/<email>'
+Desc: update the specified fields in the profile of the user with <email>
+
+You can choose how many arguments want to change
+Need: {'username': string,
+        'name': string,
+        'lastname': string,
+        'birth_date': date,
+        'address': string,
+        'family': int,
+        'house_type': string,
+        'id_neighborhoods': int}
+        
+Return success: Return success: {'username': string,
+                'name': string,
+                'lastname': string,
+                'birth_date': date,
+                'address': string,
+                'family': int,
+                'house_type': string,
+                'id_neighborhoods': int,
+                'status': 'success'}
+Return failure: {'status': 'failure', 'reason': string}
+'''
 @app.route('/profile/<email>', methods=['GET', 'POST'])
 def profile(email):
     user = get_table('users', email)
@@ -80,6 +169,7 @@ def profile(email):
     return elems
 
 
+# aux function to check if elem and email are correct
 def check(elem, email=None):
     if elem != 'reports' and elem != 'services' and elem != 'needs':
         return {'status': 'failure', 'reason': 'the list must be reports, services or needs'}
@@ -90,6 +180,14 @@ def check(elem, email=None):
     return None
 
 
+'''
+Method: GET
+Route: '/list/<elem>/<email>'
+Desc: get a list of <elem> (services, needs, reports) for the user with <email>
+
+Return success: {'list': [dict], 'status': 'success'}
+Return failure: {'status': 'failure', 'reason': string}
+'''
 @app.route('/list/<elem>/<email>', methods=['GET'])
 def get_list(elem, email):
     if check(elem, email):
@@ -99,6 +197,27 @@ def get_list(elem, email):
             'status': 'success', 'reason': ''}
 
 
+'''
+Method: GET
+Route: '/mylist/<elem>/<email>'
+Desc: get the list of <elem> (services, needs, reports) for the current user with <email>
+
+Return success: {'list': [dict], 'status': 'success'}
+Return failure: {'status': 'failure', 'reason': string}
+
+
+Method: POST
+Route: '/mylist/<elem>/<email>'
+Desc: update the specified fields in the list of type <elem> (services, needs, reports) for the current user with <email>
+
+You can choose how many arguments want to change
+Need: {'id': int (not nullable),
+        'title': string,
+        ...}
+
+Return success: {'status': 'success'}
+Return failure: {'status': 'failure', 'reason': string}
+'''
 @app.route('/mylist/<elem>/<email>', methods=['GET', 'POST'])
 def get_mylist(elem, email):
     if check(elem, email):
@@ -115,15 +234,49 @@ def get_mylist(elem, email):
     return elems
 
 
+'''
+Method: POST
+Route: '/new/<elem>'
+Desc: create a new element of type <elem> (services, needs, reports), return the id of the new element
+
+Need (one of these types):
+- services: {'title': string, 
+        'id_creator': string, 
+        'desc': string,
+        'link': string} 
+         
+- needs: {'title': string, 
+        'id_creator': string, 
+        'desc' : string,
+        'address' : string}
+        
+- reports: {'title': string, 
+        'id_creator': string, 
+        'priority' : int (1 or 2 or 3),
+        'address' : string,
+        'category' : string}
+
+
+Return success: {'id': int, 'status': 'success'}
+Return failure: {'status': 'failure', 'reason': string}
+'''
 @app.route('/new/<elem>', methods=['POST'])
 def new_elem(elem):
     if check(elem, request.form.get('id_creator')):
         return check(elem, request.form.get('id_creator'))
 
     id = add_and_commit(elem, **request.form).id
-    return {'id' : id, 'status': 'success', 'reason': ''}
+    return {'id': id, 'status': 'success', 'reason': ''}
 
 
+'''
+Method: DELETE
+Route: '/delete/<elem>/<id>'
+Desc: delete element of type <elem> (services, needs, reports) with <id> 
+
+Return success: {'status': 'success'}
+Return failure: {'status': 'failure', 'reason': string}
+'''
 @app.route('/delete/<elem>/<id>', methods=['DELETE'])
 def delete_elem(elem, id):
     if check(elem):
@@ -136,9 +289,25 @@ def delete_elem(elem, id):
     return {'status': 'success', 'reason': ''}
 
 
+'''
+Method: POST
+Route: '/assist'
+Desc: the user with <email> can solve the need with <id>
+
+Need: {'id': string, 'email': string}
+
+Return success: {'status': 'success'}
+Return failure: {'status': 'failure', 'reason': string}
+'''
 @app.route('/assist', methods=['POST'])
 def assist():
-    if request.form.get('id') == request.form.get('email'):
+    if not get_table('needs', request.form.get('id')):
+        return {'status': 'failure', 'reason': 'the id is not correct'}
+
+    if not get_table('users', request.form.get('email')):
+        return {'status': 'failure', 'reason': 'the user does not exist'}
+
+    if get_table('needs', request.form.get('id')).id_creator == request.form.get('email'):
         return {'status': 'failure', 'reason': 'creator and assistant must be different'}
 
     get_table('needs', request.form.get('id')).id_assistant = request.form.get('email')

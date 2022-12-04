@@ -3,8 +3,7 @@ email = "mario@gmail.com"
 
 def test_create_report(client):
     response = client.post("/new/" + elem , data={
-        "title": "Incendio", 
-        "postdate": "07/10/2022",
+        "title": "Incendio",
         "id_creator": email, 
         "priority" : 1,
         "address" : "via 74",

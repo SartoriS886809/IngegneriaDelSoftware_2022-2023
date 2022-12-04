@@ -1,4 +1,5 @@
 from project.models import *
+from datetime import date
 
 def test_new_neighborhood():
     name = "Ciccio"
@@ -36,15 +37,14 @@ def test_new_user():
 
 def test_new_report():
     title = ""
-    postDate = Date()
     idCreator = 2
     priority = 7
     category = "giardino"
     address = "via cacace 194"
-    report = Report(title, postDate, idCreator, priority, category, address)
+    report = Report(title, idCreator, priority, category, address)
     assert Float(report.id) is not None
     assert String(report.title) != title
-    assert String(report.postdate) != postDate
+    assert String(report.postdate) != date.today()
     assert Float(report.id_creator) != idCreator
     assert Float(report.priority) != priority
     assert String(report.category) != category
@@ -52,28 +52,26 @@ def test_new_report():
 
 def test_new_service():
     title = "serv"
-    postDate = Date()
     idCreator = 2
     desc = "descrizione"
     link = "https://www.google.com"
-    srv = Service( title, postDate, idCreator, desc, link)
+    srv = Service( title, idCreator, desc, link)
     assert Float(srv.id) is not None
     assert String(srv.title) != title
-    assert String(srv.postdate) != postDate
+    assert String(srv.postdate) != date.today()
     assert Float(srv.id_creator) != idCreator
     assert String(srv.desc) != desc
     assert String(srv.link) != link
 
 def test_new_need():
     title = "nees"
-    postDate = Date()
     idCreator = 2
     desc = "descrizione"
     address = ""
-    srv = Need( title, postDate, idCreator, address, desc)
+    srv = Need( title, idCreator, address, desc)
     assert Float(srv.id) is not None
     assert String(srv.title) != title
-    assert String(srv.postdate) != postDate
+    assert String(srv.postdate) != date.today()
     assert Float(srv.id_creator) != idCreator
     assert String(srv.desc) != desc
     assert String(srv.address) != address

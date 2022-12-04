@@ -3,9 +3,7 @@ from . import login_manager, bcrypt
 from flask_login import UserMixin
 from sqlalchemy import Column, String, Integer, Date, ForeignKey, Float, Boolean, Table, CheckConstraint, Text, UniqueConstraint
 from sqlalchemy.orm import relationship
-import json
 from datetime import date
-import inspect
 
 
 create_schema()
@@ -85,9 +83,9 @@ class Report(Base):
     category = Column(String, nullable=False)
     address = Column(String, nullable=False)
 
-    def __init__(self, title, postdate, id_creator, priority, category, address):
+    def __init__(self, title, id_creator, priority, category, address):
         self.title = title
-        self.postdate = postdate
+        self.postdate = date.today()
         self.id_creator = id_creator
         self.priority = priority
         self.category = category
@@ -108,9 +106,9 @@ class Service(Base):
     desc = Column(String, nullable=False)
     link = Column(String, nullable=False)
     
-    def __init__(self, title, postdate, id_creator, desc, link):
+    def __init__(self, title, id_creator, desc, link):
         self.title = title
-        self.postdate = postdate
+        self.postdate = date.today()
         self.id_creator = id_creator
         self.desc = desc
         self.link = link
@@ -135,9 +133,9 @@ class Need(Base):
     creator = relationship('User', backref='needs', foreign_keys=[id_creator])
     assistant = relationship('User', backref='assistant_needs', foreign_keys=[id_assistant])
     
-    def __init__(self, title, postdate, id_creator, address, desc):
+    def __init__(self, title, id_creator, address, desc):
         self.title = title
-        self.postdate = postdate
+        self.postdate = date.today()
         self.id_creator = id_creator
         self.desc = desc
         self.address = address

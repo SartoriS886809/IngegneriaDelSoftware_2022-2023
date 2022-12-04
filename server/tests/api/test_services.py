@@ -3,8 +3,7 @@ email = "mario@gmail.com"
 
 def test_create_service(client):
     response = client.post("/new/" + elem , data={
-        "title": "Giardiniere", 
-        "postdate": "01/12/2000",
+        "title": "Giardiniere",
         "id_creator": email, 
         "desc" : "Offro il mio supporto per tagliare l'erba del giardino",
         "link" : "https://www.google.com"
