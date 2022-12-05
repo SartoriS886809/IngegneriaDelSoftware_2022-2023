@@ -1,10 +1,12 @@
-//Singlenton class
+// ignore_for_file: depend_on_referenced_packages
+
 import 'package:friendly_neighborhood/model/localuser.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
-//TODO: aggiornamento e eliminazione
-//https://docs.flutter.dev/cookbook/persistence/sqlite
+//Documentazione: https://docs.flutter.dev/cookbook/persistence/sqlite
+
+//Singlenton class
 class LocalUserManager {
   static final LocalUserManager _instance = LocalUserManager._internal();
   static const String dbName = "localUser.db";
@@ -28,19 +30,6 @@ class LocalUserManager {
     _db.close();
     _isOpen = false;
   }
-/*
-(
-      String email,
-      String username,
-      String name,
-      String lastname,
-      DateTime birthdate,
-      String address,
-      int family,
-      String houseType,
-      String neighborhood,
-      String token)
-*/
 
   //La funzione serve per aprire il database
   Future open() async {
@@ -57,15 +46,37 @@ class LocalUserManager {
   }
 
   Future<void> insertUser(LocalUser user) async {
-    // Get a reference to the database.
     if (!_isOpen) {
       open();
     }
 
     await _db.insert(
-      'dogs',
+      'user',
       user.mapForDb(),
       conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<void> updateUser(LocalUser user) async {
+    if (!_isOpen) {
+      open();
+    }
+
+    //Si può aggiornare anche la chiave primaria, perciò devo rimuovere l'utente esistente
+    LocalUser l = await getUser();
+    await deleteUser(l);
+    insertUser(user);
+  }
+
+  Future<void> deleteUser(LocalUser user) async {
+    if (!_isOpen) {
+      open();
+    }
+
+    await _db.delete(
+      'user',
+      where: 'email = ?',
+      whereArgs: [user.email],
     );
   }
 
@@ -75,7 +86,6 @@ class LocalUserManager {
       open();
     }
 
-    // Query the table for all The Dogs.
     final List<Map<String, dynamic>> res = await _db.query('user');
 
     // E' possibile avere solo 1 utente nel database, non di più
