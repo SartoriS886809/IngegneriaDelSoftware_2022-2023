@@ -6,6 +6,7 @@ import 'package:friendly_neighborhood/core/report/report_page.dart';
 import 'package:friendly_neighborhood/core/service/service_page.dart';
 
 typedef NavigationBarCallback = void Function(BottomNavigationBar bnb);
+typedef FloatingCallback = void Function(FloatingActionButton fab);
 
 class Core extends StatefulWidget {
   const Core({super.key});
@@ -26,6 +27,7 @@ class _CoreState extends State<Core> {
   ];
   late Widget _openPage;
   late BottomNavigationBar? _bottomNavbar;
+  late FloatingActionButton? _floatingButton;
 
   @override
   void initState() {
@@ -40,6 +42,7 @@ class _CoreState extends State<Core> {
     setState(() {
       _openPage = _getBodyPage(newRoute);
       _currentPage = newRoute;
+      _drawer.changeCurrentRoute(_currentPage);
     });
   }
 
@@ -49,22 +52,38 @@ class _CoreState extends State<Core> {
     });
   }
 
+  void _setFloatingButton(FloatingActionButton? fab) {
+    setState(() {
+      _floatingButton = fab;
+    });
+  }
+
   //Genera la pagina da cambiare
   Widget _getBodyPage(String newRoute) {
     switch (newRoute) {
       case "Dashboard":
         _setNavigationBar(null);
+        _setFloatingButton(null);
         return DashBoard(
             switchBody: (String route) => _switchManualBody(route),
             routes: _routes);
       case "Segnalazioni":
-        return ReportPage(navCallback: ((bnb) => _setNavigationBar(bnb)));
+        _setFloatingButton(null);
+        return ReportPage(
+            navCallback: ((bnb) => _setNavigationBar(bnb)),
+            fabCallback: ((fab) => _setFloatingButton(fab)));
       case "Bisogni":
-        return NeedPage(navCallback: ((bnb) => _setNavigationBar(bnb)));
+        _setFloatingButton(null);
+        return NeedPage(
+            navCallback: ((bnb) => _setNavigationBar(bnb)),
+            fabCallback: ((fab) => _setFloatingButton(fab)));
       case "Servizi":
-        return ServicePage(navCallback: ((bnb) => _setNavigationBar(bnb)));
+        return ServicePage(
+            navCallback: ((bnb) => _setNavigationBar(bnb)),
+            fabCallback: ((fab) => _setFloatingButton(fab)));
       case "Profilo":
         _setNavigationBar(null);
+        _setFloatingButton(null);
         return const Text("Profilo");
       default:
         return const Text("Errore interno");
@@ -78,6 +97,8 @@ class _CoreState extends State<Core> {
         title: Text(_currentPage),
       ),
       drawer: _drawer,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: _floatingButton,
       onDrawerChanged: (isOpened) {
         if (!isOpened) {
           if (_currentPage != _drawer.currentRoute) {

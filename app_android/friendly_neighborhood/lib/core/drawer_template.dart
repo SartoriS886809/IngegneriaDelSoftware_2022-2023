@@ -10,6 +10,9 @@ class ConstructDrawer extends StatelessWidget {
   }
 
   String get currentRoute => _currentRoute;
+  void changeCurrentRoute(String route) {
+    _currentRoute = route;
+  }
 
   @override
   Widget build(BuildContext context) {

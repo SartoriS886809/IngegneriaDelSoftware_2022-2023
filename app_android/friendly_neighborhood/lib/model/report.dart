@@ -39,6 +39,15 @@ class Report {
     _address = json["address"];
     _creator = json["creator"];
   }
+  Report.fromDB(Map<String, dynamic> map) {
+    _id = map["id"];
+    _postDate = DateTime.parse(map["postDate"]);
+    _title = map["title"];
+    _priority = map["priority"];
+    _category = map["category"];
+    _address = map["address"];
+    _creator = map["creator"];
+  }
   //METHODS
   /*
     Il metodo prende in ingresso un colore, può essere anche null. In tal caso l'icona assumerà il colore di default
@@ -65,6 +74,17 @@ class Report {
   Map<String, dynamic> toJson() => {
         'id': _id,
         'postDate': _postDate,
+        'title': _title,
+        'priority': _priority,
+        'category': _category,
+        'address': _address,
+        'creator': _creator,
+      };
+
+  //Conversione per database
+  Map<String, dynamic> toDb() => {
+        'id': _id,
+        'postDate': _postDate.toString(),
         'title': _title,
         'priority': _priority,
         'category': _category,

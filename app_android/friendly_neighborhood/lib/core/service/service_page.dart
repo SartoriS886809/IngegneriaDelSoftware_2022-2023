@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/core/core.dart';
+import 'package:friendly_neighborhood/core/service/create_modify_service.dart';
+import 'package:friendly_neighborhood/core/service/my_service.dart';
+import 'package:friendly_neighborhood/core/service/neighborhood_service.dart';
 
 //gli StatefulWidget devono essere gestiticon due classi, una per il widget ed una privata per lo stato
 class ServicePage extends StatefulWidget {
   final NavigationBarCallback navCallback;
+  final FloatingCallback fabCallback;
 
-  const ServicePage({super.key, required this.navCallback});
+  const ServicePage(
+      {super.key, required this.navCallback, required this.fabCallback});
 
   @override
   State<ServicePage> createState() => _ServicePageState();
@@ -17,19 +22,30 @@ class _ServicePageState extends State<ServicePage> {
     "Miei servizi": Icons.account_circle
   };
   late Widget _currentPage;
-
-  late final BottomNavigationBar bnb;
+  late int _currentIndex;
+  late final FloatingActionButton _createNewService;
 
   //initState() è il costruttore delle classi stato
   @override
   void initState() {
     super.initState();
-    bnb = _createBottomNavigationBar();
-    //TODO TEMPORANEO
-    _currentPage = const Text("ciao");
+    _currentIndex = 0;
+    _changeCurrentPage(_currentIndex);
+    _createNewService = FloatingActionButton.extended(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => CreationOrModificationService()),
+        );
+      },
+      label: const Text('Crea servizio'),
+      backgroundColor: Colors.orange[900],
+    );
     //Il metodo viene invocato una volta finito il build
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      widget.navCallback(bnb);
+      widget.navCallback(_createBottomNavigationBar());
+      widget.fabCallback(_createNewService);
     });
   }
 
@@ -44,6 +60,13 @@ class _ServicePageState extends State<ServicePage> {
 
   //Cambia la pagina visualizzata in base al indice
   void _changeCurrentPage(int index) {
+    if (index == 0) {
+      _currentPage = const NeighborhoodServicePage();
+    } else if (index == 1) {
+      _currentPage = const MyServicePage();
+    } else {
+      throw "Not Implemented";
+    }
     setState(() {});
   }
 
@@ -55,17 +78,19 @@ class _ServicePageState extends State<ServicePage> {
         unselectedItemColor: Colors.white.withOpacity(.60),
         selectedFontSize: 14,
         unselectedFontSize: 14,
+        currentIndex: _currentIndex,
         onTap: (value) {
-          //VALUE => 0 o 1
+          setState(() {
+            _currentIndex = value;
+          });
           _changeCurrentPage(value);
+          widget.navCallback(_createBottomNavigationBar());
         },
         items: _createListBNB(pages));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [_currentPage],
-    );
+    return _currentPage;
   }
 }
