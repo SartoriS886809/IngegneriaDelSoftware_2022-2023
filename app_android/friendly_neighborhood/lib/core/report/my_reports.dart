@@ -14,8 +14,8 @@ class _MyReportsState extends State<MyReports> {
   // test list
 
   List<Report> ReportList = [
-    Report(2, DateTime(2022), 'cock', 2, 'animali', 'via di casa mia',
-        'pippo baudo')
+    Report(2, DateTime(2022), 'Cane randagio', 2, 'animali', 'via F. Pannofino',
+        'Alessandro')
   ];
 
   @override

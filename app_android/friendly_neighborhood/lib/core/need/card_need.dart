@@ -1,23 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/model/need.dart';
-
-//import 'package:friendly_neighborhood/core/need/need_show.dart';
-/*
-onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ShowNeed(
-                          need: service,
-                          myService: false,
-                        )));
-          },
-*/
+import 'package:friendly_neighborhood/core/need/need_show.dart';
 
 class NeedCard extends StatelessWidget {
   final Need need;
-  final bool isItMine; 
-  final bool assistedByMe;
+  final bool isItMine;//indica se la card rappresenta un bisogno dell'utente corrente 
+  final bool assistedByMe;//indica se la card rappresenta un bisogno preso in carico dall'utente corrente
   const NeedCard({super.key, required this.need, required this.isItMine, this.assistedByMe=false});
 
   @override
@@ -25,16 +13,33 @@ class NeedCard extends StatelessWidget {
     String date="${need.postDate.day}-${need.postDate.month}-${need.postDate.year} ${need.postDate.hour}:${need.postDate.minute}";
     String author=(!isItMine)?("\nAutore: "+need.creator):"";
     String assistant=(!isItMine)?"":((need.assistant!="")?"\nRichiesta presa in carico da: "+need.assistant:"\nLa richiesta non è ancora stata presa in carico");
-    
+    ShowNeed showNeedPage=//riferimento alla pagina di visualizzazione bisogno collegata al rispettivo pulsante nella card
+    ShowNeed(
+      need: need,
+      isItMine: isItMine,
+      assistedByMe: assistedByMe,
+    );
+
     final TextButton showNeedButton=
     TextButton(
       child: const Text('Apri descrizione'),
       onPressed: () {
-        (isItMine)?{
+        /*(isItMine)?{
           //mostra desc
         }:{
           //mostra desc e permetti modifiche
-        };
+        };*/
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            /*builder: (context) => ShowNeed(
+                  need: need,
+                  isItMine: isItMine,
+                  assistedByMe: assistedByMe,
+            )*/
+            builder: (context) => showNeedPage
+          )
+        );
       }
     );
 
@@ -47,7 +52,8 @@ class NeedCard extends StatelessWidget {
         padding: const EdgeInsets.all(8.0)
       ),
       onPressed: () {
-        //aggiunge il proprio id come assistente
+        //aggiunge il proprio id come assistente se viene data conferma
+        showNeedPage.showConfirmAssistanceChangeDialog(context,true);
       }
     );
 
@@ -60,7 +66,8 @@ class NeedCard extends StatelessWidget {
         padding: const EdgeInsets.all(8.0)
       ),
       onPressed: () {
-        //rimuove il proprio id come assistente
+        //rimuove il proprio id come assistente se viene data conferma
+        showNeedPage.showConfirmAssistanceChangeDialog(context,true);
       }
     );
 

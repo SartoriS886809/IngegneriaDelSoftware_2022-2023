@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:friendly_neighborhood/model/service.dart';
+import 'package:friendly_neighborhood/model/need.dart';
 
 // ignore: must_be_immutable
 class CreationOrModificationNeed extends StatefulWidget {
-  Service? service;
+  Need? need;
   late bool modification;
   CreationOrModificationNeed({super.key}) {
-    service = null;
+    need = null;
     modification = false;
   }
-  CreationOrModificationNeed.modification({super.key, this.service}) {
+  CreationOrModificationNeed.modification({super.key, this.need}) {
     modification = true;
   }
 
