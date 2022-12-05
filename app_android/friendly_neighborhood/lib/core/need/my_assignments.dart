@@ -12,7 +12,7 @@ class MyAssignments extends StatefulWidget {
 
 class _MyAssignments extends State<MyAssignments> {
 
-  List<Need> Needslist=[Need(5, new DateTime(2022,11,27,17,30), "esempio mio incarico 1", "via carlevaris 10", "descrizione mio incarico 1", "Sebastiano Sartori" , 1 , "Samuele Sartori")];
+  List<Need> Needslist=[Need(id: 5, postDate: new DateTime(2022,11,27,17,30), title: "esempio mio incarico 1", address: "via carlevaris 10", description: "descrizione mio incarico 1", assistant:  "Sebastiano Sartori" , idAssistant: 1 , creator:  "Samuele Sartori")];
   //initState() è il costruttore delle classi stato
   @override
   void initState() {

@@ -15,8 +15,8 @@ class _MyNeedsState extends State<MyNeeds> {
 //TODO implementare interazione API
   //lista di esempio (temporanea)
   List<Need> Needslist=[
-    Need(4, new DateTime(2022,11,27,17,30), "esempio mio bisogno 1", "via carlevaris 10", "descrizione mio bisogno 1", "" , 0 , "Sebastiano Sartori"),
-    Need(5, new DateTime(2022,11,27,17,30), "esempio mio bisogno 2", "via carlevaris 10", "descrizione mio bisogno 2", "Mario Rossi" , 1 , "Sebastiano Sartori"),
+    Need(id: 4, postDate: new DateTime(2022,11,27,17,30), title: "esempio mio bisogno 1", address: "via carlevaris 10", description: "descrizione mio bisogno 1", assistant: "" , idAssistant: 0 , creator: "Sebastiano Sartori"),
+    Need(id: 5, postDate: new DateTime(2022,11,27,17,30), title: "esempio mio bisogno 2", address: "via carlevaris 10", description: "descrizione mio bisogno 2", assistant: "Mario Rossi" , idAssistant: 1 , creator: "Sebastiano Sartori"),
   ];
   //initState() è il costruttore delle classi stato
   @override

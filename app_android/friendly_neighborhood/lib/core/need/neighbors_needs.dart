@@ -15,9 +15,9 @@ class _NeighborsNeedsState extends State<NeighborsNeeds> {
   //TODO implementare interazione API
   //lista di esempio (temporanea)
   List<Need> Needslist=[
-      Need(1, new DateTime(2022,11,27,17,30), "spostamento mobili", "via carlevaris 10", "richiedo aiuto per spostare il tavolo e il divano", "" , 0 , "Sebastiano Sartori"),
-      Need(2, new DateTime(2022,11,28,11,15), "cambiamento lampadina", "via carlevaris 10", "richiedo aiuto per cambiare la lampadina della cucina", "" , 0 , "Samuele Sartori"),
-      Need(3, new DateTime(2022,11,29,10,20), "rimozione erbacce", "via carlevaris 10", "richiedo aiuto per la rimozione delle erbacce sul marciapiede", "" , 0 , "Diego Sartori")
+      Need(id: 1, postDate: new DateTime(2022,11,27,17,30), title: "spostamento mobili", address: "via carlevaris 10", description: "richiedo aiuto per spostare il tavolo e il divano", assistant: "" , idAssistant: 0 , creator: "Sebastiano Sartori"),
+      Need(id: 2, postDate: new DateTime(2022,11,28,11,15), title: "cambiamento lampadina", address: "via carlevaris 10", description: "richiedo aiuto per cambiare la lampadina della cucina", assistant: "" , idAssistant: 0 , creator: "Samuele Sartori"),
+      Need(id: 3, postDate: new DateTime(2022,11,29,10,20), title: "rimozione erbacce", address: "via carlevaris 10", description: "richiedo aiuto per la rimozione delle erbacce sul marciapiede", assistant: "" , idAssistant: 0 , creator: "Diego Sartori")
     ];
   //initState() è il costruttore delle classi stato
   @override

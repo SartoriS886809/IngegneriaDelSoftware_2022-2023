@@ -10,8 +10,8 @@ class Need {
   late int _idAssistant;
   late String _creator;
 
-  Need(int id, DateTime postDate, String title, String address,
-      String description, String assistant, int idAssistant, String creator) {
+  Need({int id=-1, required DateTime postDate, required String title, required String address,
+      required String description, required String assistant, required int idAssistant, required String creator}) {
     _id = id;
     _postDate = postDate;
     _title = title;

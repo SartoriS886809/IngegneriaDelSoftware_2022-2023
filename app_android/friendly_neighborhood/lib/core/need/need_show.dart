@@ -17,11 +17,11 @@ class ShowNeed extends StatefulWidget {
       barrierDismissible: false, // L'utente deve premere il pulsante
       builder: (BuildContext context) {
         return AlertDialog(
-          title: (assistedByMe)?Text('Ritiro disponibilità'):Text('Soddisfazione richiesta'),
+          title: (assistedByMe)?const Text('Ritiro disponibilità'):const Text('Soddisfazione richiesta'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                (assistedByMe)?Text("Sei sicuro di voler ritirare la disponibilità all'assistenza?"):Text("Sei sicuro di voler soddisfare la richiesta?"),
+                (assistedByMe)?const Text("Sei sicuro di voler ritirare la disponibilità all'assistenza?"):const Text("Sei sicuro di voler soddisfare la richiesta?"),
               ],
             ),
           ),
@@ -33,7 +33,7 @@ class ShowNeed extends StatefulWidget {
               },
             ),
             TextButton(
-              child: (assistedByMe)?Text('Ritira disponibilità'):Text('Soddisfa'),
+              child: (assistedByMe)?const Text('Ritira disponibilità'):const Text('Soddisfa'),
               onPressed: () {
 
                 Navigator.of(context).pop();
@@ -114,7 +114,7 @@ class _ShowNeedState extends State<ShowNeed> {
             Text('Pubblicato il: ${widget.need.postDate.day}-${widget.need.postDate.month}-${widget.need.postDate.year}'),
             Text('Luogo associato: ${widget.need.address}'),
             if(widget.isItMine && widget.need.assistant!="") Text('Richiesta presa in carico da: ${widget.need.assistant}'),
-            if(widget.isItMine && widget.need.assistant=="") Text('La richiesta non è ancora stata presa in carico'),
+            if(widget.isItMine && widget.need.assistant=="") const Text('La richiesta non è ancora stata presa in carico'),
             Text('Descrizione: ${widget.need.description}'),
              
             Expanded(child:Container()),
@@ -180,8 +180,8 @@ class _ShowNeedState extends State<ShowNeed> {
                             },
                             child: Center(
                                 child: Padding(
-                              padding: EdgeInsets.only(top: 16, bottom: 16),
-                              child: (widget.assistedByMe)?Text('Ritira disponibilità'):Text('Soddisfa'),
+                              padding: const EdgeInsets.only(top: 16, bottom: 16),
+                              child: (widget.assistedByMe)?const Text('Ritira disponibilità'):const Text('Soddisfa'),
                             )),
                           ))),
               ],

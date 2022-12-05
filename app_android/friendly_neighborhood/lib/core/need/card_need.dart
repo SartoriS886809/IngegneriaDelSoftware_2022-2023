@@ -24,19 +24,9 @@ class NeedCard extends StatelessWidget {
     TextButton(
       child: const Text('Apri descrizione'),
       onPressed: () {
-        /*(isItMine)?{
-          //mostra desc
-        }:{
-          //mostra desc e permetti modifiche
-        };*/
         Navigator.push(
           context,
           MaterialPageRoute(
-            /*builder: (context) => ShowNeed(
-                  need: need,
-                  isItMine: isItMine,
-                  assistedByMe: assistedByMe,
-            )*/
             builder: (context) => showNeedPage
           )
         );
