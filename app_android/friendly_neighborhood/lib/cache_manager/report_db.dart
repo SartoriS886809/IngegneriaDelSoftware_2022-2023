@@ -23,7 +23,9 @@ class NeedDataManager {
   // This named constructor is the "real" constructor
   // It'll be called exactly once, by the static property assignment above
   // it's also private, so it can only be called in this class
-  NeedDataManager._internal() {}
+  NeedDataManager._internal() {
+    open();
+  }
 
   //La funzione serve per chiudere il database
   Future close() async {
