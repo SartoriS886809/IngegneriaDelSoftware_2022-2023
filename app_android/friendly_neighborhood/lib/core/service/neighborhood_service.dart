@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:friendly_neighborhood/core/service/card_service.dart';
 import 'package:friendly_neighborhood/model/service.dart';
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/core/dashboard/dashboard.dart';
 import 'package:friendly_neighborhood/core/drawer_template.dart';
 import 'package:friendly_neighborhood/core/need/need_page.dart';
+import 'package:friendly_neighborhood/core/profile/profile.dart';
 import 'package:friendly_neighborhood/core/report/report_page.dart';
 import 'package:friendly_neighborhood/core/service/service_page.dart';
 
@@ -84,7 +85,7 @@ class _CoreState extends State<Core> {
       case "Profilo":
         _setNavigationBar(null);
         _setFloatingButton(null);
-        return const Text("Profilo");
+        return Profile(switchBody: (String route) => _switchManualBody(route));
       default:
         return const Text("Errore interno");
     }

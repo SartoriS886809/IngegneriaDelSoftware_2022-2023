@@ -24,12 +24,6 @@ class CreationOrModificationService extends StatefulWidget {
       _CreationOrModificationServiceState();
 }
 
-/*COSE DA GESTIRE
-        'title': _title,  FATTO
-        'link': _link,
-        'description': _description,  FATTO
-*/
-
 class _CreationOrModificationServiceState
     extends State<CreationOrModificationService> {
   //Variabile gestione Form
