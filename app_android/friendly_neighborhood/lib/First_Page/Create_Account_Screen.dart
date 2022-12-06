@@ -2,6 +2,7 @@
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:friendly_neighborhood/API_Manager/api_manager.dart';
 import 'package:friendly_neighborhood/First_Page/login_screen.dart';
 import 'package:friendly_neighborhood/configuration/configuration.dart';
 import 'package:friendly_neighborhood/utils/check_connection.dart';
@@ -44,7 +45,36 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     "Appartamento",
     "Casa singola"
   ];
-  late List<String> _neighborhood = ["Scegli un quartiere"];
+  List<String> _neighborhood = ["Scegli un quartiere"];
+
+  Future<Widget> makeNeighborhoodMenu() async {
+    //TODO gestire errori
+    List<String> list = await API_Manager.getNeighborhoods();
+    _neighborhood = ["Scegli un quartiere"] + list;
+    if (_neighborhood.length > 1) {
+      _neighborhood.removeAt(_neighborhood.length - 1);
+    }
+    return DropdownSearch<String>(
+      popupProps: const PopupProps.menu(
+        showSelectedItems: true,
+      ),
+      items: _neighborhood,
+      validator: (value) {
+        if (value == "Scegliere un quartiere") {
+          return "Scegliere un quartiere";
+        } else {
+          return null;
+        }
+      },
+      dropdownDecoratorProps: const DropDownDecoratorProps(
+        dropdownSearchDecoration: InputDecoration(
+          labelText: "Quartiere",
+        ),
+      ),
+      onChanged: ((value) => _choice_neighborhood = value!),
+      selectedItem: _neighborhood[0],
+    );
+  }
 
   @override
   void initState() {
@@ -400,28 +430,16 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                           //TODO fix glitch grafico all'apertura del menù
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 15),
-                            child: DropdownSearch<String>(
-                              popupProps: const PopupProps.menu(
-                                showSelectedItems: true,
-                              ),
-                              items: _neighborhood,
-                              validator: (value) {
-                                if (value == _neighborhood[0]) {
-                                  return "Scegliere un quartiere";
-                                } else {
-                                  return null;
-                                }
-                              },
-                              dropdownDecoratorProps:
-                                  const DropDownDecoratorProps(
-                                dropdownSearchDecoration: InputDecoration(
-                                  labelText: "Quartiere",
-                                ),
-                              ),
-                              onChanged: ((value) =>
-                                  _choice_neighborhood = value!),
-                              selectedItem: _neighborhood[0],
-                            ),
+                            child: FutureBuilder<Widget>(
+                                future: makeNeighborhoodMenu(),
+                                builder:
+                                    (context, AsyncSnapshot<Widget> snapshot) {
+                                  if (snapshot.hasData) {
+                                    return snapshot.data!;
+                                  } else {
+                                    return const CircularProgressIndicator();
+                                  }
+                                }),
                           ),
                           //Pulsante Registrati
                           Padding(
