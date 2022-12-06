@@ -35,7 +35,7 @@ def signup():
 
     add_and_commit('users', token='', **request.form)
 
-    return {'status': 'success', 'reason': ''}
+    return {'status': 'success'}
 
 
 '''
@@ -53,21 +53,18 @@ def login():
     email = request.form.get('email')
     password = request.form.get('password')
     rand_token = ''
-
     user = get_table('users', email)
-    control = (email != "" and password != "" and user is not None and user.password_check(psw=password))
-    status = 'success' if control else 'failure'
-    reason = '' if control else 'email or password are wrong'
 
-    if control:
-        rand_token = str(uuid4())
-        user.token = rand_token
+    if user is None:
+        return {'status': 'failure', 'reason': 'user does not exist'}
 
-    if control and get_table('users', email).token != rand_token:
-        status = 'failure'
-        reason = 'update does not work'
+    if password == "" or not user.password_check(psw=password):
+        return {'status': 'failure', 'reason': 'password is not correct'}
 
-    return {'token': rand_token, 'status': status, 'reason': reason}
+    rand_token = str(uuid4())
+    user.token = rand_token
+
+    return {'token': rand_token, 'status': 'success'}
 
 
 '''
@@ -90,7 +87,44 @@ def logout():
 
     user.token = ''
 
-    return {'status': 'success', 'reason': ''}
+    return {'status': 'success'}
+
+
+'''
+Method: DELETE
+Route: '/delete-account/<email>'
+Desc: delete the user with <email> 
+
+Return success: {'status': 'success'}
+Return failure: {'status': 'failure', 'reason': string}
+'''
+@app.route('/delete-account/<email>', methods=['DELETE'])
+def delete_account(email):
+    if not get_table('users', email):
+        return {'status': 'failure', 'reason': 'user does not exist'}
+
+    delete_tuple('users', email)
+    if get_table('users', email):
+        return {'status': 'failure', 'reason': 'delete does not work'}
+
+    return {'status': 'success'}
+
+
+'''
+Method: GET
+Route: '/token/<email>'
+Desc: return the token of the user with <email>
+
+Return success: {'token': string, 'status': 'success'}
+Return failure: {'status': 'failure', 'reason': string}
+'''
+@app.route('/token/<email>', methods=['GET'])
+def get_token(email):
+    user = get_table('users', email)
+    if not user:
+        return {'status': 'failure', 'reason': 'user does not exist'}
+
+    return {'token': user.token, 'status': 'success'}
 
 
 '''
@@ -165,7 +199,6 @@ def profile(email):
 
     elems = user.get_all_elements()
     elems['status'] = 'success'
-    elems['reason'] = ''
     return elems
 
 
@@ -194,7 +227,7 @@ def get_list(elem, email):
         return check(elem, email)
 
     return {'list': [get_table(elem, x.id).get_all_elements() for x in get_all(table=elem, not_creator=email)],
-            'status': 'success', 'reason': ''}
+            'status': 'success'}
 
 
 '''
@@ -225,12 +258,11 @@ def get_mylist(elem, email):
 
     if request.method == 'GET':
         return {'list': [get_table(elem, x.id).get_all_elements() for x in get_all(table=elem, creator=email)],
-                'status': 'success', 'reason': ''}
+                'status': 'success'}
 
     update_tuple(elem, request.form.get('id'), **request.form)
     elems = get_table(elem, request.form.get('id')).get_all_elements()
     elems['status'] = 'success'
-    elems['reason'] = ''
     return elems
 
 
@@ -266,7 +298,7 @@ def new_elem(elem):
         return check(elem, request.form.get('id_creator'))
 
     id = add_and_commit(elem, **request.form).id
-    return {'id': id, 'status': 'success', 'reason': ''}
+    return {'id': id, 'status': 'success'}
 
 
 '''
@@ -286,7 +318,7 @@ def delete_elem(elem, id):
     if get_table(elem, id):
         return {'status': 'failure', 'reason': 'delete does not work'}
 
-    return {'status': 'success', 'reason': ''}
+    return {'status': 'success'}
 
 
 '''
@@ -311,4 +343,4 @@ def assist():
         return {'status': 'failure', 'reason': 'creator and assistant must be different'}
 
     get_table('needs', request.form.get('id')).id_assistant = request.form.get('email')
-    return {'status': 'success', 'reason': ''}
+    return {'status': 'success'}
