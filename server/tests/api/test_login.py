@@ -15,22 +15,7 @@ def test_normal_login(client):
     assert response.json["status"] == "success"
 
 @pytest.mark.order(2)
-def test_empty_fields_login(client):
-    email = ""
-    password = ""
-    response = client.post("/login", data={
-            "email": email,
-            "password": password,
-            })
-    assert response.status_code == 200
-    #print(response.json)
-    
-    assert response.json["token"] == ""
-    assert response.json["status"] == "failure"
-    assert response.json["reason"] == "email or password are wrong"
-    
-@pytest.mark.order(2)
-def test_incorrect_psw_login(client):
+def test_wrong_password(client):
     email = "mario@gmail.com"
     password = "ciao"
     response = client.post("/login", data={
@@ -39,10 +24,9 @@ def test_incorrect_psw_login(client):
             })
     assert response.status_code == 200
     #print(response.json)
-    
-    assert response.json["token"] == ""
+
     assert response.json["status"] == "failure"
-    assert response.json["reason"] == "email or password are wrong"
+    assert response.json["reason"] == "password is not correct"
 
 @pytest.mark.order(2)
 def test_login_incorrect_email(client):
@@ -54,7 +38,15 @@ def test_login_incorrect_email(client):
             })
     assert response.status_code == 200
     #print(response.json)
-    
-    assert response.json["token"] == ""
+
     assert response.json["status"] == "failure"
-    assert response.json["reason"] == "email or password are wrong"
+    assert response.json["reason"] == "user does not exist"
+
+@pytest.mark.order(2)
+def test_get_token(client):
+    email = "mario@gmail.com"
+    response = client.get("/token/" + email)
+
+    assert response.status_code == 200
+    assert response.json["status"] == "success"
+    assert response.json["token"] != ""
