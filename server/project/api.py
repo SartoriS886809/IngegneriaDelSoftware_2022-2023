@@ -61,6 +61,8 @@ def login():
         return {'status': 'failure', 'reason': 'password is not correct'}
 
     rand_token = str(uuid4())
+    while get_user_by_token(rand_token):
+        rand_token = str(uuid4())
     user.token = rand_token
 
     return {'token': rand_token, 'status': 'success'}
@@ -217,61 +219,70 @@ def profile():
 
 
 # aux function to check if elem and email are correct
-def check(elem, email=None):
+def check(elem, token=None):
     if elem != 'reports' and elem != 'services' and elem != 'needs':
         return {'status': 'failure', 'reason': 'the list must be reports, services or needs'}
 
-    if email is not None and get_table('users', email) is None:
-        return {'status': 'failure', 'reason': 'the email does not exist'}
+    if token is not None and get_user_by_token(token) is None:
+        return {'status': 'failure', 'reason': 'the user does not exist'}
 
     return None
 
 
 '''
-Method: GET
-Route: '/list/<elem>/<email>'
-Desc: get a list of <elem> (services, needs, reports) for the user with <email>
+Method: POST
+Route: '/list/<elem>'
+Desc: get a list of <elem> (services, needs, reports) for the user with the token specified
+
+Need: {'token': string}
 
 Return success: {'list': [dict], 'status': 'success'}
 Return failure: {'status': 'failure', 'reason': string}
 '''
-@app.route('/list/<elem>/<email>', methods=['GET'])
-def get_list(elem, email):
-    if check(elem, email):
-        return check(elem, email)
+@app.route('/list/<elem>', methods=['POST'])
+def get_list(elem):
+    token = request.form.get('token')
 
-    return {'list': [get_table(elem, x.id).get_all_elements() for x in get_all(table=elem, not_creator=email)],
+    if check(elem, token):
+        return check(elem, token)
+
+    return {'list': [get_table(elem, x.id).get_all_elements() for x in get_all(table=elem, not_creator=get_user_by_token(token).email)],
             'status': 'success'}
 
 
 '''
-Method: GET
-Route: '/mylist/<elem>/<email>'
-Desc: get the list of <elem> (services, needs, reports) for the current user with <email>
+Method: POST to retrieve elem data (only one field in the body)
+Route: '/mylist/<elem>'
+Desc: get the list of <elem> (services, needs, reports) for user specified
+
+Need: {'token': string}
 
 Return success: {'list': [dict], 'status': 'success'}
 Return failure: {'status': 'failure', 'reason': string}
 
 
-Method: POST
-Route: '/mylist/<elem>/<email>'
-Desc: update the specified fields in the list of type <elem> (services, needs, reports) for the current user with <email>
+Method: POST to update elem data (more than one field in the body)
+Route: '/mylist/<elem>'
+Desc: update the specified fields in the list of type <elem> (services, needs, reports) for user specified
 
 You can choose how many arguments want to change
-Need: {'id': int (not nullable),
+Need: { 'token': string,
+        'id': int (not nullable),
         'title': string,
         ...}
 
 Return success: {'status': 'success'}
 Return failure: {'status': 'failure', 'reason': string}
 '''
-@app.route('/mylist/<elem>/<email>', methods=['GET', 'POST'])
-def get_mylist(elem, email):
-    if check(elem, email):
-        return check(elem, email)
+@app.route('/mylist/<elem>', methods=['POST'])
+def get_mylist(elem):
+    token = request.form.get('token')
 
-    if request.method == 'GET':
-        return {'list': [get_table(elem, x.id).get_all_elements() for x in get_all(table=elem, creator=email)],
+    if check(elem, token):
+        return check(elem, token)
+
+    if len(request.form) == 1:
+        return {'list': [get_table(elem, x.id).get_all_elements() for x in get_all(table=elem, creator=get_user_by_token(token).email)],
                 'status': 'success'}
 
     update_tuple(elem, request.form.get('id'), **request.form)
@@ -286,18 +297,21 @@ Route: '/new/<elem>'
 Desc: create a new element of type <elem> (services, needs, reports), return the id of the new element
 
 Need (one of these types):
-- services: {'title': string, 
-        'id_creator': string, 
+- services: {
+        'token': string,
+        'title': string,
         'desc': string,
         'link': string} 
          
-- needs: {'title': string, 
-        'id_creator': string, 
+- needs: {
+        'token': string,
+        'title': string,
         'desc' : string,
         'address' : string}
         
-- reports: {'title': string, 
-        'id_creator': string, 
+- reports: {
+        'token': string,
+        'title': string,
         'priority' : int (1 or 2 or 3),
         'address' : string,
         'category' : string}
@@ -308,10 +322,16 @@ Return failure: {'status': 'failure', 'reason': string}
 '''
 @app.route('/new/<elem>', methods=['POST'])
 def new_elem(elem):
-    if check(elem, request.form.get('id_creator')):
-        return check(elem, request.form.get('id_creator'))
+    token = request.form.get('token')
 
-    id = add_and_commit(elem, **request.form).id
+    if check(elem, token):
+        return check(elem, token)
+
+    data = {'id_creator': get_user_by_token(token).email}
+    for k, v in request.form.items():
+        if k != 'token':
+            data[k] = v
+    id = add_and_commit(elem, **data).id
     return {'id': id, 'status': 'success'}
 
 
@@ -338,23 +358,26 @@ def delete_elem(elem, id):
 '''
 Method: POST
 Route: '/assist'
-Desc: the user with <email> can solve the need with <id>
+Desc: the user specified can solve the need with id passed
 
-Need: {'id': string, 'email': string}
+Need: {'token': string, 'id': string}
 
 Return success: {'status': 'success'}
 Return failure: {'status': 'failure', 'reason': string}
 '''
 @app.route('/assist', methods=['POST'])
 def assist():
+    token = request.form.get('token')
+
     if not get_table('needs', request.form.get('id')):
         return {'status': 'failure', 'reason': 'the id is not correct'}
 
-    if not get_table('users', request.form.get('email')):
+    user = get_user_by_token(token)
+    if not user:
         return {'status': 'failure', 'reason': 'the user does not exist'}
 
-    if get_table('needs', request.form.get('id')).id_creator == request.form.get('email'):
+    if get_table('needs', request.form.get('id')).id_creator == user.email:
         return {'status': 'failure', 'reason': 'creator and assistant must be different'}
 
-    get_table('needs', request.form.get('id')).id_assistant = request.form.get('email')
+    get_table('needs', request.form.get('id')).id_assistant = user.email
     return {'status': 'success'}

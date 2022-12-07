@@ -1,10 +1,14 @@
+from . import login
 elem = "reports"
 email = "mario@gmail.com"
+token = None
 
 def test_create_report(client):
+    global token
+    token = login(client).json["token"]
     response = client.post("/new/" + elem , data={
+        "token": token,
         "title": "Incendio",
-        "id_creator": email, 
         "priority" : 1,
         "address" : "via 74",
         "category" : "Danger"
@@ -14,23 +18,31 @@ def test_create_report(client):
     assert response.json["status"] == "success"
     
 def test_view_my_reports(client):
-    response = client.get("/mylist/" + elem + "/" + email)
+    response = client.post("/mylist/" + elem, data={
+        "token": token
+    })
     #print(old_response.json)
     assert response.status_code == 200
     assert response.json["status"] == "success"
     assert response.json["list"] != []
     
 def test_view_reports(client):
-    response = client.get("/list/" + elem + "/" + email)
+    response = client.post("/list/reports", data={
+        "token": token
+    })
     assert response.status_code == 200
     assert response.json["status"] == "success"
     assert response.json["list"] != []
 
 def test_delete_report(client):
-    response1 = client.get("/mylist/" + elem + "/" + email)
+    response1 = client.post("/mylist/" + elem, data={
+        "token": token
+    })
     response2 = client.delete("/delete/" + elem + "/" + str(response1.json["list"][0]["id"]))
     assert response2.status_code == 200
     assert response2.json["status"] == "success"
 
-    response3 = client.get("/mylist/" + elem + "/" + email)
+    response3 = client.post("/mylist/" + elem, data={
+        "token": token
+    })
     assert response3.json["list"] == []
