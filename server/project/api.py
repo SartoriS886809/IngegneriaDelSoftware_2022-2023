@@ -52,7 +52,6 @@ Return failure: {'status': 'failure', 'reason': string}
 def login():
     email = request.form.get('email')
     password = request.form.get('password')
-    rand_token = ''
     user = get_table('users', email)
 
     if user is None:
@@ -111,20 +110,26 @@ def delete_account(email):
 
 
 '''
-Method: GET
-Route: '/token/<email>'
-Desc: return the token of the user with <email>
+Method: POST
+Route: '/token'
+Desc: compare the token passed and the token in the db for the user specified
 
-Return success: {'token': string, 'status': 'success'}
+Return success: {'status': 'success'}
 Return failure: {'status': 'failure', 'reason': string}
 '''
-@app.route('/token/<email>', methods=['GET'])
-def get_token(email):
+@app.route('/token', methods=['POST'])
+def compare_token():
+    email = request.form.get('email')
+    token = request.form.get('token')
+
     user = get_table('users', email)
     if not user:
         return {'status': 'failure', 'reason': 'user does not exist'}
 
-    return {'token': user.token, 'status': 'success'}
+    if token != user.token:
+        return {'status': 'failure', 'reason': 'token is not valid'}
+
+    return {'status': 'success'}
 
 
 '''
