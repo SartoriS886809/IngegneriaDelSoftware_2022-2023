@@ -2,7 +2,9 @@
 
 import 'dart:convert';
 
+import 'package:friendly_neighborhood/cache_manager/profile_db.dart';
 import 'package:friendly_neighborhood/configuration/configuration.dart';
+import 'package:friendly_neighborhood/model/localuser.dart';
 import 'package:http/http.dart' as http;
 
 enum HTTP_Method { POST, GET }
@@ -18,7 +20,7 @@ class API_Manager {
       if (jsonResponse["status"] != 'success') {
         throw jsonResponse["reason"].toString();
       }
-      String token = json["token"].toString();
+      String token = jsonResponse["token"].toString();
       //Scaricare dati del profilo collegato
       Map<String,dynamic> profile={};
       try{  
@@ -45,7 +47,7 @@ class API_Manager {
       if (jsonResponse["status"] != 'success') {
         throw jsonResponse["reason"].toString();
       }
-      return response;
+      return jsonResponse;
     } catch (e) {
       rethrow;
     }
