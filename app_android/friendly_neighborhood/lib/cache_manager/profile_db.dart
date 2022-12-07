@@ -54,7 +54,11 @@ class LocalUserManager {
     if (!_isOpen) {
       await open();
     }
-
+    //Controllo che non ci siano altri utenti salvati
+    LocalUser? l = await getUser();
+    if (l != null) {
+      await deleteUser(l);
+    }
     await _db!.insert(
       tableName,
       user.mapForDb(),
