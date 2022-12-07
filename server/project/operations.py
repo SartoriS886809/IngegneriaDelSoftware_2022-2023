@@ -93,3 +93,8 @@ def get_all(table, creator=None, not_creator=None):
 def get_table(table, code):
     table = convert_table(table)
     return session.query(table).filter_by(email=code).first() if table == User else session.query(table).filter_by(id=code).first()
+
+
+def get_user_by_token(token):
+    return session.query(User).filter(User.token == token).first()
+

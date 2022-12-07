@@ -1,6 +1,6 @@
 from . import app
 from flask import request
-from project.operations import commit, rollback, flush, add_and_commit, add_no_commit, delete_tuple, update_tuple, get_all, get_table
+from project.operations import commit, rollback, flush, add_and_commit, add_no_commit, delete_tuple, update_tuple, get_all, get_table, get_user_by_token
 from uuid import uuid4
 
 
@@ -151,11 +151,15 @@ def get_neighborhoods():
 
 
 '''
-Method: GET
-Route: '/profile/<email>'
-Desc: get the information of the user with <email>
+Method: POST to retrieve user data (only one field in the body)
+Route: '/profile'
+Desc: get the information of the user with the token specified
 
-Return success: {'username': string,
+Need: {'token': string}
+
+Return success: {
+                'email': string,
+                'username': string,
                 'name': string,
                 'lastname': string,
                 'birth_date': date,
@@ -167,12 +171,15 @@ Return success: {'username': string,
 Return failure: {'status': 'failure', 'reason': string}
 
 
-Method: POST
-Route: '/profile/<email>'
-Desc: update the specified fields in the profile of the user with <email>
+Method: POST to update user data (more than one field in the body)
+Route: '/profile'
+Desc: update the specified fields in the profile of the user with the token specified
 
 You can choose how many arguments want to change
-Need: {'username': string,
+Need: { 
+        'token': string,
+        'email': string,
+        'username': string,
         'name': string,
         'lastname': string,
         'birth_date': date,
@@ -181,7 +188,9 @@ Need: {'username': string,
         'house_type': string,
         'id_neighborhoods': int}
         
-Return success: Return success: {'username': string,
+Return success: Return success: {
+                'email': string,
+                'username': string,
                 'name': string,
                 'lastname': string,
                 'birth_date': date,
@@ -192,14 +201,14 @@ Return success: Return success: {'username': string,
                 'status': 'success'}
 Return failure: {'status': 'failure', 'reason': string}
 '''
-@app.route('/profile/<email>', methods=['GET', 'POST'])
-def profile(email):
-    user = get_table('users', email)
+@app.route('/profile', methods=['POST'])
+def profile():
+    user = get_user_by_token(request.form.get('token'))
 
     if not user:
         return {'status': 'failure', 'reason': 'user does not exist'}
 
-    if request.method == 'POST':
+    if len(request.form) > 1:
         update_tuple('users', user.email, **request.form)
 
     elems = user.get_all_elements()

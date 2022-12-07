@@ -67,3 +67,5 @@ def test_compare_token_wrong(client):
     assert response.status_code == 200
     assert response.json["status"] == "failure"
     assert response.json["reason"] == "token is not valid"
+
+new_token = token
