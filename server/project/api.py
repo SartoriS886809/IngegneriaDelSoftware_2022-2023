@@ -135,18 +135,18 @@ def compare_token():
 '''
 Method: GET
 Route: '/neighborhoods'
-Desc: return a list of all the neighborhoods present in the app, in the format 'neigh1;neigh2;neigh3'
+Desc: return a list of dictionary that represent all the neighborhoods present in the app
 
-Return success: {'neighborhoods': string, 'status': 'success'}
+Return success: {'neighborhoods': [dict], 'status': 'success'}
 Return failure: {'status': 'failure', 'reason': string}
 '''
 @app.route('/neighborhoods', methods=['GET'])
 def get_neighborhoods():
     neighs = get_all('neighborhoods')
-    ans = ''
+    ans = []
     if neighs is not None:
         for n in neighs:
-            ans = ans + n.name + ';'
+            ans.append(n.get_all_elements())
     return {'neighborhoods': ans, 'status': 'success'}
 
 

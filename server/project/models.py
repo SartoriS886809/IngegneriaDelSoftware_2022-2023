@@ -20,6 +20,9 @@ class Neighborhood(Base):
         self.name = name
         self.area = area
 
+    def get_all_elements(self):
+        return {'id': self.id, 'name': self.name, 'area': self.area}
+
 
 class User(Base, UserMixin):
     __tablename__ = 'users'
