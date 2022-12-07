@@ -20,6 +20,9 @@ class Neighborhood(Base):
         self.name = name
         self.area = area
 
+    def get_all_elements(self):
+        return {'id': self.id, 'name': self.name, 'area': self.area}
+
 
 class User(Base, UserMixin):
     __tablename__ = 'users'
@@ -68,7 +71,7 @@ class User(Base, UserMixin):
         return bcrypt.check_password_hash(self.hashed_password, psw)
 
     def get_all_elements(self):
-        return {'username': self.username, 'name': self.name, 'lastname': self.lastname, 'birth_date': self.birth_date,
+        return {'email': self.email, 'username': self.username, 'name': self.name, 'lastname': self.lastname, 'birth_date': self.birth_date,
                 'address': self.address, 'family': self.family, 'house_type': self.house_type, 'neighborhood': self.neigh.name}
 
 
