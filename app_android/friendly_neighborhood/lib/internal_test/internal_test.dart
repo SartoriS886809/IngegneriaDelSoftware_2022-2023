@@ -1,7 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:friendly_neighborhood/API_Manager/api_manager.dart';
 import 'package:friendly_neighborhood/model/neighborhood.dart';
 
@@ -17,7 +14,7 @@ class _TestState extends State<Test> {
     List<Neighborhood> l = await API_Manager.getNeighborhoods();
     String s = "";
     for (Neighborhood n in l) {
-      s += "${n.name}, ";
+      s += "${n}, ";
     }
     return Text(s);
   }

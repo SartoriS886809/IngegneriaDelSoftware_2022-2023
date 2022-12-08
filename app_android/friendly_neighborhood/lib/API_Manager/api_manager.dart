@@ -126,9 +126,8 @@ class API_Manager {
         throw json["reason"].toString();
       }
       List<Neighborhood> list = [];
-      List<String> arr = json["neighborhoods"];
-      for (String x in arr) {
-        list.add(Neighborhood.fromJSON(jsonDecode(x)));
+      for (Map<String, dynamic> x in json["neighborhoods"]) {
+        list.add(Neighborhood.fromJSON(x));
       }
       return list;
     } catch (e) {
@@ -187,17 +186,16 @@ la lista in base alla tipologia richiesta.
       throw jsonResponse["reason"].toString();
     }
     List<dynamic> res = [];
-    List<String> arr = jsonResponse["list"];
-    for (String x in arr) {
+    for (Map<String, dynamic> x in jsonResponse["list"]) {
       switch (type) {
         case ELEMENT_TYPE.NEEDS:
-          res.add(Need.fromJSON(jsonDecode(x)));
+          res.add(Need.fromJSON(x));
           break;
         case ELEMENT_TYPE.REPORTS:
-          res.add(Report.fromJSON(jsonDecode(x)));
+          res.add(Report.fromJSON(x));
           break;
         case ELEMENT_TYPE.SERVICES:
-          res.add(Service.fromJSON(jsonDecode(x)));
+          res.add(Service.fromJSON(x));
           break;
         default:
           break;
