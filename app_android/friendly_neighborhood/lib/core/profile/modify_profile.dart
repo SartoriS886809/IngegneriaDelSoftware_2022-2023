@@ -318,6 +318,8 @@ class _ModifyProfileState extends State<ModifyProfile> {
                                 onPressed: () async {
                                   //Controllo se il form è valido
                                   if (_formKey.currentState!.validate()) {
+                                    //TODO FIX
+                                    /*
                                     LocalUser updatedUser = LocalUser(
                                         _controllerEmail.text,
                                         _controllerUsername.text,
@@ -331,7 +333,7 @@ class _ModifyProfileState extends State<ModifyProfile> {
                                         _choice_neighborhood,
                                         widget.user.token);
                                     LocalUserManager lm = LocalUserManager();
-                                    await lm.updateUser(updatedUser);
+                                    await lm.updateUser(updatedUser);*/
                                     //TODO invia info al server
 
                                     Navigator.pop(context);

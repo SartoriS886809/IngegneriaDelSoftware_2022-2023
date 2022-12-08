@@ -10,8 +10,15 @@ class Need {
   late int _idAssistant;
   late String _creator;
 
-  Need({int id=-1, required DateTime postDate, required String title, required String address,
-      required String description, required String assistant, required int idAssistant, required String creator}) {
+  Need(
+      {int id = -1,
+      required DateTime postDate,
+      required String title,
+      required String address,
+      required String description,
+      required String assistant,
+      required int idAssistant,
+      required String creator}) {
     _id = id;
     _postDate = postDate;
     _title = title;
@@ -23,7 +30,7 @@ class Need {
   }
 
   //JSON CONSTRUCTOR
-  Need.fromJson(Map<String, dynamic> json) {
+  Need.fromJSON(Map<String, dynamic> json) {
     _id = json["id"];
     _postDate = json["postDate"];
     _title = json["title"];

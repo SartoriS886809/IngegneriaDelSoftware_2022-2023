@@ -49,11 +49,12 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
   Future<Widget> makeNeighborhoodMenu() async {
     //TODO gestire errori
-    List<String> list = await API_Manager.getNeighborhoods();
-    _neighborhood = ["Scegli un quartiere"] + list;
-    if (_neighborhood.length > 1) {
-      _neighborhood.removeAt(_neighborhood.length - 1);
-    }
+    //List<String> list = ["S"]
+    // await API_Manager.getNeighborhoods();
+    //_neighborhood = ["Scegli un quartiere"] + list;
+    //if (_neighborhood.length > 1) {
+    //  _neighborhood.removeAt(_neighborhood.length - 1);
+    // }
     return DropdownSearch<String>(
       popupProps: const PopupProps.menu(
         showSelectedItems: true,

@@ -43,7 +43,7 @@ class LocalUserManager {
       //Funzione creazione database
       onCreate: (db, version) {
         return db.execute(
-            'CREATE TABLE $tableName(email TEXT PRIMARY KEY,username TEXT,name TEXT, lastname TEXT, birthdate TEXT,address TEXT, family INTEGER,houseType TEXT,neighborhood TEXT,token TEXT)');
+            'CREATE TABLE $tableName(email TEXT PRIMARY KEY,username TEXT,name TEXT, lastname TEXT, birthdate TEXT,address TEXT, family INTEGER,houseType TEXT,neighborhood TEXT,idNeighborhood INTEGER,token TEXT)');
       },
       version: 1,
     );

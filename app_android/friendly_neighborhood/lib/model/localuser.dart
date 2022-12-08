@@ -10,6 +10,7 @@ class LocalUser {
   late int _family;
   late String _houseType;
   late String _neighborhood;
+  late int _idNeighborhood;
   late String _token;
 
   LocalUser(
@@ -22,6 +23,7 @@ class LocalUser {
       int family,
       String houseType,
       String neighborhood,
+      int idNeighborhood,
       String token) {
     _email = email;
     _username = username;
@@ -32,6 +34,7 @@ class LocalUser {
     _family = family;
     _houseType = houseType;
     _neighborhood = neighborhood;
+    _idNeighborhood = idNeighborhood;
     _token = token;
   }
   LocalUser.fromJSON(Map<String, dynamic> json) {
@@ -44,6 +47,7 @@ class LocalUser {
     _family = json['family'];
     _houseType = json['houseType'];
     _neighborhood = json['neighborhood'];
+    _idNeighborhood = json['id_neighborhoods'];
     _token = json['token'];
   }
 
@@ -57,6 +61,7 @@ class LocalUser {
     _family = map['family'];
     _houseType = map['houseType'];
     _neighborhood = map['neighborhood'];
+    _idNeighborhood = map['id_neighborhoods'];
     _token = map['token'];
   }
 
@@ -69,6 +74,7 @@ class LocalUser {
   String get address => _address;
   int get family => _family;
   String get houseType => _houseType;
+  int get idNeighborhood => _idNeighborhood;
   String get neighborhood => _neighborhood;
   String get token => _token;
 
@@ -82,6 +88,7 @@ class LocalUser {
   set family(int family) => _family = family;
   set houseType(String houseType) => _houseType = houseType;
   set neighborhood(String neighborhood) => _neighborhood = neighborhood;
+  set idNeighborhood(int idNeighborhood) => _idNeighborhood = idNeighborhood;
 
   //CONVERSION TO JSON
   Map<String, dynamic> toJson() => {
@@ -94,6 +101,7 @@ class LocalUser {
         'family': _family,
         'houseType': _houseType,
         'neighborhood': _neighborhood,
+        'idNeighborhood': _idNeighborhood,
         'token': _token
       };
 
@@ -108,6 +116,7 @@ class LocalUser {
         'family': _family,
         'houseType': _houseType,
         'neighborhood': _neighborhood,
+        'idNeighborhood': _idNeighborhood,
         'token': _token
       };
 }
