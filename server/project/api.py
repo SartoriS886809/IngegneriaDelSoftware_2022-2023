@@ -93,8 +93,8 @@ def logout():
 
 '''
 Method: DELETE
-Route: '/delete-account/<email>'
-Desc: delete the user with <email>
+Route: '/delete-account'
+Desc: delete the user specified
 
 Need: {'token': string}
 
