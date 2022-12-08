@@ -1,11 +1,10 @@
 import pytest
-from project import create_app
-from project.engine import create_schema
+from project import *
 
 
 @pytest.fixture()
-def app():
-    app = create_app()
+def application():
+    #app = create_app()
     app.config.update({
         "TESTING": True,
     })
@@ -15,14 +14,13 @@ def app():
     yield app
     
     # clean up / reset resources here
-    create_schema()
 
 
 @pytest.fixture()
-def client(app):
-    return app.test_client()
+def client(application):
+    return application.test_client()
 
 
 @pytest.fixture()
-def runner(app):
-    return app.test_cli_runner()
+def runner(application):
+    return application.test_cli_runner()

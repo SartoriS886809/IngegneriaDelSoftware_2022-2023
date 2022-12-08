@@ -3,7 +3,6 @@ from . import login_manager, bcrypt
 from flask_login import UserMixin
 from sqlalchemy import Column, String, Integer, Date, ForeignKey, Float, Boolean, Table, CheckConstraint, Text, UniqueConstraint
 from sqlalchemy.orm import relationship
-import json
 from datetime import date
 
 
@@ -17,13 +16,12 @@ class Neighborhood(Base):
     name = Column(String(length=30), nullable=False)
     area = Column(Float, nullable=False)
 
-    def __int__(self, id, name, area):
-        self.id = id
+    def __init__(self, name, area):
         self.name = name
         self.area = area
 
-    def __repr__(self):
-        return json.dumps(__dict__)
+    def get_all_elements(self):
+        return {'id': self.id, 'name': self.name, 'area': self.area}
 
 
 class User(Base, UserMixin):
@@ -37,9 +35,27 @@ class User(Base, UserMixin):
     birth_date = Column(Date, nullable=False)
     address = Column(String, nullable=False)
     family = Column(Integer, nullable=False)
+    house_type = Column(String, nullable=False)
     token = Column(String, nullable=False)
-    idNeighborhoods = Column(ForeignKey(Neighborhood.id, ondelete='CASCADE'), nullable=False)
+    id_neighborhoods = Column(ForeignKey(Neighborhood.id, ondelete='CASCADE'), nullable=False)
 
+    neigh = relationship('Neighborhood', backref='user')
+    services = relationship('Service', backref='creator')
+    reports = relationship('Report', backref='creator')
+    
+    def __init__(self, email, password, username, name, lastname, birth_date, address, family, house_type, token, id_neighborhoods):
+        self.email = email
+        self.password = password
+        self.username = username
+        self.name = name
+        self.lastname = lastname
+        self.birth_date = birth_date
+        self.address = address
+        self.family = family
+        self.house_type = house_type
+        self.token = token
+        self.id_neighborhoods = id_neighborhoods
+        
     def get_id(self):
         return self.email
 
@@ -54,8 +70,9 @@ class User(Base, UserMixin):
     def password_check(self, psw):
         return bcrypt.check_password_hash(self.hashed_password, psw)
 
-    def __repr__(self):
-        return json.dumps(self.__dict__)
+    def get_all_elements(self):
+        return {'email': self.email, 'username': self.username, 'name': self.name, 'lastname': self.lastname, 'birth_date': self.birth_date,
+                'address': self.address, 'family': self.family, 'house_type': self.house_type, 'neighborhood': self.neigh.name}
 
 
 class Report(Base):
@@ -63,14 +80,23 @@ class Report(Base):
 
     id = Column(Integer, primary_key=True)
     title = Column(String, nullable=False)
-    postDate = Column(Date, nullable=False)
-    idCreator = Column(ForeignKey(User.email, ondelete='CASCADE'), nullable=False)
-    priority = Column(Integer, nullable=False)
+    postdate = Column(Date, nullable=False)
+    id_creator = Column(ForeignKey(User.email, ondelete='CASCADE'), nullable=False)
+    priority = Column(Integer, CheckConstraint('priority >= 1 and priority <= 3'), nullable=False)
     category = Column(String, nullable=False)
     address = Column(String, nullable=False)
 
-    def __repr__(self):
-        return json.dumps(__dict__)
+    def __init__(self, title, id_creator, priority, category, address):
+        self.title = title
+        self.postdate = date.today()
+        self.id_creator = id_creator
+        self.priority = priority
+        self.category = category
+        self.address = address
+
+    def get_all_elements(self):
+        return {'id': self.id, 'title': self.title, 'postdate': self.postdate, 'creator': self.creator.username,
+                'priority': self.priority, 'category': self.category, 'address': self.address}
 
 
 class Service(Base):
@@ -78,13 +104,21 @@ class Service(Base):
     
     id = Column(Integer, primary_key=True)
     title = Column(String, nullable=False)
-    postDate = Column(Date, nullable=False)
-    IdCreator = Column(ForeignKey(User.email, ondelete='CASCADE'), nullable=False)
+    postdate = Column(Date, nullable=False)
+    id_creator = Column(ForeignKey(User.email, ondelete='CASCADE'), nullable=False)
     desc = Column(String, nullable=False)
     link = Column(String, nullable=False)
     
-    def __repr__(self):
-        return json.dumps(__dict__)   
+    def __init__(self, title, id_creator, desc, link):
+        self.title = title
+        self.postdate = date.today()
+        self.id_creator = id_creator
+        self.desc = desc
+        self.link = link
+
+    def get_all_elements(self):
+        return {'id': self.id, 'title': self.title, 'postdate': self.postdate, 'creator': self.creator.username,
+                'desc': self.desc, 'link': self.link}
 
 
 class Need(Base):
@@ -92,17 +126,29 @@ class Need(Base):
     
     id = Column(Integer, primary_key=True)
     title = Column(String, nullable=False)
-    postDate = Column(Date, nullable=False)
+    postdate = Column(Date, nullable=False)
     # TODO check idAssistant != idCreator
-    idAssistant = Column(ForeignKey(User.email, ondelete='CASCADE'), nullable=True)
-    idCreator = Column(ForeignKey(User.email, ondelete='CASCADE'), nullable=False)
+    id_assistant = Column(ForeignKey(User.email, ondelete='CASCADE'), nullable=True)
+    id_creator = Column(ForeignKey(User.email, ondelete='CASCADE'), nullable=False)
     address = Column(String, nullable=False)
     desc = Column(String, nullable=False)
+
+    creator = relationship('User', backref='needs', foreign_keys=[id_creator])
+    assistant = relationship('User', backref='assistant_needs', foreign_keys=[id_assistant])
     
-    def __repr__(self):
-        return json.dumps(__dict__)
+    def __init__(self, title, id_creator, address, desc):
+        self.title = title
+        self.postdate = date.today()
+        self.id_creator = id_creator
+        self.desc = desc
+        self.address = address
+
+    def get_all_elements(self):
+        return {'id': self.id, 'title': self.title, 'postdate': self.postdate, 'creator': self.creator.username,
+                'assistant': self.assistant.username if self.assistant else "", 'desc': self.desc, 'address': self.address}
 
 
 Base.metadata.create_all(engine)
-#populate()
+create_neigh(Neighborhood)
+populate()
 
