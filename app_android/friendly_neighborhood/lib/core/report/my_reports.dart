@@ -76,6 +76,6 @@ class _MyReportsState extends State<MyReports> {
             child: Padding(
                 padding: EdgeInsets.all(16.0),
                 //TODO
-                child: Text("Non sono ancora presenti richieste")));
+                child: Text("Non hai pubblicato segnalazioni")));
   }
 }

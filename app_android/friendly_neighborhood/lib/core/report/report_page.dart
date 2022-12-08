@@ -46,7 +46,7 @@ class _ReportPageState extends State<ReportPage> {
           MaterialPageRoute(builder: (context) => CreationReport()),
         );
       },
-      label: const Text('Crea bisogno'),
+      label: const Text('Crea Segnalazione'),
       backgroundColor: Colors.orange[900],
     );
 
