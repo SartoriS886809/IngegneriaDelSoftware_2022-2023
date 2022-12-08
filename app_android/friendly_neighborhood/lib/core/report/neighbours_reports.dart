@@ -37,7 +37,6 @@ class _NeighboursReportsState extends State<NeighboursReports> {
 
   @override
   Widget build(BuildContext context) {
-    //return const Text('todo');
     return (ReportList.isNotEmpty)
         ? ListView.builder(
             itemCount: ReportList.length,
