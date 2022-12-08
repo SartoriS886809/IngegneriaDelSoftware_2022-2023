@@ -68,12 +68,50 @@ def test_resolved_need(client):
     })
     assert old_response.json["list"][0]["assistant"] == "username1"
 
+
+def test_get_assist_list(client):
+    old_response = client.post("/mylist/" + elem, data={
+        "token": token
+    }).json["list"][0]
+    response = client.post("/assist-list", data={
+        "token": "token"
+    })
+
+    assert response.status_code == 200
+    assert response.json["status"] == "success"
+    assert response.json["list"][0]["id"] == old_response["id"]
+    assert response.json["list"][0]["title"] == old_response["title"]
+    assert response.json["list"][0]["creator"] == old_response["creator"]
+    assert response.json["list"][0]["assistant"] == old_response["assistant"]
+
+
+def test_delete_assist(client):
+    old_response = client.post("/mylist/" + elem, data={
+        "token": token
+    })
+    assert old_response.json["list"][0]["assistant"] == "username1"
+
+    response = client.delete("/assist", data={
+        "token": "token",
+        "id": old_response.json["list"][0]["id"]
+    })
+    assert response.status_code == 200
+    assert response.json["status"] == "success"
+
+    old_response = client.post("/mylist/" + elem, data={
+        "token": token
+    })
+    assert old_response.json["list"][0]["assistant"] == ""
+
     
 def test_delete_need(client):
     response1 = client.post("/mylist/" + elem, data={
         "token": token
     })
-    response2 = client.delete("/delete/" + elem + "/" + str(response1.json["list"][0]["id"]))
+    response2 = client.delete("/delete/" + elem, data={
+        "token": token,
+        "id": response1.json["list"][0]["id"]
+    })
     assert response2.status_code == 200
     assert response2.json["status"] == "success"
 

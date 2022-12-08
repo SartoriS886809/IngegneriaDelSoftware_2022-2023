@@ -78,7 +78,7 @@ def update_tuple(table, code, **kwargs):
         raise e
 
 
-def get_all(table, creator=None, not_creator=None):
+def get_all(table='needs', creator=None, not_creator=None, assistant=None):
     table = convert_table(table)
 
     if creator is not None:
@@ -86,6 +86,9 @@ def get_all(table, creator=None, not_creator=None):
 
     if not_creator is not None:
         return session.query(table).where(table.id_creator != not_creator).all()
+
+    if assistant is not None:
+        return session.query(table).where(table.id_assistant == assistant).all()
 
     return session.query(table).all()
 
