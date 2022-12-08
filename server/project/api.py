@@ -94,16 +94,21 @@ def logout():
 '''
 Method: DELETE
 Route: '/delete-account/<email>'
-Desc: delete the user with <email> 
+Desc: delete the user with <email>
+
+Need: {'token': string}
 
 Return success: {'status': 'success'}
 Return failure: {'status': 'failure', 'reason': string}
 '''
-@app.route('/delete-account/<email>', methods=['DELETE'])
-def delete_account(email):
-    if not get_table('users', email):
+@app.route('/delete-account', methods=['DELETE'])
+def delete_account():
+    user = get_user_by_token(request.form.get('token'))
+
+    if not user:
         return {'status': 'failure', 'reason': 'user does not exist'}
 
+    email = user.email
     delete_tuple('users', email)
     if get_table('users', email):
         return {'status': 'failure', 'reason': 'delete does not work'}
@@ -115,6 +120,8 @@ def delete_account(email):
 Method: POST
 Route: '/token'
 Desc: compare the token passed and the token in the db for the user specified
+
+Need: {'token': string, 'email': string}
 
 Return success: {'status': 'success'}
 Return failure: {'status': 'failure', 'reason': string}
@@ -246,7 +253,7 @@ def get_list(elem):
     if check(elem, token):
         return check(elem, token)
 
-    return {'list': [get_table(elem, x.id).get_all_elements() for x in get_all(table=elem, not_creator=get_user_by_token(token).email)],
+    return {'list': [x.get_all_elements() for x in get_all(table=elem, not_creator=get_user_by_token(token).email)],
             'status': 'success'}
 
 
@@ -282,13 +289,34 @@ def get_mylist(elem):
         return check(elem, token)
 
     if len(request.form) == 1:
-        return {'list': [get_table(elem, x.id).get_all_elements() for x in get_all(table=elem, creator=get_user_by_token(token).email)],
+        return {'list': [x.get_all_elements() for x in get_all(table=elem, creator=get_user_by_token(token).email)],
                 'status': 'success'}
 
     update_tuple(elem, request.form.get('id'), **request.form)
     elems = get_table(elem, request.form.get('id')).get_all_elements()
     elems['status'] = 'success'
     return elems
+
+
+'''
+Method: POST
+Route: '/assist-list'
+Desc: get the list of needs the user specified have to assist
+
+Need: {'token': string}
+
+Return success: {'list': [dict], 'status': 'success'}
+Return failure: {'status': 'failure', 'reason': string}
+'''
+@app.route('/assist-list', methods=['POST'])
+def get_assist_list():
+    user = get_user_by_token(request.form.get('token'))
+
+    if not user:
+        return {'status': 'failure', 'reason': 'the user does not exist'}
+
+    return {'list': [x.get_all_elements() for x in get_all(assistant=user.email)],
+            'status': 'success'}
 
 
 '''
@@ -337,16 +365,27 @@ def new_elem(elem):
 
 '''
 Method: DELETE
-Route: '/delete/<elem>/<id>'
-Desc: delete element of type <elem> (services, needs, reports) with <id> 
+Route: '/delete/<elem>'
+Desc: delete element of type <elem> (services, needs, reports) with the id passed 
+
+Need: {'token': string, 'id': int}
 
 Return success: {'status': 'success'}
 Return failure: {'status': 'failure', 'reason': string}
 '''
-@app.route('/delete/<elem>/<id>', methods=['DELETE'])
-def delete_elem(elem, id):
-    if check(elem):
-        return check(elem)
+@app.route('/delete/<elem>', methods=['DELETE'])
+def delete_elem(elem):
+    id = request.form.get('id')
+    token = request.form.get('token')
+
+    if check(elem, token):
+        return check(elem, token)
+
+    if not get_table(elem, id):
+        return {'status': 'failure', 'reason': 'id does not exist'}
+
+    if get_table(elem, id).id_creator != get_user_by_token(token).email:
+        return {'status': 'failure', 'reason': 'the user is not the creator of the element'}
 
     delete_tuple(elem, id)
     if get_table(elem, id):
@@ -365,19 +404,25 @@ Need: {'token': string, 'id': string}
 Return success: {'status': 'success'}
 Return failure: {'status': 'failure', 'reason': string}
 '''
-@app.route('/assist', methods=['POST'])
+@app.route('/assist', methods=['POST', 'DELETE'])
 def assist():
     token = request.form.get('token')
+    id = request.form.get('id')
 
-    if not get_table('needs', request.form.get('id')):
+    if not get_table('needs', id):
         return {'status': 'failure', 'reason': 'the id is not correct'}
 
     user = get_user_by_token(token)
     if not user:
         return {'status': 'failure', 'reason': 'the user does not exist'}
 
-    if get_table('needs', request.form.get('id')).id_creator == user.email:
-        return {'status': 'failure', 'reason': 'creator and assistant must be different'}
+    if request.method == 'POST':
+        if get_table('needs', id).id_creator == user.email:
+            return {'status': 'failure', 'reason': 'creator and assistant must be different'}
+        get_table('needs', id).id_assistant = user.email
+    else:
+        if get_table('needs', id).id_assistant != user.email:
+            return {'status': 'failure', 'reason': 'user is not the assistant for this need'}
+        get_table('needs', id).id_assistant = None
 
-    get_table('needs', request.form.get('id')).id_assistant = user.email
     return {'status': 'success'}
