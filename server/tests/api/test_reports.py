@@ -38,7 +38,10 @@ def test_delete_report(client):
     response1 = client.post("/mylist/" + elem, data={
         "token": token
     })
-    response2 = client.delete("/delete/" + elem + "/" + str(response1.json["list"][0]["id"]))
+    response2 = client.delete("/delete/" + elem, data={
+        "token": token,
+        "id": response1.json["list"][0]["id"]
+    })
     assert response2.status_code == 200
     assert response2.json["status"] == "success"
 
