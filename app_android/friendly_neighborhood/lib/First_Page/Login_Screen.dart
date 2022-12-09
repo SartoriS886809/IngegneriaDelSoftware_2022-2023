@@ -1,7 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:friendly_neighborhood/API_Manager/api_manager.dart';
 import 'package:friendly_neighborhood/First_Page/Create_Account_Screen.dart';
 import 'package:friendly_neighborhood/configuration/configuration.dart';
+import 'package:friendly_neighborhood/core/core.dart';
 import 'package:friendly_neighborhood/utils/check_connection.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -15,12 +19,17 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   late bool _passwordVisible;
   late IconData _iconPassword;
+  final _controllerEmail = TextEditingController();
+  final _controllerPassword = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _passwordVisible = false;
     _iconPassword = Icons.visibility;
+    //TODO TEMP
+    _controllerEmail.text = "email1@email.com";
+    _controllerPassword.text = "passpass";
   }
 
   Future<void> _showAlertDialog({required String text}) async {
@@ -75,6 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               hintText: "Inserisci l'email",
                               labelText: 'Email',
                             ),
+                            controller: _controllerEmail,
                             //Validatore input email
                             validator: (String? value) {
                               //Se è vuoto dice di inserire l'email
@@ -96,6 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 15),
                           child: TextFormField(
+                            controller: _controllerPassword,
                             //Parametro per nascondere la password
                             obscureText: !_passwordVisible,
                             decoration: InputDecoration(
@@ -141,6 +152,20 @@ class _LoginScreenState extends State<LoginScreen> {
                                   bool check = await CheckConnection.check();
                                   if (check) {
                                     //TODO inviare richiesta server
+                                    try {
+                                      if (await API_Manager.login(
+                                          _controllerEmail.text,
+                                          _controllerPassword.text)) {
+                                        Navigator.pop(context);
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const Core()));
+                                      }
+                                    } catch (e) {
+                                      _showAlertDialog(text: e.toString());
+                                    }
                                   } else {
                                     _showAlertDialog(
                                         text:

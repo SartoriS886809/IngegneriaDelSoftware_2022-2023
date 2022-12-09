@@ -7,7 +7,6 @@ import 'package:friendly_neighborhood/configuration/configuration.dart';
 import 'package:friendly_neighborhood/model/localuser.dart';
 import 'package:friendly_neighborhood/model/neighborhood.dart';
 import 'package:http/http.dart' as http;
-import '../utils/elaborate_data.dart';
 
 import '../model/need.dart';
 import '../model/report.dart';
@@ -54,8 +53,14 @@ class API_Manager {
         rethrow;
       }
       //Upload sul dbLocalUser
-      //TODO AGGIUNGERE IDNEIGHBORHOODS
       profile["token"] = token;
+      List<Neighborhood> neighborhood = await getNeighborhoods();
+      for (Neighborhood x in neighborhood) {
+        if (x.id == profile["idNeighborhood"]) {
+          profile["neighborhood"] = x.name;
+          break;
+        }
+      }
       LocalUser user = LocalUser.fromJSON(profile);
       LocalUserManager l = LocalUserManager();
       await l.insertUser(user);

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class Configuration {
   static const int minAge = 16;
   static const int minLengthPassword = 8;
-  static const String API_link = "https://neighborhood.azurewebsites.net/";
+  static const String API_link = "https://neighborhood.azurewebsites.net";
 
   /*https://blog.logrocket.com/launching-urls-flutter-url_launcher/ */
 
