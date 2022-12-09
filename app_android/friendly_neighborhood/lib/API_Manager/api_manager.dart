@@ -24,10 +24,12 @@ class API_Manager {
   Se l'esito della registrazione è positivo verrà ritornato true, in caso
   di errore verrà lanciata un'eccezione
   */
-  static Future<bool> signup(LocalUser user) async {
+  static Future<bool> signup(LocalUser user, String password) async {
     String link = '${Configuration.API_link}/signup';
+    Map<String, dynamic> json = user.toJson();
+    json["password"] = password;
     http.Response response =
-        await sendRequest(link, user.toJson().toString(), HTTP_Method.POST);
+        await sendRequest(link, json.toString(), HTTP_Method.POST);
     dynamic jsonResponse = jsonDecode(response.body);
     if (jsonResponse["status"] != 'success') {
       throw jsonResponse["reason"].toString();
@@ -35,7 +37,7 @@ class API_Manager {
     return true;
   }
 
-  static Future<bool> login(String email, String password) async {
+  static Future<String> login(String email, String password) async {
     String link = '${Configuration.API_link}/login';
     try {
       String json = "{'email':$email,'password':$password}";
@@ -64,7 +66,7 @@ class API_Manager {
       LocalUser user = LocalUser.fromJSON(profile);
       LocalUserManager l = LocalUserManager();
       await l.insertUser(user);
-      return true;
+      return token;
     } catch (e) {
       rethrow;
     }

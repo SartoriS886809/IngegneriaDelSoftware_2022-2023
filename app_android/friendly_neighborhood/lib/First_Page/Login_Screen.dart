@@ -153,16 +153,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                   if (check) {
                                     //TODO inviare richiesta server
                                     try {
-                                      if (await API_Manager.login(
+                                      await API_Manager.login(
                                           _controllerEmail.text,
-                                          _controllerPassword.text)) {
-                                        Navigator.pop(context);
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const Core()));
-                                      }
+                                          _controllerPassword.text);
+                                      Navigator.pop(context);
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const Core()));
                                     } catch (e) {
                                       _showAlertDialog(text: e.toString());
                                     }
