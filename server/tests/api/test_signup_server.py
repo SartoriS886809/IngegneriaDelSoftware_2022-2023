@@ -11,5 +11,5 @@ send = {'email': 'email6@email.com',
         'family' : 4,
         'house_type' : 'house type',
         'id_neighborhoods' : 1}
-resp = requests.post( url, data=send)
+resp = requests.post( url, json=send)
 print(resp.content)

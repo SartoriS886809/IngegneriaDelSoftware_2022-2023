@@ -30,11 +30,10 @@ Return failure: {'status': 'failure', 'reason': string}
 '''
 @app.route('/signup', methods=['POST'])
 def signup():
-    print(request)
-    if get_table('users', request.args.get('email')):
+    if get_table('users', request.json['email']):
         return {'status': 'failure', 'reason': 'user already exists'}
 
-    add_and_commit('users', token='', **request.args)
+    add_and_commit('users', token='', **request.json)
 
     return {'status': 'success'}
 
@@ -51,8 +50,8 @@ Return failure: {'status': 'failure', 'reason': string}
 '''
 @app.route('/login', methods=['POST'])
 def login():
-    email = request.form.get('email')
-    password = request.form.get('password')
+    email = request.json.get('email')
+    password = request.json.get('password')
     user = get_table('users', email)
 
     if user is None:
@@ -65,6 +64,7 @@ def login():
     while get_user_by_token(rand_token):
         rand_token = str(uuid4())
     user.token = rand_token
+    commit()
 
     return {'token': rand_token, 'status': 'success'}
 
@@ -81,13 +81,14 @@ Return failure: {'status': 'failure', 'reason': string}
 '''
 @app.route('/logout', methods=['POST'])
 def logout():
-    email = request.form.get('email')
+    email = request.json.get('email')
     user = get_table('users', email)
 
     if not user:
         return {'status': 'failure', 'reason': 'user does not exist'}
 
     user.token = ''
+    commit()
 
     return {'status': 'success'}
 
@@ -104,7 +105,7 @@ Return failure: {'status': 'failure', 'reason': string}
 '''
 @app.route('/delete-account', methods=['DELETE'])
 def delete_account():
-    user = get_user_by_token(request.form.get('token'))
+    user = get_user_by_token(request.json.get('token'))
 
     if not user:
         return {'status': 'failure', 'reason': 'user does not exist'}
@@ -129,8 +130,8 @@ Return failure: {'status': 'failure', 'reason': string}
 '''
 @app.route('/token', methods=['POST'])
 def compare_token():
-    email = request.form.get('email')
-    token = request.form.get('token')
+    email = request.json.get('email')
+    token = request.json.get('token')
 
     user = get_table('users', email)
     if not user:
@@ -163,7 +164,7 @@ def get_neighborhoods():
 '''
 Method: POST to retrieve user data (only one field in the body)
 Route: '/profile'
-Desc: get the information of the user with the token specified
+Desc: get the injsonation of the user with the token specified
 
 Need: {'token': string}
 
@@ -213,13 +214,13 @@ Return failure: {'status': 'failure', 'reason': string}
 '''
 @app.route('/profile', methods=['POST'])
 def profile():
-    user = get_user_by_token(request.form.get('token'))
+    user = get_user_by_token(request.json.get('token'))
 
     if not user:
         return {'status': 'failure', 'reason': 'user does not exist'}
 
-    if len(request.form) > 1:
-        update_tuple('users', user.email, **request.form)
+    if len(request.json) > 1:
+        update_tuple('users', user.email, **request.json)
 
     elems = user.get_all_elements()
     elems['status'] = 'success'
@@ -249,7 +250,7 @@ Return failure: {'status': 'failure', 'reason': string}
 '''
 @app.route('/list/<elem>', methods=['POST'])
 def get_list(elem):
-    token = request.form.get('token')
+    token = request.json.get('token')
 
     if check(elem, token):
         return check(elem, token)
@@ -284,17 +285,17 @@ Return failure: {'status': 'failure', 'reason': string}
 '''
 @app.route('/mylist/<elem>', methods=['POST'])
 def get_mylist(elem):
-    token = request.form.get('token')
+    token = request.json.get('token')
 
     if check(elem, token):
         return check(elem, token)
 
-    if len(request.form) == 1:
+    if len(request.json) == 1:
         return {'list': [x.get_all_elements() for x in get_all(table=elem, creator=get_user_by_token(token).email)],
                 'status': 'success'}
 
-    update_tuple(elem, request.form.get('id'), **request.form)
-    elems = get_table(elem, request.form.get('id')).get_all_elements()
+    update_tuple(elem, request.json.get('id'), **request.json)
+    elems = get_table(elem, request.json.get('id')).get_all_elements()
     elems['status'] = 'success'
     return elems
 
@@ -311,7 +312,7 @@ Return failure: {'status': 'failure', 'reason': string}
 '''
 @app.route('/assist-list', methods=['POST'])
 def get_assist_list():
-    user = get_user_by_token(request.form.get('token'))
+    user = get_user_by_token(request.json.get('token'))
 
     if not user:
         return {'status': 'failure', 'reason': 'the user does not exist'}
@@ -351,13 +352,13 @@ Return failure: {'status': 'failure', 'reason': string}
 '''
 @app.route('/new/<elem>', methods=['POST'])
 def new_elem(elem):
-    token = request.form.get('token')
+    token = request.json.get('token')
 
     if check(elem, token):
         return check(elem, token)
 
     data = {'id_creator': get_user_by_token(token).email}
-    for k, v in request.form.items():
+    for k, v in request.json.items():
         if k != 'token':
             data[k] = v
     id = add_and_commit(elem, **data).id
@@ -376,8 +377,8 @@ Return failure: {'status': 'failure', 'reason': string}
 '''
 @app.route('/delete/<elem>', methods=['DELETE'])
 def delete_elem(elem):
-    id = request.form.get('id')
-    token = request.form.get('token')
+    id = request.json.get('id')
+    token = request.json.get('token')
 
     if check(elem, token):
         return check(elem, token)
@@ -407,8 +408,8 @@ Return failure: {'status': 'failure', 'reason': string}
 '''
 @app.route('/assist', methods=['POST', 'DELETE'])
 def assist():
-    token = request.form.get('token')
-    id = request.form.get('id')
+    token = request.json.get('token')
+    id = request.json.get('id')
 
     if not get_table('needs', id):
         return {'status': 'failure', 'reason': 'the id is not correct'}
