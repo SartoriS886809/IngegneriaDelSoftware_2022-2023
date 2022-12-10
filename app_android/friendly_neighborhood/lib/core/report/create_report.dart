@@ -3,14 +3,9 @@ import 'package:friendly_neighborhood/model/report.dart';
 
 //ignore: must_be_immutable
 class CreationReport extends StatefulWidget {
-  Report? service;
-  late bool modification;
+  Report? report;
   CreationReport({super.key}) {
-    service = null;
-    modification = false;
-  }
-  CreationReport.modification({super.key, this.service}) {
-    modification = true;
+    report = null;
   }
 
   @override
@@ -22,7 +17,7 @@ class _CreationReportState extends State<CreationReport> {
   final _controllerTitle = TextEditingController();
   final _controllerAddress = TextEditingController();
   String? _valueChoose;
-  late int priority = 1;
+  late int _priority = 1;
   final List<String> listItem = [
     'Problemi ambientali',
     'Incidente stradale',
@@ -71,8 +66,18 @@ class _CreationReportState extends State<CreationReport> {
     );
   }
 
-  //per creare l'oggetto
-  void createReport() {}
+  void createReport() {
+    //TODO Creator da assegnare
+    widget.report = Report(
+        postDate: DateTime.now(),
+        title: _controllerTitle.text,
+        priority: _priority,
+        category: _valueChoose.toString(),
+        address: _controllerAddress.text,
+        creator: 'creator');
+    //TODO comunicare con DB
+    Navigator.pop(_context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -163,10 +168,10 @@ class _CreationReportState extends State<CreationReport> {
                           title: const Text('Basso'),
                           leading: Radio<int>(
                             value: 1,
-                            groupValue: priority,
+                            groupValue: _priority,
                             onChanged: (value) {
                               setState(() {
-                                priority = value!;
+                                _priority = value!;
                               });
                             },
                           ),
@@ -178,10 +183,10 @@ class _CreationReportState extends State<CreationReport> {
                           title: const Text('Medio'),
                           leading: Radio<int>(
                             value: 2,
-                            groupValue: priority,
+                            groupValue: _priority,
                             onChanged: (value) {
                               setState(() {
-                                priority = value!;
+                                _priority = value!;
                               });
                             },
                           ),
@@ -193,10 +198,10 @@ class _CreationReportState extends State<CreationReport> {
                           title: const Text('Alto'),
                           leading: Radio<int>(
                             value: 3,
-                            groupValue: priority,
+                            groupValue: _priority,
                             onChanged: (value) {
                               setState(() {
-                                priority = value!;
+                                _priority = value!;
                               });
                             },
                           ),

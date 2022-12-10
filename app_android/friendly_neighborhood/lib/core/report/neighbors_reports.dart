@@ -1,29 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/model/report.dart';
 
-class NeighboursReports extends StatefulWidget {
-  const NeighboursReports({super.key});
+class NeighborsReports extends StatefulWidget {
+  const NeighborsReports({super.key});
 
   @override
-  State<NeighboursReports> createState() => _NeighboursReportsState();
+  State<NeighborsReports> createState() => _NeighborsReportsState();
 }
 
-class _NeighboursReportsState extends State<NeighboursReports> {
+class _NeighborsReportsState extends State<NeighborsReports> {
   //API
 
   //test list
 
-  List<Report> ReportList = [
-    Report(1, DateTime(2022, 11, 23, 14, 20), 'Albero caduto', 1,
-        'problemi ambientali', 'via papa luciani', 'paolino'),
-    Report(2, DateTime(2022, 11, 23, 14, 20), 'tombino rotto', 1,
-        'problemi ambientali', 'via cristo', 'creator'),
-    Report(3, DateTime(2022, 11, 23, 14, 20), 'ladri in casa', 1, 'crimine',
-        'via Col Vento', 'Lucio Wolf'),
-    Report(4, DateTime(2022, 11, 23, 14, 20), 'Cane randagio nel quartiere', 1,
-        'animali', 'via Montalbano', 'Zaia Luca'),
-    Report(65, DateTime(2022, 02, 02, 2, 2), 'Strada chiusa per lavori', 3,
-        'lavori in corso', 'via Monte Marmolada', 'Sandro')
+  List<Report> reportList = [
+    Report(
+        postDate: DateTime(2022, 11, 23, 14, 20),
+        title: 'Albero caduto',
+        priority: 1,
+        category: 'problemi ambientali',
+        address: 'via papa luciani',
+        creator: 'paolino'),
+    Report(
+        postDate: DateTime(2022, 11, 23, 14, 20),
+        title: 'tombino rotto',
+        priority: 1,
+        category: 'problemi ambientali',
+        address: 'via cristo',
+        creator: 'creator'),
+    Report(
+        postDate: DateTime(2022, 11, 23, 14, 20),
+        title: 'ladri in casa',
+        priority: 3,
+        category: 'crimine',
+        address: 'via Col Vento',
+        creator: 'Lucio Wolf')
   ];
 
   //initState() è il costruttore delle classi stato
@@ -37,11 +48,11 @@ class _NeighboursReportsState extends State<NeighboursReports> {
 
   @override
   Widget build(BuildContext context) {
-    return (ReportList.isNotEmpty)
+    return (reportList.isNotEmpty)
         ? ListView.builder(
-            itemCount: ReportList.length,
+            itemCount: reportList.length,
             itemBuilder: (context, index) {
-              final Report reportIter = ReportList.elementAt(index);
+              final Report reportIter = reportList.elementAt(index);
               final String dateIter =
                   "${reportIter.postDate.day}-${reportIter.postDate.year} ${reportIter.postDate.hour}:${reportIter.postDate.minute}";
               return Card(
@@ -50,12 +61,9 @@ class _NeighboursReportsState extends State<NeighboursReports> {
                   children: <Widget>[
                     Row(children: [
                       Expanded(
-                        //width: 150,
                         child: ListTile(
-                          leading: Icon(
-                              reportIter.getIconFromCategory(Colors.black).icon,
-                              color: Colors.black,
-                              size: 40.0),
+                          leading: reportIter.getIconFromCategory(
+                              const Color.fromARGB(255, 0, 0, 0), 40.0),
                           title: Text(reportIter.title),
                           subtitle: Text(
                               "Categoria: ${reportIter.category}\nLuogo: ${reportIter.address}\nData Segnalazione: $dateIter\nCreata da: ${reportIter.creator}"),

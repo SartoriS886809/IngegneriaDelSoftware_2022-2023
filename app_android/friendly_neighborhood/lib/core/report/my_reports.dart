@@ -13,9 +13,14 @@ class _MyReportsState extends State<MyReports> {
 
   // test list
 
-  List<Report> ReportList = [
-    Report(2, DateTime(2022), 'Cane randagio', 2, 'animali', 'via F. Pannofino',
-        'Alessandro')
+  List<Report> reportList = [
+    Report(
+        postDate: DateTime(2022),
+        title: 'cane randagio',
+        priority: 2,
+        category: 'animali',
+        address: 'via F. Pannofino',
+        creator: 'test')
   ];
 
   @override
@@ -23,13 +28,55 @@ class _MyReportsState extends State<MyReports> {
     super.initState();
   }
 
+  Future<void> _showAlertDialog(
+      {required String title,
+      required String message,
+      required String buttonMessage,
+      required Function f}) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // L'utente deve premere il pulsante
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(message),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Annulla'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text(buttonMessage),
+              onPressed: () {
+                Navigator.of(context).pop();
+                f();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void deleteReport() {
+    //TODO chiamata al database per eliminare segnalazione
+  }
+
   @override
   Widget build(BuildContext context) {
-    return (ReportList.isNotEmpty)
+    return (reportList.isNotEmpty)
         ? ListView.builder(
-            itemCount: ReportList.length,
+            itemCount: reportList.length,
             itemBuilder: (context, index) {
-              final Report reportIter = ReportList.elementAt(index);
+              final Report reportIter = reportList.elementAt(index);
               final String dateIter =
                   "${reportIter.postDate.day}-${reportIter.postDate.year} ${reportIter.postDate.hour}:${reportIter.postDate.minute}";
               return Card(
@@ -41,11 +88,8 @@ class _MyReportsState extends State<MyReports> {
                         //width: 150,
                         child: ListTile(
                           //controllare la funzione delle icone ( il colore non va)
-                          leading: Icon(
-                            reportIter.getIconFromCategory(Colors.black).icon,
-                            color: Colors.black,
-                            size: 40.0,
-                          ),
+                          leading: reportIter.getIconFromCategory(
+                              const Color.fromARGB(255, 0, 0, 0), 40.0),
                           title: Text(reportIter.title),
                           subtitle: Text(
                               "Categoria: ${reportIter.category}\nLuogo: ${reportIter.address}\nData Segnalazione: $dateIter\nCreata da: ${reportIter.creator}"),
@@ -62,6 +106,12 @@ class _MyReportsState extends State<MyReports> {
                             ),
                             onTap: () {
                               //action code when clicked
+                              _showAlertDialog(
+                                  title: 'cancellazione',
+                                  message:
+                                      'sei sicuro di voler cancellare la segnalazione',
+                                  buttonMessage: 'cancella',
+                                  f: deleteReport);
                             },
                           )
                         ],
