@@ -10,6 +10,15 @@ class Neighborhood {
     name = json["name"];
   }
 
+  bool functionFilterForNeighborhoods(String filter) {
+    return name.contains(filter);
+  }
+
+  //custom comparing function to check if two users are equal
+  bool isEqual(Neighborhood model) {
+    return id == model.id;
+  }
+
   @override
   String toString() {
     return '{id:$id,area:$area,name:$name}';

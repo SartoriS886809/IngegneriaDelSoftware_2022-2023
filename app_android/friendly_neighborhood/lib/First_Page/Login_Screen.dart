@@ -8,6 +8,11 @@ import 'package:friendly_neighborhood/configuration/configuration.dart';
 import 'package:friendly_neighborhood/core/core.dart';
 import 'package:friendly_neighborhood/utils/check_connection.dart';
 
+/*
+Lista di todo:
+//TODO Gestire errori da richiesta
+//TODO se possibile utilizzare un testo per notifiche di errori riguardanti email/password
+*/
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -28,8 +33,8 @@ class _LoginScreenState extends State<LoginScreen> {
     _passwordVisible = false;
     _iconPassword = Icons.visibility;
     //TODO TEMP
-    _controllerEmail.text = "email1@email.com";
-    _controllerPassword.text = "passpass";
+    _controllerEmail.text = "prova@prova.com";
+    _controllerPassword.text = "prova";
   }
 
   Future<void> _showAlertDialog({required String text}) async {
@@ -151,7 +156,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                   //Controllo connessione internet
                                   bool check = await CheckConnection.check();
                                   if (check) {
-                                    //TODO inviare richiesta server
                                     try {
                                       await API_Manager.login(
                                           _controllerEmail.text,

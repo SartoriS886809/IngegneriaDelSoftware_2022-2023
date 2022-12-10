@@ -31,14 +31,9 @@ class Need {
 
   //JSON CONSTRUCTOR
   Need.fromJSON(Map<String, dynamic> json) {
-    _id = json["id"];
-    _postDate = json["postDate"];
     _title = json["title"];
     _address = json["address"];
     _description = json["description"];
-    _assistant = json["assistant"];
-    _idAssistant = json["idAssistant"];
-    _creator = json["creator"];
   }
 
   //GETTER

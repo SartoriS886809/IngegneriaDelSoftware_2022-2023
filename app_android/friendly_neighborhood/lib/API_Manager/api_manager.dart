@@ -6,6 +6,7 @@ import 'package:friendly_neighborhood/cache_manager/profile_db.dart';
 import 'package:friendly_neighborhood/configuration/configuration.dart';
 import 'package:friendly_neighborhood/model/localuser.dart';
 import 'package:friendly_neighborhood/model/neighborhood.dart';
+import 'package:friendly_neighborhood/utils/elaborate_data.dart';
 import 'package:http/http.dart' as http;
 
 import '../model/need.dart';
@@ -28,8 +29,10 @@ class API_Manager {
     String link = '${Configuration.API_link}/signup';
     Map<String, dynamic> json = user.toJson();
     json["password"] = password;
+    //Fix Date Format
+    json["birth_date"] = convertDateTimeToDate(json["birth_date"]);
     http.Response response =
-        await sendRequest(link, json.toString(), HTTP_Method.POST);
+        await sendRequest(link, jsonEncode(json), HTTP_Method.POST);
     dynamic jsonResponse = jsonDecode(response.body);
     if (jsonResponse["status"] != 'success') {
       throw jsonResponse["reason"].toString();
@@ -40,8 +43,12 @@ class API_Manager {
   static Future<String> login(String email, String password) async {
     String link = '${Configuration.API_link}/login';
     try {
-      String json = "{'email':$email,'password':$password}";
-      http.Response response = await sendRequest(link, json, HTTP_Method.POST);
+      //String json = "{'email':$email,'password':$password}";
+      Map<String, dynamic> j = {};
+      j["email"] = email;
+      j["password"] = password;
+      http.Response response =
+          await sendRequest(link, jsonEncode(j), HTTP_Method.POST);
       dynamic jsonResponse = jsonDecode(response.body);
       if (jsonResponse["status"] != 'success') {
         throw jsonResponse["reason"].toString();
@@ -54,15 +61,11 @@ class API_Manager {
       } catch (e) {
         rethrow;
       }
+      profile["birth_date"] = extractDataFromDBString(profile["birth_date"]);
       //Upload sul dbLocalUser
       profile["token"] = token;
-      List<Neighborhood> neighborhood = await getNeighborhoods();
-      for (Neighborhood x in neighborhood) {
-        if (x.id == profile["idNeighborhood"]) {
-          profile["neighborhood"] = x.name;
-          break;
-        }
-      }
+      //TODO TEMP
+      profile['id_neighborhoods'] = 1;
       LocalUser user = LocalUser.fromJSON(profile);
       LocalUserManager l = LocalUserManager();
       await l.insertUser(user);
@@ -79,8 +82,10 @@ class API_Manager {
   */
   static Future<bool> logout(String email) async {
     String link = '${Configuration.API_link}/logout';
-    String json = "{'email':$email}";
-    http.Response response = await sendRequest(link, json, HTTP_Method.POST);
+    Map<String, dynamic> json = {};
+    json["email"] = email;
+    http.Response response =
+        await sendRequest(link, jsonEncode(json), HTTP_Method.POST);
     dynamic jsonResponse = jsonDecode(response.body);
     if (jsonResponse["status"] != 'success') {
       throw jsonResponse["reason"].toString();
@@ -93,9 +98,12 @@ class API_Manager {
   Se l'esito dell'operazione è positivo verrà ritornato true, in caso
   di errore verrà lanciata un'eccezione
   */
-  static Future<bool> deleteAccount(String email) async {
-    String link = '${Configuration.API_link}/delete-account/$email';
-    http.Response response = await sendRequest(link, "", HTTP_Method.DELETE);
+  static Future<bool> deleteAccount(String token) async {
+    String link = '${Configuration.API_link}/delete-account';
+    Map<String, dynamic> json = {};
+    json["token"] = token;
+    http.Response response =
+        await sendRequest(link, jsonEncode(json), HTTP_Method.DELETE);
     dynamic jsonResponse = jsonDecode(response.body);
     if (jsonResponse["status"] != 'success') {
       throw jsonResponse["reason"].toString();
@@ -109,8 +117,11 @@ class API_Manager {
   */
   static Future<bool> checkToken(String email, String token) async {
     String link = '${Configuration.API_link}/token';
-    String json = "{'token':$token,'email':$email}";
-    http.Response response = await sendRequest(link, "", HTTP_Method.POST);
+    Map<String, dynamic> json = {};
+    json["email"] = email;
+    json["token"] = token;
+    http.Response response =
+        await sendRequest(link, jsonEncode(json), HTTP_Method.POST);
     dynamic jsonResponse = jsonDecode(response.body);
     if (jsonResponse["status"] != 'success') {
       return false;
@@ -118,36 +129,31 @@ class API_Manager {
     return true;
   }
 
-//TODO FIX
   /*
   La funzione getNeighborhoods() restituisce una lista di quartieri
   In caso di errore verrà lanciata un eccezione
   */
-  //[{"area":23.0,"id":1,"name":"neigh1"},{"area":23.0,"id":2,"name":"neigh2"},{"area":23.0,"id":3,"name":"neigh3"}]
   static Future<List<Neighborhood>> getNeighborhoods() async {
     String link = '${Configuration.API_link}/neighborhoods';
-    try {
-      http.Response response = await sendRequest(link, "", HTTP_Method.GET);
-      dynamic json = jsonDecode(response.body);
-      if (json["status"] != 'success') {
-        throw json["reason"].toString();
-      }
-      List<Neighborhood> list = [];
-      for (Map<String, dynamic> x in json["neighborhoods"]) {
-        list.add(Neighborhood.fromJSON(x));
-      }
-      return list;
-    } catch (e) {
-      rethrow;
+    http.Response response = await sendRequest(link, "", HTTP_Method.GET);
+    dynamic json = jsonDecode(response.body);
+    if (json["status"] != 'success') {
+      throw json["reason"].toString();
     }
+    List<Neighborhood> list = [];
+    for (Map<String, dynamic> x in json["neighborhoods"]) {
+      list.add(Neighborhood.fromJSON(x));
+    }
+    return list;
   }
 
-  //TODO FIX
   static Future<Map<String, dynamic>> getProfile(String token) async {
     String link = '${Configuration.API_link}/profile';
     try {
-      String json = "{'token':$token}";
-      http.Response response = await sendRequest(link, json, HTTP_Method.POST);
+      Map<String, dynamic> json = {};
+      json["token"] = token;
+      http.Response response =
+          await sendRequest(link, jsonEncode(json), HTTP_Method.POST);
       dynamic jsonResponse = jsonDecode(response.body);
       if (jsonResponse["status"] != 'success') {
         throw jsonResponse["reason"].toString();
@@ -173,7 +179,8 @@ la lista in base alla tipologia richiesta.
     } else {
       link = "/list/";
     }
-    String json = "{'token':$token}";
+    Map<String, dynamic> json = {};
+    json["token"] = token;
     switch (type) {
       case ELEMENT_TYPE.NEEDS:
         link += "needs";
@@ -187,7 +194,8 @@ la lista in base alla tipologia richiesta.
       default:
         break;
     }
-    http.Response response = await sendRequest(link, json, HTTP_Method.POST);
+    http.Response response =
+        await sendRequest(link, jsonEncode(json), HTTP_Method.POST);
     dynamic jsonResponse = jsonDecode(response.body);
     if (jsonResponse["status"] != 'success') {
       throw jsonResponse["reason"].toString();
@@ -216,7 +224,7 @@ La funzione updateElement aggiorna il contenuto di una entry di una tabella spec
 Questa ritornerà true se l'operazione andrà a buon fine, altrimenti lancerà un'eccezione. La funzione richiede in input l'elemento da modificare (elem) 
 e il token (token) dell'utente corrente.
 */
-
+//TODO Guardare parametri passati al server
   static Future<bool> updateElement(
       String token, dynamic elem, ELEMENT_TYPE type) async {
     String link = "/mylist/";
@@ -241,8 +249,8 @@ e il token (token) dell'utente corrente.
         break;
     }
     map["token"] = token;
-    String json = map.toString();
-    http.Response response = await sendRequest(link, json, HTTP_Method.POST);
+    http.Response response =
+        await sendRequest(link, jsonEncode(map), HTTP_Method.POST);
     dynamic jsonResponse = jsonDecode(response.body);
     if (jsonResponse["status"] != 'success') {
       throw jsonResponse["reason"].toString();
@@ -279,8 +287,8 @@ e il token (token) dell'utente corrente.
         break;
     }
     map["token"] = token;
-    String json = map.toString();
-    http.Response response = await sendRequest(link, json, HTTP_Method.POST);
+    http.Response response =
+        await sendRequest(link, jsonEncode(map), HTTP_Method.POST);
     dynamic jsonResponse = jsonDecode(response.body);
     if (jsonResponse["status"] != 'success') {
       throw jsonResponse["reason"].toString();
@@ -310,8 +318,10 @@ e il token (token) dell'utente corrente.
         break;
     }
     link += "$id";
-    String json = "{'token':$token}";
-    http.Response response = await sendRequest(link, json, HTTP_Method.DELETE);
+    Map<String, dynamic> json = {};
+    json['token'] = token;
+    http.Response response =
+        await sendRequest(link, jsonEncode(json), HTTP_Method.DELETE);
     dynamic jsonResponse = jsonDecode(response.body);
     if (jsonResponse["status"] != 'success') {
       throw jsonResponse["reason"].toString();
@@ -326,11 +336,14 @@ e il token (token) dell'utente corrente.
   */
   static Future<http.Response> sendRequest(
       String link, String json, HTTP_Method type) async {
+    Map<String, String> headers = {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+    };
+
     http.Response response;
     if (type == HTTP_Method.GET) {
-      response = await http.get(
-        Uri.parse(link),
-      );
+      response = await http.get(Uri.parse(link), headers: headers);
       if (response.statusCode != 200) {
         throw "Errore nella richiesta";
       }
@@ -338,14 +351,17 @@ e il token (token) dell'utente corrente.
     } else if (type == HTTP_Method.POST) {
       response = await http.post(
         Uri.parse(link),
+        headers: headers,
         body: json,
       );
+
       if (response.statusCode != 200) {
         throw "Errore nella richiesta";
       }
       return response;
     } else {
-      response = await http.delete(Uri.parse(link), body: json);
+      response =
+          await http.delete(Uri.parse(link), body: json, headers: headers);
       return response;
     }
   }

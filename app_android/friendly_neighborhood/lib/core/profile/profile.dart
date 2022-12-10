@@ -58,10 +58,10 @@ class _ProfileState extends State<Profile> {
         Text("Nome: ${user!.name}"),
         Text("Cognome: ${user!.lastname}"),
         Text(
-            "Data di nascita: ${user!.birthdate.day}-${user!.birthdate.month}-${user!.birthdate.year}"),
+            "Data di nascita: ${user!.birth_date.day}-${user!.birth_date.month}-${user!.birth_date.year}"),
         Text("Indirizzo: ${user!.address}"),
         Text("Nucleo familiare: ${user!.family}"),
-        Text("Tipologia abitazione: ${user!.houseType}"),
+        Text("Tipologia abitazione: ${user!.house_type}"),
         Text("Quartiere: ${user!.neighborhood}"),
         Container(
           height: 50,

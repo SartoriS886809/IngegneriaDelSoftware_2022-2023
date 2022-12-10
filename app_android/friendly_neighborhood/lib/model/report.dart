@@ -78,13 +78,10 @@ class Report {
 
   //CONVERSION TO JSON
   Map<String, dynamic> toJson() => {
-        'id': _id,
-        'postDate': _postDate,
         'title': _title,
         'priority': _priority,
         'category': _category,
         'address': _address,
-        'creator': _creator,
       };
 
   //Conversione per database

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/API_Manager/api_manager.dart';
 import 'package:friendly_neighborhood/First_Page/login_screen.dart';
 import 'package:friendly_neighborhood/configuration/configuration.dart';
+import 'package:friendly_neighborhood/model/neighborhood.dart';
 import 'package:friendly_neighborhood/utils/check_connection.dart';
 import 'package:intl/intl.dart';
 import 'package:friendly_neighborhood/utils/elaborate_data.dart';
@@ -26,8 +27,11 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   late IconData _iconPassword;
   late bool _confirmPasswordVisible;
   late IconData _confirmIconPassword;
+  final _popupBuilderKey = GlobalKey<DropdownSearchState<String>>();
+  final _popupCustomValidationKey = GlobalKey<DropdownSearchState<int>>();
 
   //Sezione controller / variabili gestione contenuto campi
+
   final _controllerUsername = TextEditingController();
   final _controllerEmail = TextEditingController();
   final _controllerPassword = TextEditingController();
@@ -36,8 +40,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   final _controllerResidence = TextEditingController();
   final _controllerFamily = TextEditingController();
   final _controllerDate = TextEditingController();
+  final _voidNeighborhood =
+      Neighborhood(id: -1, area: 0, name: "Scegli un quartiere");
   String _choice_house_type = "Scegliere una tipologia";
-  String _choice_neighborhood = "Scegli un quartiere";
+  late Neighborhood _choice_neighborhood;
 
   //Dati scelta utente
   static const _house_types = [
@@ -45,35 +51,65 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     "Appartamento",
     "Casa singola"
   ];
-  List<String> _neighborhood = ["Scegli un quartiere"];
+  List<Neighborhood> _neighborhood = [];
 
   Future<Widget> makeNeighborhoodMenu() async {
     //TODO gestire errori
-    //List<String> list = ["S"]
-    // await API_Manager.getNeighborhoods();
-    //_neighborhood = ["Scegli un quartiere"] + list;
-    //if (_neighborhood.length > 1) {
-    //  _neighborhood.removeAt(_neighborhood.length - 1);
-    // }
-    return DropdownSearch<String>(
-      popupProps: const PopupProps.menu(
-        showSelectedItems: true,
+    _neighborhood = await API_Manager.getNeighborhoods();
+    _neighborhood = [_voidNeighborhood] + _neighborhood;
+    return Row(
+      children: [
+        Expanded(
+          child: DropdownSearch<Neighborhood>(
+            items: _neighborhood,
+            compareFn: (i, s) => i.isEqual(s),
+            itemAsString: (Neighborhood u) => u.name,
+            onChanged: ((value) => _choice_neighborhood = value!),
+            selectedItem: _neighborhood[0],
+            validator: (value) {
+              if (value!.name == _voidNeighborhood.name) {
+                return "Scegliere un quartiere";
+              } else {
+                return null;
+              }
+            },
+            filterFn: ((item, filter) =>
+                item.functionFilterForNeighborhoods(filter)),
+            dropdownDecoratorProps: const DropDownDecoratorProps(
+              dropdownSearchDecoration: InputDecoration(
+                labelText: "Quartiere",
+              ),
+            ),
+            popupProps: PopupPropsMultiSelection.modalBottomSheet(
+              isFilterOnline: true,
+              showSelectedItems: true,
+              showSearchBox: true,
+              itemBuilder: _popupSearchBox,
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget _popupSearchBox(
+    BuildContext context,
+    Neighborhood? item,
+    bool isSelected,
+  ) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 8),
+      decoration: !isSelected
+          ? null
+          : BoxDecoration(
+              border: Border.all(color: Theme.of(context).primaryColor),
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.white,
+            ),
+      child: ListTile(
+        selected: isSelected,
+        title: Text(item?.name ?? ''),
       ),
-      items: _neighborhood,
-      validator: (value) {
-        if (value == "Scegliere un quartiere") {
-          return "Scegliere un quartiere";
-        } else {
-          return null;
-        }
-      },
-      dropdownDecoratorProps: const DropDownDecoratorProps(
-        dropdownSearchDecoration: InputDecoration(
-          labelText: "Quartiere",
-        ),
-      ),
-      onChanged: ((value) => _choice_neighborhood = value!),
-      selectedItem: _neighborhood[0],
     );
   }
 
@@ -84,6 +120,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     _iconPassword = Icons.visibility;
     _confirmPasswordVisible = false;
     _confirmIconPassword = Icons.visibility;
+    _choice_neighborhood = _voidNeighborhood;
   }
 
   Future<void> _showAlertDialog({required String text}) async {
@@ -428,7 +465,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                             ),
                           ),
                           //Quartiere
-                          //TODO fix glitch grafico all'apertura del menù
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 15),
                             child: FutureBuilder<Widget>(

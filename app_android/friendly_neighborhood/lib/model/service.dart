@@ -53,12 +53,9 @@ class Service {
 
   //CONVERSION TO JSON
   Map<String, dynamic> toJson() => {
-        'id': _id,
-        'postDate': _postDate,
         'title': _title,
         'link': _link,
         'description': _description,
-        'creator': _creator,
       };
 
   //Il campo link sarà strutturato come segue:

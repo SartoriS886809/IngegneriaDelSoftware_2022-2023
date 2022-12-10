@@ -46,8 +46,8 @@ class _ModifyProfileState extends State<ModifyProfile> {
     _controllerResidence.text = widget.user.address;
     _controllerFamily.text = widget.user.family.toString();
     _controllerDate.text =
-        DateFormat('dd-MM-yyyy').format(widget.user.birthdate);
-    _choice_house_type = widget.user.houseType;
+        DateFormat('dd-MM-yyyy').format(widget.user.birth_date);
+    _choice_house_type = widget.user.house_type;
     _choice_neighborhood = widget.user.neighborhood;
   }
 
