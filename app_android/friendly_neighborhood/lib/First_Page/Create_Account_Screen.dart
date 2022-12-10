@@ -1,10 +1,11 @@
-// ignore_for_file: non_constant_identifier_names, unused_field, constant_identifier_names, prefer_final_fields, file_names
+// ignore_for_file: non_constant_identifier_names, unused_field, constant_identifier_names, prefer_final_fields, file_names, use_build_context_synchronously
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/API_Manager/api_manager.dart';
-import 'package:friendly_neighborhood/First_Page/login_screen.dart';
 import 'package:friendly_neighborhood/configuration/configuration.dart';
+import 'package:friendly_neighborhood/first_page/login_screen.dart';
+import 'package:friendly_neighborhood/model/localuser.dart';
 import 'package:friendly_neighborhood/model/neighborhood.dart';
 import 'package:friendly_neighborhood/utils/check_connection.dart';
 import 'package:intl/intl.dart';
@@ -490,6 +491,35 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                     bool check = await CheckConnection.check();
                                     if (check) {
                                       //TODO inviare richiesta server
+                                      LocalUser newUser = LocalUser(
+                                          _controllerEmail.text,
+                                          _controllerUsername.text,
+                                          _controllerName.text,
+                                          _controllerLastname.text,
+                                          DateFormat('dd-MM-yyyy')
+                                              .parse(_controllerDate.text),
+                                          _controllerResidence.text,
+                                          int.parse(_controllerFamily.text),
+                                          _choice_house_type,
+                                          _choice_neighborhood.name,
+                                          _choice_neighborhood.id,
+                                          "");
+                                      try {
+                                        bool c = await API_Manager.signup(
+                                            newUser, _controllerPassword.text);
+                                        if (c) {
+                                          Navigator.pop(context);
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      LoginScreen.withMessage(
+                                                          message:
+                                                              "Creazione account avvenuta con successo. Si prega di eseguire l'accesso")));
+                                        }
+                                      } catch (e) {
+                                        _showAlertDialog(text: e.toString());
+                                      }
                                     } else {
                                       _showAlertDialog(
                                           text:
@@ -538,8 +568,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) =>
-                                            const LoginScreen()));
+                                        builder: (context) => LoginScreen()));
                               }),
                       ]),
                     ),

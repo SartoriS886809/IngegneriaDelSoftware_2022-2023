@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, must_be_immutable
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +14,12 @@ Lista di todo:
 //TODO se possibile utilizzare un testo per notifiche di errori riguardanti email/password
 */
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  String message = "";
+  LoginScreen({super.key}) {
+    message = "";
+  }
+
+  LoginScreen.withMessage({super.key, required this.message});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -33,8 +38,8 @@ class _LoginScreenState extends State<LoginScreen> {
     _passwordVisible = false;
     _iconPassword = Icons.visibility;
     //TODO TEMP
-    _controllerEmail.text = "prova@prova.com";
-    _controllerPassword.text = "prova";
+    _controllerEmail.text = "prova2@prova.com";
+    _controllerPassword.text = "passpass";
   }
 
   Future<void> _showAlertDialog({required String text}) async {
@@ -75,6 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Text(widget.message),
               Expanded(child: Container()),
               Form(
                   key: _formKey,
@@ -151,6 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             padding: const EdgeInsets.symmetric(vertical: 16.0),
                             child: ElevatedButton(
                               onPressed: () async {
+                                widget.message = "";
                                 //Controllo se il form è valido
                                 if (_formKey.currentState!.validate()) {
                                   //Controllo connessione internet
@@ -211,6 +218,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             //Se il testo viene cliccato
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
+                                widget.message = "";
                                 //Rimuovo dallo stack la pagina di login e inserisco quella di creazione account
                                 Navigator.of(context).pop();
                                 Navigator.push(
