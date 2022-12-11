@@ -171,13 +171,13 @@ La variabile isItMine serve a specificare se la lista da scaricare corrisponde a
 (es. Miei Servizi) oppure quella generica (es. Servizi). Il metodo scaricherà
 la lista in base alla tipologia richiesta.
 */
-  static Future<List<dynamic>> listOfElements(
+  static Future<List<dynamic>> listOfElements<E>(
       String token, ELEMENT_TYPE type, bool isItMine) async {
-    String link = "";
+    String link = Configuration.API_link;
     if (isItMine) {
-      link = "/mylist/";
+      link += "/mylist/";
     } else {
-      link = "/list/";
+      link += "/list/";
     }
     Map<String, dynamic> json = {};
     json["token"] = token;
@@ -200,8 +200,10 @@ la lista in base alla tipologia richiesta.
     if (jsonResponse["status"] != 'success') {
       throw jsonResponse["reason"].toString();
     }
+
     List<dynamic> res = [];
     for (Map<String, dynamic> x in jsonResponse["list"]) {
+      x["postdate"] = extractDataFromDBString(x["postdate"]);
       switch (type) {
         case ELEMENT_TYPE.NEEDS:
           res.add(Need.fromJSON(x));
@@ -227,7 +229,7 @@ e il token (token) dell'utente corrente.
 //TODO Guardare parametri passati al server
   static Future<bool> updateElement(
       String token, dynamic elem, ELEMENT_TYPE type) async {
-    String link = "/mylist/";
+    String link = "${Configuration.API_link}/mylist/";
     Map<String, dynamic> map = {};
     switch (type) {
       case ELEMENT_TYPE.NEEDS:
@@ -265,7 +267,7 @@ e il token (token) dell'utente corrente.
 */
   static Future<bool> createElement(
       String token, dynamic elem, ELEMENT_TYPE type) async {
-    String link = "/new/";
+    String link = "${Configuration.API_link}/new/";
     Map<String, dynamic> map = {};
     switch (type) {
       case ELEMENT_TYPE.NEEDS:
@@ -303,7 +305,7 @@ e il token (token) dell'utente corrente.
 */
   static Future<bool> deleteElement(
       String token, int id, ELEMENT_TYPE type) async {
-    String link = "/delete/";
+    String link = "${Configuration.API_link}/delete/";
     switch (type) {
       case ELEMENT_TYPE.NEEDS:
         link += "needs/";
@@ -328,6 +330,9 @@ e il token (token) dell'utente corrente.
     }
     return true;
   }
+  //TODO route assist
+  //TODO undo assist
+  //TODO lista da soddisfare
 
   /*
   La funzione sendRequest dato un link e una stringa in formato json, invia una richiesta
@@ -365,10 +370,6 @@ e il token (token) dell'utente corrente.
       return response;
     }
   }
-  //TODO route assist
-  //TODO undo assist
-  //TODO lista da soddisfare
-
 }
 //https://docs.flutter.dev/cookbook/networking/send-data
 //https://pub.dev/packages/request_permission

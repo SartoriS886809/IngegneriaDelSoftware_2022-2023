@@ -1,6 +1,7 @@
 // ignore_for_file: unnecessary_getters_setters
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/icon_manager/report__icons_icons.dart';
+import 'package:intl/intl.dart';
 
 class Report {
   late int _id;
@@ -38,7 +39,7 @@ class Report {
 
   Report.fromJSON(Map<String, dynamic> json) {
     _id = json["id"];
-    _postDate = json["postDate"];
+    _postDate = DateFormat('dd-MM-yyyy').parse(json["postDate"]);
     _title = json["title"];
     _priority = json["priority"];
     _category = json["category"];

@@ -1,6 +1,7 @@
 // ignore_for_file: unnecessary_getters_setters
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/configuration/configuration.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../utils/elaborate_data.dart';
@@ -31,10 +32,10 @@ class Service {
   //JSON constructor
   Service.fromJSON(Map<String, dynamic> json) {
     _id = json["id"];
-    _postDate = json["postDate"];
+    _postDate = DateFormat('dd-MM-yyyy').parse(json["postdate"]);
     _title = json["title"];
     _link = json["link"];
-    _description = json["description"];
+    _description = json["desc"];
     _creator = json["creator"];
   }
 
@@ -55,7 +56,7 @@ class Service {
   Map<String, dynamic> toJson() => {
         'title': _title,
         'link': _link,
-        'description': _description,
+        'desc': _description,
       };
 
   //Il campo link sarà strutturato come segue:

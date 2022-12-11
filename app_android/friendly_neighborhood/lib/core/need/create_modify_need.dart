@@ -14,11 +14,12 @@ class CreationOrModificationNeed extends StatefulWidget {
   }
 
   @override
-  State<CreationOrModificationNeed> createState() =>_CreationOrModificationNeedState();
+  State<CreationOrModificationNeed> createState() =>
+      _CreationOrModificationNeedState();
 }
 
-class _CreationOrModificationNeedState extends State<CreationOrModificationNeed> {
-
+class _CreationOrModificationNeedState
+    extends State<CreationOrModificationNeed> {
   final _formKey = GlobalKey<FormState>();
   final _controllerTitle = TextEditingController();
   final _controllerDescription = TextEditingController();
@@ -53,17 +54,18 @@ class _CreationOrModificationNeedState extends State<CreationOrModificationNeed>
         address: _controllerAddress.text,
         description: _controllerDescription.text,
         assistant: "",
-        idAssistant: 0,
-        creator: "creator");    //TODO: creator preso da profilo
-        //TODO: invia al server
+        creator: "creator"); //TODO: creator preso da profilo
+    //TODO: invia al server
     Navigator.pop(_context);
   }
 
   Future<void> _showAlertDialog() async {
-    String title=(widget.modification)?"Aggiornamento":"Creazione";
-    String message=(widget.modification)?"Sei sicuro di voler aggiornare il bisogno?":"Sei sicuro di voler creare il bisogno?";
-    String buttonMessage=(widget.modification)?"Aggiorna":"Crea";
-    Function f=(widget.modification)?updateNeed:createNeed;
+    String title = (widget.modification) ? "Aggiornamento" : "Creazione";
+    String message = (widget.modification)
+        ? "Sei sicuro di voler aggiornare il bisogno?"
+        : "Sei sicuro di voler creare il bisogno?";
+    String buttonMessage = (widget.modification) ? "Aggiorna" : "Crea";
+    Function f = (widget.modification) ? updateNeed : createNeed;
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // L'utente deve premere il pulsante
@@ -108,10 +110,9 @@ class _CreationOrModificationNeedState extends State<CreationOrModificationNeed>
       body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
-          children:[
+          children: [
             Expanded(
-              child: 
-              Form(
+              child: Form(
                   key: _formKey,
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,8 +206,9 @@ class _CreationOrModificationNeedState extends State<CreationOrModificationNeed>
                                         child: ElevatedButton(
                                           onPressed: () async {
                                             //Controllo se il form è valido
-                                            if (_formKey.currentState!.validate()) {
-                                                _showAlertDialog();
+                                            if (_formKey.currentState!
+                                                .validate()) {
+                                              _showAlertDialog();
                                             }
                                           },
                                           child: Center(
@@ -222,8 +224,7 @@ class _CreationOrModificationNeedState extends State<CreationOrModificationNeed>
                         )
                       ])),
             ),
-          ]
-      ),
+          ]),
     );
   }
 }
