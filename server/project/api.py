@@ -2,6 +2,19 @@ from . import app
 from flask import request
 from project.operations import commit, rollback, flush, add_and_commit, add_no_commit, delete_tuple, update_tuple, get_all, get_table, get_user_by_token
 from uuid import uuid4
+from sqlalchemy.exc import SQLAlchemyError
+
+
+@app.errorhandler(Exception)
+def handle_error(e):
+    rollback()
+    return {'status': 'failure', 'reason': str(e)}
+
+
+@app.errorhandler(SQLAlchemyError)
+def handle_error(e):
+    rollback()
+    return {'status': 'failure', 'reason': str(e)}
 
 
 @app.route('/')
@@ -177,6 +190,7 @@ Return success: {
                 'address': string,
                 'family': int,
                 'house_type': string,
+                'neighborhood': string,
                 'id_neighborhoods': int,
                 'status': 'success'}
 Return failure: {'status': 'failure', 'reason': string}
@@ -208,6 +222,7 @@ Return success: Return success: {
                 'address': string,
                 'family': int,
                 'house_type': string,
+                'neighborhood': string,
                 'id_neighborhoods': int,
                 'status': 'success'}
 Return failure: {'status': 'failure', 'reason': string}
@@ -223,6 +238,7 @@ def profile():
         update_tuple('users', user.email, **request.json)
 
     elems = user.get_all_elements()
+    elems['id_neighborhoods'] = user.id_neighborhoods
     elems['status'] = 'success'
     return elems
 
