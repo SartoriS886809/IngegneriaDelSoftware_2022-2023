@@ -16,6 +16,7 @@ def test_view_profile(client):
     assert response.json["family"] is not None
     assert response.json["house_type"] != ""
     assert response.json["neighborhood"] != ""
+    assert response.json["id_neighborhoods"] != ""
 
 
 def test_modify_profile(client):
