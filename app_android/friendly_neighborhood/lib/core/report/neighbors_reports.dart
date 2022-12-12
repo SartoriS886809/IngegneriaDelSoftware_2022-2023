@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/model/report.dart';
 
+import '../../API_Manager/api_manager.dart';
+import '../../cache_manager/profile_db.dart';
+import '../../model/localuser.dart';
+import '../../utils/elaborate_data.dart';
+
 class NeighborsReports extends StatefulWidget {
   const NeighborsReports({super.key});
 
@@ -9,11 +14,14 @@ class NeighborsReports extends StatefulWidget {
 }
 
 class _NeighborsReportsState extends State<NeighborsReports> {
+  String token = "";
+  LocalUserManager lum = LocalUserManager();
   //API
 
   //test list
 
-  List<Report> reportList = [
+  List<Report> reportList = [];
+  /*
     Report(
         postDate: DateTime(2022, 11, 23, 14, 20),
         title: 'Albero caduto',
@@ -36,6 +44,7 @@ class _NeighborsReportsState extends State<NeighborsReports> {
         address: 'via Col Vento',
         creator: 'Lucio Wolf')
   ];
+  */
 
   //initState() è il costruttore delle classi stato
 
@@ -44,17 +53,29 @@ class _NeighborsReportsState extends State<NeighborsReports> {
     super.initState();
   }
 
-  //TODO implementare la lista di segnalazioni
+  //TODO INSERIRE FUNZIONE DI GESTIONE DI ERRORE IN CASO DEL TOKEN NON PIù VALIDO
 
-  @override
-  Widget build(BuildContext context) {
+  //TODO Controllo connessione ad internet
+  Future downloadData(bool needRefreshGUI) async {
+    if (token == "") {
+      LocalUser? user = await lum.getUser();
+      token = user!.token;
+    }
+
+    reportList = List<Report>.from(
+        await API_Manager.listOfElements(token, ELEMENT_TYPE.REPORTS, false));
+    if (needRefreshGUI) setState(() {});
+  }
+
+  Future<Widget> generateList() async {
+    await downloadData(false);
     return (reportList.isNotEmpty)
         ? ListView.builder(
             itemCount: reportList.length,
             itemBuilder: (context, index) {
               final Report reportIter = reportList.elementAt(index);
               final String dateIter =
-                  "${reportIter.postDate.day}-${reportIter.postDate.year} ${reportIter.postDate.hour}:${reportIter.postDate.minute}";
+                  convertDateTimeToDate(reportIter.postDate);
               return Card(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -78,5 +99,19 @@ class _NeighborsReportsState extends State<NeighborsReports> {
             child: Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Text("Non sono ancora presenti Segnalazioni")));
+  }
+  //TODO implementare la lista di segnalazioni
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<Widget>(
+        future: generateList(),
+        builder: (context, AsyncSnapshot<Widget> snapshot) {
+          if (snapshot.hasData) {
+            return snapshot.data!;
+          } else {
+            return const CircularProgressIndicator();
+          }
+        });
   }
 }

@@ -222,7 +222,7 @@ la lista in base alla tipologia richiesta.
   }
 
 /*
-La funzione updateElement aggiorna il contenuto di una entry di una tabella specificata dal parametro type (SERVICES, NEEDS, REPORTS). 
+La funzione updateElement aggiorna il contenuto di una entry di una tabella specificata dal parametro type (SERVICES, NEEDS). 
 Questa ritornerà true se l'operazione andrà a buon fine, altrimenti lancerà un'eccezione. La funzione richiede in input l'elemento da modificare (elem) 
 e il token (token) dell'utente corrente.
 */
@@ -235,16 +235,16 @@ e il token (token) dell'utente corrente.
       case ELEMENT_TYPE.NEEDS:
         Need? n = _cast<Need>(elem);
         map = n!.toJson();
+        map["id"] = n.id;
         link += "needs";
         break;
       case ELEMENT_TYPE.REPORTS:
-        Report? r = _cast<Report>(elem);
-        map = r!.toJson();
-        link += "reports";
-        break;
+        //I report non possono essere modificati
+        throw "I report non possono essere modificati";
       case ELEMENT_TYPE.SERVICES:
         Service? s = _cast<Service>(elem);
         map = s!.toJson();
+        map["id"] = s.id;
         link += "services";
         break;
       default:
@@ -308,20 +308,20 @@ e il token (token) dell'utente corrente.
     String link = "${Configuration.API_link}/delete/";
     switch (type) {
       case ELEMENT_TYPE.NEEDS:
-        link += "needs/";
+        link += "needs";
         break;
       case ELEMENT_TYPE.REPORTS:
-        link += "reports/";
+        link += "reports";
         break;
       case ELEMENT_TYPE.SERVICES:
-        link += "services/";
+        link += "services";
         break;
       default:
         break;
     }
-    link += "$id";
     Map<String, dynamic> json = {};
     json['token'] = token;
+    json['id'] = id;
     http.Response response =
         await sendRequest(link, jsonEncode(json), HTTP_Method.DELETE);
     dynamic jsonResponse = jsonDecode(response.body);
@@ -330,9 +330,54 @@ e il token (token) dell'utente corrente.
     }
     return true;
   }
-  //TODO route assist
-  //TODO undo assist
-  //TODO lista da soddisfare
+
+/*
+La funzione assistNeed serve ad impostare la persona che andrà ad assistere.
+La funzione richiede in input l'id del bisogno da soddisfare e il token (token) dell'utente corrente e 
+un tipo bool markAssistance (true=soddisfa, false= non soddisfare più).
+*/
+  static Future<bool> assistanceNeed(
+      String token, int id, bool markAssistance) async {
+    String link = "${Configuration.API_link}/assist";
+    Map<String, dynamic> json = {};
+    json['token'] = token;
+    json['id'] = id.toString();
+    HTTP_Method h;
+    if (markAssistance) {
+      h = HTTP_Method.POST;
+    } else {
+      h = HTTP_Method.DELETE;
+    }
+    http.Response response = await sendRequest(link, jsonEncode(json), h);
+    dynamic jsonResponse = jsonDecode(response.body);
+    if (jsonResponse["status"] != 'success') {
+      throw jsonResponse["reason"].toString();
+    }
+    return true;
+  }
+
+/*
+La funzione assistList restituisce una lista di Need che dovranno essere soddisfatti. 
+La funzione richiede in ingresso il token dell'utente corrente.
+*/
+  static Future<List<Need>> assistList<E>(String token) async {
+    String link = "${Configuration.API_link}/assist-list";
+    Map<String, dynamic> json = {};
+    json["token"] = token;
+    http.Response response =
+        await sendRequest(link, jsonEncode(json), HTTP_Method.POST);
+    dynamic jsonResponse = jsonDecode(response.body);
+    if (jsonResponse["status"] != 'success') {
+      throw jsonResponse["reason"].toString();
+    }
+
+    List<Need> res = [];
+    for (Map<String, dynamic> x in jsonResponse["list"]) {
+      x["postdate"] = extractDataFromDBString(x["postdate"]);
+      res.add(Need.fromJSON(x));
+    }
+    return res;
+  }
 
   /*
   La funzione sendRequest dato un link e una stringa in formato json, invia una richiesta

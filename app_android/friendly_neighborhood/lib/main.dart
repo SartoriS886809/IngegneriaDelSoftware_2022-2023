@@ -97,9 +97,10 @@ class _LoadingScreenState extends State<LoadingScreen> {
       Navigator.pop(_context);
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => LoginScreen()));
+      return;
     }
     if (await CheckConnection.check()) {
-      bool check = await API_Manager.checkToken(user!.email, user.token);
+      bool check = await API_Manager.checkToken(user.email, user.token);
       if (check) {
         Navigator.pop(_context);
         Navigator.push(

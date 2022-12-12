@@ -33,6 +33,12 @@ class _NeighborhoodServicePageState extends State<NeighborhoodServicePage> {
 
   Future<Widget> generateList() async {
     await downloadData(false);
+    if (data.isEmpty) {
+      return const Center(
+          child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text("Non sono ancora presenti servizi")));
+    }
     return SizedBox(
       height: double.infinity,
       child: ListView.builder(

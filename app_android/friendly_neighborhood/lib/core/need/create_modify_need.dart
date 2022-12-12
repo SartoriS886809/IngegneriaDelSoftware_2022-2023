@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:friendly_neighborhood/API_Manager/api_manager.dart';
+import 'package:friendly_neighborhood/cache_manager/profile_db.dart';
+import 'package:friendly_neighborhood/model/localuser.dart';
 import 'package:friendly_neighborhood/model/need.dart';
 
 // ignore: must_be_immutable
@@ -26,6 +29,9 @@ class _CreationOrModificationNeedState
   final _controllerAddress = TextEditingController();
   late BuildContext _context;
 
+  String token = "";
+  LocalUserManager lum = LocalUserManager();
+
   @override
   void initState() {
     super.initState();
@@ -39,14 +45,19 @@ class _CreationOrModificationNeedState
     }
   }
 
-  void updateNeed() {
+  void updateNeed() async {
     widget.need!.title = _controllerTitle.text;
     widget.need!.description = _controllerDescription.text;
+    widget.need!.address = _controllerAddress.text;
     //TODO: invia al server
+    LocalUser? user = await lum.getUser();
+    token = user!.token;
+    await API_Manager.updateElement(token, widget.need, ELEMENT_TYPE.NEEDS);
+    //
     Navigator.pop(_context);
   }
 
-  void createNeed() {
+  void createNeed() async {
     //TODO Creator da assegnare
     widget.need = Need(
         postDate: DateTime.now(),
@@ -54,8 +65,12 @@ class _CreationOrModificationNeedState
         address: _controllerAddress.text,
         description: _controllerDescription.text,
         assistant: "",
-        creator: "creator"); //TODO: creator preso da profilo
+        creator: ""); //TODO: creator preso da profilo
     //TODO: invia al server
+    LocalUser? user = await lum.getUser();
+    token = user!.token;
+    await API_Manager.createElement(token, widget.need, ELEMENT_TYPE.NEEDS);
+    //
     Navigator.pop(_context);
   }
 

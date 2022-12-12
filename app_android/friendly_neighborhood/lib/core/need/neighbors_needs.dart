@@ -97,6 +97,5 @@ class _NeighborsNeedsState extends State<NeighborsNeeds> {
             return const CircularProgressIndicator();
           }
         });
-    //return Text("neighbours needs");
   }
 }

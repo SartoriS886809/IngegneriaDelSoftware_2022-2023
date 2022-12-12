@@ -39,13 +39,14 @@ class Report {
 
   Report.fromJSON(Map<String, dynamic> json) {
     _id = json["id"];
-    _postDate = DateFormat('dd-MM-yyyy').parse(json["postDate"]);
+    _postDate = DateFormat('dd-MM-yyyy').parse(json["postdate"]);
     _title = json["title"];
     _priority = json["priority"];
     _category = json["category"];
     _address = json["address"];
     _creator = json["creator"];
   }
+
   Report.fromDB(Map<String, dynamic> map) {
     _id = map["id"];
     _postDate = DateTime.parse(map["postDate"]);

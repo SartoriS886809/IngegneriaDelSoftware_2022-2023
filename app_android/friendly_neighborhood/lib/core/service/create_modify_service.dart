@@ -1,8 +1,11 @@
-// ignore_for_file: list_remove_unrelated_type
+// ignore_for_file: list_remove_unrelated_type, use_build_context_synchronously
 
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
+import 'package:friendly_neighborhood/API_Manager/api_manager.dart';
+import 'package:friendly_neighborhood/cache_manager/profile_db.dart';
 import 'package:friendly_neighborhood/configuration/configuration.dart';
+import 'package:friendly_neighborhood/model/localuser.dart';
 import 'package:friendly_neighborhood/model/service.dart';
 
 import '../../utils/elaborate_data.dart';
@@ -32,6 +35,8 @@ class _CreationOrModificationServiceState
   final _controllerDescription = TextEditingController();
   late List<Pair<String, String>> _listContact;
   late BuildContext _context;
+  LocalUserManager lum = LocalUserManager();
+  LocalUser? user = null;
 
   Future<void> _showAlertDialog(
       {required String title,
@@ -71,22 +76,43 @@ class _CreationOrModificationServiceState
     );
   }
 
-  void updateService() {
+  void updateService() async {
+    user ??= await lum.getUser();
     widget.service!.title = _controllerTitle.text;
     widget.service!.description = _controllerDescription.text;
-    widget.service!.title = Service.getLinkFromContactMethods(_listContact);
-    Navigator.pop(_context);
+    widget.service!.link = Service.getLinkFromContactMethods(_listContact);
+    try {
+      await API_Manager.updateElement(
+          user!.token, widget.service, ELEMENT_TYPE.SERVICES);
+      Navigator.pop(_context);
+    } catch (e) {
+      _showAlertDialog(
+          buttonMessage: "Riprova",
+          title: "Errore",
+          message: e.toString(),
+          f: updateService);
+    }
   }
 
-  void createService() {
-    //TODO Creator da assegnare
+  void createService() async {
+    user ??= await lum.getUser();
     widget.service = Service(
         postDate: DateTime.now(),
         title: _controllerTitle.text,
         link: Service.getLinkFromContactMethods(_listContact),
         description: _controllerDescription.text,
-        creator: "creator");
-    Navigator.pop(_context);
+        creator: "");
+    try {
+      await API_Manager.createElement(
+          user!.token, widget.service, ELEMENT_TYPE.SERVICES);
+      Navigator.pop(_context);
+    } catch (e) {
+      _showAlertDialog(
+          buttonMessage: "Riprova",
+          title: "Errore",
+          message: e.toString(),
+          f: createService);
+    }
   }
 
   Widget makeList() {

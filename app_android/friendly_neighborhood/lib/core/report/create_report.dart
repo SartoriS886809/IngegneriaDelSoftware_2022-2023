@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/model/report.dart';
 
+import '../../API_Manager/api_manager.dart';
+import '../../cache_manager/profile_db.dart';
+import '../../model/localuser.dart';
+
 //ignore: must_be_immutable
 class CreationReport extends StatefulWidget {
   Report? report;
@@ -26,6 +30,9 @@ class _CreationReportState extends State<CreationReport> {
     'Guasto',
     'Lavori in corso'
   ];
+  String token = "";
+  LocalUserManager lum = LocalUserManager();
+
   late BuildContext _context;
 
   Future<void> _showAlertDialog(
@@ -66,15 +73,18 @@ class _CreationReportState extends State<CreationReport> {
     );
   }
 
-  void createReport() {
+  Future<void> createReport() async {
     //TODO Creator da assegnare
     widget.report = Report(
         postDate: DateTime.now(),
         title: _controllerTitle.text,
         priority: _priority,
-        category: _valueChoose.toString(),
+        category: _valueChoose.toString().toLowerCase(),
         address: _controllerAddress.text,
-        creator: 'creator');
+        creator: '');
+    LocalUser? user = await lum.getUser();
+    token = user!.token;
+    API_Manager.createElement(token, widget.report, ELEMENT_TYPE.REPORTS);
     //TODO comunicare con DB
     Navigator.pop(_context);
   }
@@ -83,6 +93,8 @@ class _CreationReportState extends State<CreationReport> {
   Widget build(BuildContext context) {
     _context = context;
     return Scaffold(
+        //Evita l'overflow una volta aperta la tastiera
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(title: const Text("Creazione Segnalazione")),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -245,7 +257,7 @@ class _CreationReportState extends State<CreationReport> {
                                         _showAlertDialog(
                                             title: "Creazione",
                                             message:
-                                                "Sei sicuro di voler creare il servizio?",
+                                                "Sei sicuro di voler creare la segnalazione?",
                                             buttonMessage: "Crea",
                                             f: createReport);
                                       }

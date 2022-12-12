@@ -1,7 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
+import 'package:friendly_neighborhood/cache_manager/profile_db.dart';
 import 'package:friendly_neighborhood/core/service/create_modify_service.dart';
 import 'package:friendly_neighborhood/model/service.dart';
 
+import '../../API_Manager/api_manager.dart';
+import '../../model/localuser.dart';
 import '../../utils/elaborate_data.dart';
 
 class ShowService extends StatefulWidget {
@@ -16,9 +21,17 @@ class ShowService extends StatefulWidget {
 
 class _ShowServiceState extends State<ShowService> {
   late BuildContext _context;
-  void removeService() {
-    //TODO Richiesta di rimuovere al server
-    Navigator.pop(_context);
+  LocalUserManager lum = LocalUserManager();
+  LocalUser? user = null;
+  Future<void> removeService() async {
+    user ??= await lum.getUser();
+    try {
+      await API_Manager.deleteElement(
+          user!.token, widget.service.id, ELEMENT_TYPE.SERVICES);
+      Navigator.pop(_context);
+    } catch (e) {
+      //TODO Inserire dialogo con scritto l'errore e riprovare
+    }
   }
 
   Future<void> _showConfirmDeleteDialog() async {

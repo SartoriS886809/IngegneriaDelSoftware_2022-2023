@@ -30,12 +30,18 @@ class _MyServicePageState extends State<MyServicePage> {
 
   Future<Widget> generateList() async {
     await downloadData(false);
+    if (data.isEmpty) {
+      return const Center(
+          child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text("Non hai creato servizi")));
+    }
     return SizedBox(
       height: double.infinity,
       child: ListView.builder(
         itemCount: data.length,
         itemBuilder: (context, index) {
-          return ServiceCardNeighborhood(service: data[index]);
+          return ServiceCardMe(service: data[index]);
         },
       ),
     );

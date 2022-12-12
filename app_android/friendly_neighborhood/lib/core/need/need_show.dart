@@ -1,27 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:friendly_neighborhood/API_Manager/api_manager.dart';
+import 'package:friendly_neighborhood/cache_manager/profile_db.dart';
 import 'package:friendly_neighborhood/core/need/create_modify_need.dart';
+import 'package:friendly_neighborhood/model/localuser.dart';
 import 'package:friendly_neighborhood/model/need.dart';
-
 
 class ShowNeed extends StatefulWidget {
   final Need need;
-  final bool isItMine;//indica se l'utente corrente è il creatore del bisogno visualizzato
-  final bool assistedByMe;//indica se l'utente corrente è attualmente in carico del bisogno visualizzato
-  const ShowNeed({super.key, required this.need, required this.isItMine, required this.assistedByMe});
+  final bool
+      isItMine; //indica se l'utente corrente è il creatore del bisogno visualizzato
+  final bool
+      assistedByMe; //indica se l'utente corrente è attualmente in carico del bisogno visualizzato
+  const ShowNeed(
+      {super.key,
+      required this.need,
+      required this.isItMine,
+      required this.assistedByMe});
 
 //la seguente funzione crea una finestra di dialogo per gestire la conferma di cambiamenti nella disponibilità all'assistenza di una richiesta
 //parametro callFromList indica se la funzione è stata chiamata dalla lista nella sezione "My assignments"
-  Future<void> showConfirmAssistanceChangeDialog(BuildContext context, [bool callFromMyAssignments=false]) async {
+  Future<void> showConfirmAssistanceChangeDialog(BuildContext context,
+      [bool callFromMyAssignments = false]) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // L'utente deve premere il pulsante
       builder: (BuildContext context) {
         return AlertDialog(
-          title: (assistedByMe)?const Text('Ritiro disponibilità'):const Text('Soddisfazione richiesta'),
+          title: (assistedByMe)
+              ? const Text('Ritiro disponibilità')
+              : const Text('Soddisfazione richiesta'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                (assistedByMe)?const Text("Sei sicuro di voler ritirare la disponibilità all'assistenza?"):const Text("Sei sicuro di voler soddisfare la richiesta?"),
+                (assistedByMe)
+                    ? const Text(
+                        "Sei sicuro di voler ritirare la disponibilità all'assistenza?")
+                    : const Text(
+                        "Sei sicuro di voler soddisfare la richiesta?"),
               ],
             ),
           ),
@@ -33,11 +48,12 @@ class ShowNeed extends StatefulWidget {
               },
             ),
             TextButton(
-              child: (assistedByMe)?const Text('Ritira disponibilità'):const Text('Soddisfa'),
+              child: (assistedByMe)
+                  ? const Text('Ritira disponibilità')
+                  : const Text('Soddisfa'),
               onPressed: () {
-
                 Navigator.of(context).pop();
-                changeAssistanceAvailability(context,callFromMyAssignments);
+                changeAssistanceAvailability(context, callFromMyAssignments);
               },
             ),
           ],
@@ -47,13 +63,21 @@ class ShowNeed extends StatefulWidget {
   }
 
 //questa funzione si occupa della richiesta al server di modifica del campo relativo all'assistente del bisogno visualizzato
-  void changeAssistanceAvailability(BuildContext context, [bool callFromMyAssignments=false]) {
-    if(assistedByMe){
+  void changeAssistanceAvailability(BuildContext context,
+      [bool callFromMyAssignments = false]) async {
+    String token = "";
+    LocalUserManager lum = LocalUserManager();
+    LocalUser? user = await lum.getUser();
+    token = user!.token;
+
+    if (assistedByMe) {
       //TODO Richiesta al server di rimozione del proprio id come assistente dal bisogno
-    }else{
+      await API_Manager.assistanceNeed(token, need.id, false);
+    } else {
       //TODO Richiesta al server di inserimento del proprio id come assistente dal bisogno
+      await API_Manager.assistanceNeed(token, need.id, true);
     }
-    if(!callFromMyAssignments) Navigator.pop(context);
+    if (!callFromMyAssignments) Navigator.pop(context);
   }
 
   @override
@@ -63,8 +87,12 @@ class ShowNeed extends StatefulWidget {
 class _ShowNeedState extends State<ShowNeed> {
   late BuildContext _context;
 
-  void removeNeed() {
-    //TODO Richiesta di rimozione bisogno al server
+  void removeNeed() async {
+    String token = "";
+    LocalUserManager lum = LocalUserManager();
+    LocalUser? user = await lum.getUser();
+    token = user!.token;
+    await API_Manager.deleteElement(token, widget.need.id, ELEMENT_TYPE.NEEDS);
     Navigator.pop(_context);
   }
 
@@ -111,13 +139,15 @@ class _ShowNeedState extends State<ShowNeed> {
         body: Column(
           children: [
             Text('Creato da: ${widget.need.creator}'),
-            Text('Pubblicato il: ${widget.need.postDate.day}-${widget.need.postDate.month}-${widget.need.postDate.year}'),
+            Text(
+                'Pubblicato il: ${widget.need.postDate.day}-${widget.need.postDate.month}-${widget.need.postDate.year}'),
             Text('Luogo associato: ${widget.need.address}'),
-            if(widget.isItMine && widget.need.assistant!="") Text('Richiesta presa in carico da: ${widget.need.assistant}'),
-            if(widget.isItMine && widget.need.assistant=="") const Text('La richiesta non è ancora stata presa in carico'),
+            if (widget.isItMine && widget.need.assistant != "")
+              Text('Richiesta presa in carico da: ${widget.need.assistant}'),
+            if (widget.isItMine && widget.need.assistant == "")
+              const Text('La richiesta non è ancora stata presa in carico'),
             Text('Descrizione: ${widget.need.description}'),
-             
-            Expanded(child:Container()),
+            Expanded(child: Container()),
             Row(
               children: [
                 Expanded(
@@ -169,7 +199,8 @@ class _ShowNeedState extends State<ShowNeed> {
                               child: Text('Elimina'),
                             )),
                           ))),
-                if (!widget.isItMine)//se il bisogno non è dell'utente corrente, questo deve poter soddisfarlo o ritirare la disponibilità
+                if (!widget
+                    .isItMine) //se il bisogno non è dell'utente corrente, questo deve poter soddisfarlo o ritirare la disponibilità
                   Expanded(
                       child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -180,8 +211,11 @@ class _ShowNeedState extends State<ShowNeed> {
                             },
                             child: Center(
                                 child: Padding(
-                              padding: const EdgeInsets.only(top: 16, bottom: 16),
-                              child: (widget.assistedByMe)?const Text('Ritira disponibilità'):const Text('Soddisfa'),
+                              padding:
+                                  const EdgeInsets.only(top: 16, bottom: 16),
+                              child: (widget.assistedByMe)
+                                  ? const Text('Ritira disponibilità')
+                                  : const Text('Soddisfa'),
                             )),
                           ))),
               ],
