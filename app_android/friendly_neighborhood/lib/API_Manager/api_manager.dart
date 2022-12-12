@@ -64,8 +64,6 @@ class API_Manager {
       profile["birth_date"] = extractDataFromDBString(profile["birth_date"]);
       //Upload sul dbLocalUser
       profile["token"] = token;
-      //TODO TEMP
-      profile['id_neighborhoods'] = 1;
       LocalUser user = LocalUser.fromJSON(profile);
       LocalUserManager l = LocalUserManager();
       await l.insertUser(user);
