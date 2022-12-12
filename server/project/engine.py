@@ -16,16 +16,21 @@ Base = declarative_base()
 Session = sessionmaker(bind=engine)
 session = Session()
 
+def delete_schema():
+    engine.execute(DDL("DROP SCHEMA IF EXISTS public CASCADE"))
 
 def create_schema():
-    engine.execute(DDL("DROP SCHEMA IF EXISTS public CASCADE; CREATE SCHEMA IF NOT EXISTS public"))
-
+    engine.execute(DDL("CREATE SCHEMA IF NOT EXISTS public"))
 
 def populate():
     engine.execute(text(open("db_scripts/populate.sql").read()))
     
 def create_neigh(table):
-    session.add(table(name='neigh1', area=23))
-    session.add(table(name='neigh2', area=23))
-    session.add(table(name='neigh3', area=23))
+    session.add(table(name='San Polo', area=0.70))
+    session.add(table(name='Dorsoduro', area=0.70))
+    session.add(table(name='San Marco', area=0.71))
+    session.add(table(name='Santa Croce', area=0.68))
+    session.add(table(name='Castello', area=0.93))
+    session.add(table(name='Cannaregio', area=1.1))
+    session.add(table(name='Giudecca', area=0.59))
     session.commit()

@@ -43,7 +43,7 @@ Return failure: {'status': 'failure', 'reason': string}
 '''
 @app.route('/signup', methods=['POST'])
 def signup():
-    if get_table('users', request.json['email']):
+    if get_table('users', request.json.get('email')):
         return {'status': 'failure', 'reason': 'user already exists'}
 
     add_and_commit('users', token='', **request.json)
