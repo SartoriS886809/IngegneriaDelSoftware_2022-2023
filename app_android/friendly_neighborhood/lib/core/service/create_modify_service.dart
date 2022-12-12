@@ -156,6 +156,9 @@ class _CreationOrModificationServiceState
                   labelText: "Contatto",
                   hintText: "Inserisci il contatto",
                 ),
+                onChanged: (value) {
+                  _listContact[index].last = value;
+                },
                 //Validatore input username
                 validator: (String? value) {
                   //Se è vuoto dice di inserire il titolo
@@ -166,6 +169,7 @@ class _CreationOrModificationServiceState
                           .hasMatch(value))) {
                     return "Formato email non corretto";
                   } else if (_listContact[index].first != "sito web" &&
+                      _listContact[index].first != "email" &&
                       !RegExp(r'^(?:[+0][1-9])?[0-9]{10,12}$')
                           .hasMatch(value)) {
                     return "Formato non corretto";
