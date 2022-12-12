@@ -162,6 +162,23 @@ class API_Manager {
     }
   }
 
+  static Future<bool> updateProfile(LocalUser user) async {
+    String link = '${Configuration.API_link}/profile';
+    try {
+      Map<String, dynamic> json = user.toJson();
+      json["token"] = user.token;
+      http.Response response =
+          await sendRequest(link, jsonEncode(json), HTTP_Method.POST);
+      dynamic jsonResponse = jsonDecode(response.body);
+      if (jsonResponse["status"] != 'success') {
+        throw jsonResponse["reason"].toString();
+      }
+      return true;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
 /*
 La funzione listOfElements restituisce una lista dynamic. Il contenuto della lista
 dipende dal tipo passato come parametro (SERVICES, NEEDS, REPORTS).
@@ -224,7 +241,6 @@ La funzione updateElement aggiorna il contenuto di una entry di una tabella spec
 Questa ritornerà true se l'operazione andrà a buon fine, altrimenti lancerà un'eccezione. La funzione richiede in input l'elemento da modificare (elem) 
 e il token (token) dell'utente corrente.
 */
-//TODO Guardare parametri passati al server
   static Future<bool> updateElement(
       String token, dynamic elem, ELEMENT_TYPE type) async {
     String link = "${Configuration.API_link}/mylist/";

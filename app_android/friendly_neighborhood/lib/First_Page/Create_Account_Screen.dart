@@ -414,32 +414,34 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                             ),
                           ),
                           //Tipologia Casa
-                          //TODO fix glitch grafico all'apertura del menù
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 15),
-                            child: DropdownSearch<String>(
-                              popupProps: const PopupProps.menu(
-                                showSelectedItems: true,
-                              ),
-                              items: _house_types,
-                              validator: (value) {
-                                if (value == _house_types[0]) {
-                                  return "Scegliere una tipologia";
-                                } else {
-                                  return null;
-                                }
-                              },
-                              dropdownDecoratorProps:
-                                  const DropDownDecoratorProps(
-                                dropdownSearchDecoration: InputDecoration(
-                                  labelText: "Tipologia abitazione",
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 15),
+                              child: DropdownButtonFormField<String>(
+                                decoration: const InputDecoration(
+                                  labelText: 'Tipologia abitazione',
                                 ),
-                              ),
-                              onChanged: ((value) =>
-                                  _choice_house_type = value!),
-                              selectedItem: _house_types[0],
-                            ),
-                          ),
+                                value: _choice_house_type,
+                                hint: const Text('Scegliere una tipologia: '),
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    _choice_house_type = newValue!;
+                                  });
+                                },
+                                validator: (value) {
+                                  if (value == _house_types[0]) {
+                                    return "Scegliere una tipologia";
+                                  } else {
+                                    return null;
+                                  }
+                                },
+                                items: _house_types.map((valueItem) {
+                                  return DropdownMenuItem<String>(
+                                    value: valueItem,
+                                    child: Text(valueItem),
+                                  );
+                                }).toList(),
+                              )),
                           //Campo Nucleo familiare
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 15),

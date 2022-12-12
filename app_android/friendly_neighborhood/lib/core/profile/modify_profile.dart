@@ -1,13 +1,14 @@
-// ignore_for_file: must_be_immutable, use_build_context_synchronously
+// ignore_for_file: must_be_immutable, use_build_context_synchronously, non_constant_identifier_names, constant_identifier_names
 
 import 'package:dropdown_search/dropdown_search.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/cache_manager/profile_db.dart';
 import 'package:friendly_neighborhood/model/localuser.dart';
 import 'package:intl/intl.dart';
 
+import '../../API_Manager/api_manager.dart';
 import '../../configuration/configuration.dart';
+import '../../model/neighborhood.dart';
 import '../../utils/elaborate_data.dart';
 
 class ModifyProfile extends StatefulWidget {
@@ -31,11 +32,13 @@ class _ModifyProfileState extends State<ModifyProfile> {
   final _controllerFamily = TextEditingController();
   final _controllerDate = TextEditingController();
   String _choice_house_type = "Scegliere una tipologia";
-  String _choice_neighborhood = "Scegli un quartiere";
+  late Neighborhood _choice_neighborhood;
   //Dati scelta utente
   static const _house_types = ["Appartamento", "Casa singola"];
-  late List<String> _neighborhood = ["Dorsoduro"];
+  late List<Neighborhood> _neighborhood = [];
 
+  LocalUserManager lum = LocalUserManager();
+  late BuildContext _context;
   @override
   void initState() {
     super.initState();
@@ -48,11 +51,137 @@ class _ModifyProfileState extends State<ModifyProfile> {
     _controllerDate.text =
         DateFormat('dd-MM-yyyy').format(widget.user.birth_date);
     _choice_house_type = widget.user.house_type;
-    _choice_neighborhood = widget.user.neighborhood;
+    _choice_neighborhood = Neighborhood(
+        id: widget.user.id_neighborhoods,
+        area: 0,
+        name: widget.user.neighborhood);
+  }
+
+  void setChoiceNeighborhood() {
+    for (Neighborhood n in _neighborhood) {
+      if (n.id == _choice_neighborhood.id) {
+        _choice_neighborhood = n;
+        return;
+      }
+    }
+  }
+
+  Future<void> _showAlertDialog(
+      {required String title,
+      required String message,
+      required String buttonMessage,
+      required Function f}) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // L'utente deve premere il pulsante
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(message),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Annulla'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text(buttonMessage),
+              onPressed: () {
+                Navigator.of(context).pop();
+                f();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void updateProfile() async {
+    LocalUser updatedUser = LocalUser(
+        _controllerEmail.text,
+        _controllerUsername.text,
+        _controllerName.text,
+        _controllerLastname.text,
+        DateFormat('dd-MM-yyyy').parse(_controllerDate.text),
+        _controllerResidence.text,
+        int.parse(_controllerFamily.text),
+        _choice_house_type,
+        _choice_neighborhood.name,
+        _choice_neighborhood.id,
+        widget.user.token);
+    try {
+      await API_Manager.updateProfile(updatedUser);
+      await lum.updateUser(updatedUser);
+      Navigator.pop(context);
+    } catch (e) {
+      //TODO Gestire errori
+    }
+  }
+
+  Future<Widget> makeNeighborhoodMenu() async {
+    //TODO gestire errori
+    _neighborhood = await API_Manager.getNeighborhoods();
+    setChoiceNeighborhood();
+    return Row(
+      children: [
+        Expanded(
+          child: DropdownSearch<Neighborhood>(
+            items: _neighborhood,
+            compareFn: (i, s) => i.isEqual(s),
+            itemAsString: (Neighborhood u) => u.name,
+            onChanged: ((value) => _choice_neighborhood = value!),
+            selectedItem: _neighborhood[0],
+            filterFn: ((item, filter) =>
+                item.functionFilterForNeighborhoods(filter)),
+            dropdownDecoratorProps: const DropDownDecoratorProps(
+              dropdownSearchDecoration: InputDecoration(
+                labelText: "Quartiere",
+              ),
+            ),
+            popupProps: PopupPropsMultiSelection.modalBottomSheet(
+              isFilterOnline: true,
+              showSelectedItems: true,
+              showSearchBox: true,
+              itemBuilder: _popupSearchBox,
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget _popupSearchBox(
+    BuildContext context,
+    Neighborhood? item,
+    bool isSelected,
+  ) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 8),
+      decoration: !isSelected
+          ? null
+          : BoxDecoration(
+              border: Border.all(color: Theme.of(context).primaryColor),
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.white,
+            ),
+      child: ListTile(
+        selected: isSelected,
+        title: Text(item?.name ?? ''),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    _context = context;
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -131,10 +260,6 @@ class _ModifyProfileState extends State<ModifyProfile> {
                                 if (value == null || value.isEmpty) {
                                   return "Il campo nome non può essere vuoto";
                                   //Controlla che il nome sia stato inserito nel formato corretto
-                                } else if (!RegExp('[a-zA-Z]')
-                                    .hasMatch(value)) {
-                                  //TODO REGEXP NON FUNZIONA
-                                  return "Formato cognome non corretto";
                                 } else {
                                   return null;
                                 }
@@ -157,10 +282,6 @@ class _ModifyProfileState extends State<ModifyProfile> {
                                 if (value == null || value.isEmpty) {
                                   return "Il campo cognome non può essere vuoto";
                                   //Controlla che il nome sia stato inserito nel formato corretto
-                                } else if (!RegExp('[a-zA-Z]')
-                                    .hasMatch(value)) {
-                                  //TODO REGEXP NON FUNZIONA
-                                  return "Formato cognome non corretto";
                                 } else {
                                   return null;
                                 }
@@ -224,7 +345,6 @@ class _ModifyProfileState extends State<ModifyProfile> {
                                 //Se è vuoto dice di inserire la residenza
                                 if (value == null || value.isEmpty) {
                                   return "Il campo residenza non può essere vuoto";
-                                  //TODO inserire se possibile check della residenza
                                 } else {
                                   return null;
                                 }
@@ -232,32 +352,24 @@ class _ModifyProfileState extends State<ModifyProfile> {
                             ),
                           ),
                           //Tipologia Casa
-                          //TODO fix glitch grafico all'apertura del menù
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 15),
-                            child: DropdownSearch<String>(
-                              popupProps: const PopupProps.menu(
-                                showSelectedItems: true,
-                              ),
-                              items: _house_types,
-                              validator: (value) {
-                                if (value == "Scegliere una tipologia") {
-                                  return "Scegliere una tipologia";
-                                } else {
-                                  return null;
-                                }
-                              },
-                              dropdownDecoratorProps:
-                                  const DropDownDecoratorProps(
-                                dropdownSearchDecoration: InputDecoration(
-                                  labelText: "Tipologia abitazione",
-                                ),
-                              ),
-                              onChanged: ((value) =>
-                                  _choice_house_type = value!),
-                              selectedItem: _house_types[0],
-                            ),
-                          ),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 15),
+                              child: DropdownButtonFormField<String>(
+                                value: _choice_house_type,
+                                hint: const Text('Scegliere una tipologia: '),
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    _choice_house_type = newValue!;
+                                  });
+                                },
+                                items: _house_types.map((valueItem) {
+                                  return DropdownMenuItem<String>(
+                                    value: valueItem,
+                                    child: Text(valueItem),
+                                  );
+                                }).toList(),
+                              )),
                           //Campo Nucleo familiare
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -284,31 +396,18 @@ class _ModifyProfileState extends State<ModifyProfile> {
                             ),
                           ),
                           //Quartiere
-                          //TODO fix glitch grafico all'apertura del menù
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 15),
-                            child: DropdownSearch<String>(
-                              popupProps: const PopupProps.menu(
-                                showSelectedItems: true,
-                              ),
-                              items: _neighborhood,
-                              validator: (value) {
-                                if (value == "Scegliere un quartiere") {
-                                  return "Scegliere un quartiere";
-                                } else {
-                                  return null;
-                                }
-                              },
-                              dropdownDecoratorProps:
-                                  const DropDownDecoratorProps(
-                                dropdownSearchDecoration: InputDecoration(
-                                  labelText: "Quartiere",
-                                ),
-                              ),
-                              onChanged: ((value) =>
-                                  _choice_neighborhood = value!),
-                              selectedItem: _neighborhood[0],
-                            ),
+                            child: FutureBuilder<Widget>(
+                                future: makeNeighborhoodMenu(),
+                                builder:
+                                    (context, AsyncSnapshot<Widget> snapshot) {
+                                  if (snapshot.hasData) {
+                                    return snapshot.data!;
+                                  } else {
+                                    return const CircularProgressIndicator();
+                                  }
+                                }),
                           ),
                           //Pulsante Aggiorna dati
                           Padding(
@@ -318,25 +417,12 @@ class _ModifyProfileState extends State<ModifyProfile> {
                                 onPressed: () async {
                                   //Controllo se il form è valido
                                   if (_formKey.currentState!.validate()) {
-                                    //TODO FIX
-                                    /*
-                                    LocalUser updatedUser = LocalUser(
-                                        _controllerEmail.text,
-                                        _controllerUsername.text,
-                                        _controllerName.text,
-                                        _controllerLastname.text,
-                                        DateFormat('dd-MM-yyyy')
-                                            .parse(_controllerDate.text),
-                                        _controllerResidence.text,
-                                        int.parse(_controllerFamily.text),
-                                        _choice_house_type,
-                                        _choice_neighborhood,
-                                        widget.user.token);
-                                    LocalUserManager lm = LocalUserManager();
-                                    await lm.updateUser(updatedUser);*/
-                                    //TODO invia info al server
-
-                                    Navigator.pop(context);
+                                    _showAlertDialog(
+                                        title: "Conferma aggiornamento",
+                                        message:
+                                            "Sei sicuro di voler aggiornare i dati del profilo",
+                                        buttonMessage: "Sì",
+                                        f: updateProfile);
                                   }
                                 },
                                 child: const Center(

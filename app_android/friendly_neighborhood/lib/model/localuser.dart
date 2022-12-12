@@ -1,5 +1,6 @@
 // ignore_for_file: unnecessary_getters_setters, non_constant_identifier_names
 
+import 'package:friendly_neighborhood/utils/elaborate_data.dart';
 import 'package:intl/intl.dart';
 
 class LocalUser {
@@ -99,7 +100,7 @@ class LocalUser {
         'username': _username,
         'name': _name,
         'lastname': _lastname,
-        'birth_date': birth_date,
+        'birth_date': convertDateTimeToDate(birth_date),
         'address': _address,
         'family': _family,
         'house_type': _house_type,

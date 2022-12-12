@@ -11,7 +11,7 @@ class LocalUserManager {
   static final LocalUserManager _instance = LocalUserManager._internal();
   static const String dbName = "localUser.db";
   static const String tableName = "user";
-  Database? _db = null;
+  Database? _db;
   bool _isOpen = false;
 
   // using a factory is important
