@@ -48,7 +48,10 @@ class _NeighborhoodServicePageState extends State<NeighborhoodServicePage> {
       child: ListView.builder(
         itemCount: data.length,
         itemBuilder: (context, index) {
-          return ServiceCardNeighborhood(service: data[index]);
+          return ServiceCardNeighborhood(
+            service: data[index],
+            downloadNewDataFunction: downloadData,
+          );
         },
       ),
     );

@@ -8,6 +8,7 @@ import 'package:friendly_neighborhood/core/service/service_page.dart';
 
 typedef NavigationBarCallback = void Function(BottomNavigationBar bnb);
 typedef FloatingCallback = void Function(FloatingActionButton fab);
+typedef DownloadNewDataFunction = void Function(bool refreshWidget);
 
 class Core extends StatefulWidget {
   const Core({super.key});

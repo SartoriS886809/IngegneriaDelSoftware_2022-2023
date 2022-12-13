@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/core/core.dart';
 import 'package:friendly_neighborhood/core/service/create_modify_service.dart';
@@ -37,6 +39,12 @@ class _ServicePageState extends State<ServicePage> {
           context,
           MaterialPageRoute(
               builder: (context) => CreationOrModificationService()),
+        ).then(
+          (value) {
+            setState(() {
+              _changeCurrentPage(_currentIndex);
+            });
+          },
         );
       },
       label: const Text('Crea servizio'),
@@ -60,10 +68,11 @@ class _ServicePageState extends State<ServicePage> {
 
   //Cambia la pagina visualizzata in base al indice
   void _changeCurrentPage(int index) {
+    _currentPage = Container();
     if (index == 0) {
-      _currentPage = const NeighborhoodServicePage();
+      _currentPage = NeighborhoodServicePage();
     } else if (index == 1) {
-      _currentPage = const MyServicePage();
+      _currentPage = MyServicePage();
     } else {
       throw "Not Implemented";
     }

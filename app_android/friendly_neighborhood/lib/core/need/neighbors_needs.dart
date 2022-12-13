@@ -75,7 +75,10 @@ class _NeighborsNeedsState extends State<NeighborsNeeds> {
             itemCount: needslist.length,
             itemBuilder: (context, index) {
               final Need need_i = needslist.elementAt(index);
-              return NeedCard(need: need_i, isItMine: false);
+              return NeedCard(
+                  need: need_i,
+                  downloadNewDataFunction: downloadData,
+                  isItMine: false);
             },
           )
         : const Center(

@@ -46,7 +46,8 @@ class _MyServicePageState extends State<MyServicePage> {
       child: ListView.builder(
         itemCount: data.length,
         itemBuilder: (context, index) {
-          return ServiceCardMe(service: data[index]);
+          return ServiceCardMe(
+              service: data[index], downloadNewDataFunction: downloadData);
         },
       ),
     );

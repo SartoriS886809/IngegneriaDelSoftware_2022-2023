@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/core/core.dart';
 import 'package:friendly_neighborhood/core/need/create_modify_need.dart';
@@ -5,13 +7,13 @@ import 'package:friendly_neighborhood/core/need/my_assignments.dart';
 import 'package:friendly_neighborhood/core/need/neighbors_needs.dart';
 import 'package:friendly_neighborhood/core/need/my_needs.dart';
 
-
 //gli StatefulWidget devono essere gestiti con due classi, una per il widget ed una privata per lo stato
 class NeedPage extends StatefulWidget {
   final NavigationBarCallback navCallback;
   final FloatingCallback fabCallback;
 
-  const NeedPage({super.key, required this.navCallback, required this.fabCallback});
+  const NeedPage(
+      {super.key, required this.navCallback, required this.fabCallback});
 
   @override
   State<NeedPage> createState() => _NeedPageState();
@@ -24,7 +26,11 @@ class _NeedPageState extends State<NeedPage> {
     "Miei incarichi": Icons.assignment_turned_in
   };
   //TODO mappare insieme su pages anche le pagine
-  final List<Widget> pagesWidgets= [const NeighborsNeeds(), const MyNeeds(), const MyAssignments()];
+  /*final List<Type super Widget> pagesWidgets = [
+    NeighborsNeeds,
+    MyNeeds,
+    MyAssignments
+  ];*/
 
   late Widget _currentPage;
   late int _currentIndex;
@@ -35,16 +41,15 @@ class _NeedPageState extends State<NeedPage> {
   @override
   void initState() {
     super.initState();
-    _currentIndex=0;
+    _currentIndex = 0;
     bnb = _createBottomNavigationBar();
-    _currentPage=pagesWidgets[0];
+    _currentPage = NeighborsNeeds(); //pagesWidgets[0];
     _createNewNeed = FloatingActionButton.extended(
       onPressed: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-              builder: (context) => CreationOrModificationNeed()),
-        );
+          MaterialPageRoute(builder: (context) => CreationOrModificationNeed()),
+        ).then((value) => _changeCurrentPage(_currentIndex));
       },
       label: const Text('Crea bisogno'),
       backgroundColor: Colors.orange[900],
@@ -67,8 +72,17 @@ class _NeedPageState extends State<NeedPage> {
 
   //Cambia la pagina visualizzata in base al indice
   void _changeCurrentPage(int index) {
+    _currentPage = Container();
+    _currentIndex = index;
     setState(() {
-      _currentPage=pagesWidgets[index];
+      if (index == 0) {
+        _currentPage = NeighborsNeeds();
+      } else if (index == 1) {
+        _currentPage = MyNeeds();
+      } else {
+        _currentPage = MyAssignments();
+      }
+      //_currentPage = pagesWidgets[index];
     });
   }
 
@@ -83,7 +97,7 @@ class _NeedPageState extends State<NeedPage> {
         currentIndex: _currentIndex,
         onTap: (value) {
           //VALUE => 0 o 1
-          _currentIndex=value;
+          _currentIndex = value;
           _changeCurrentPage(value);
           widget.navCallback(_createBottomNavigationBar());
         },

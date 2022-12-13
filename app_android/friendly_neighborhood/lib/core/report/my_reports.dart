@@ -154,6 +154,7 @@ class _MyReportsState extends State<MyReports> {
 
   void deleteReport(Report report) async {
     await API_Manager.deleteElement(token, report.id, ELEMENT_TYPE.REPORTS);
+    downloadData(true);
   }
 
   @override

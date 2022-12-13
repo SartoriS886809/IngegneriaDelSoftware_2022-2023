@@ -55,7 +55,10 @@ class _MyAssignments extends State<MyAssignments> {
             itemBuilder: (context, index) {
               final Need need_i = needslist.elementAt(index);
               return NeedCard(
-                  need: need_i, isItMine: false, assistedByMe: true);
+                  need: need_i,
+                  isItMine: false,
+                  downloadNewDataFunction: downloadData,
+                  assistedByMe: true);
             },
           )
         : const Center(

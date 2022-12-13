@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/core/core.dart';
 import 'package:friendly_neighborhood/core/report/neighbors_reports.dart';
@@ -21,11 +23,11 @@ class _ReportPageState extends State<ReportPage> {
     "Segnalazioni": Icons.supervised_user_circle,
     "Mie segnalazioni": Icons.account_circle
   };
-
+/*
   final List<Widget> pagesWidgets = [
     const NeighborsReports(),
     const MyReports()
-  ];
+  ];*/
   late Widget _currentPage;
   late int _currentIndex;
   late final BottomNavigationBar bnb;
@@ -38,13 +40,13 @@ class _ReportPageState extends State<ReportPage> {
     _currentIndex = 0;
     bnb = _createBottomNavigationBar();
 
-    _currentPage = pagesWidgets[0];
+    _currentPage = NeighborsReports();
     _createNewReport = FloatingActionButton.extended(
       onPressed: () {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => CreationReport()),
-        );
+        ).then((value) => _changeCurrentPage(_currentIndex));
       },
       label: const Text('Crea Segnalazione'),
       backgroundColor: Colors.orange[900],
@@ -68,8 +70,13 @@ class _ReportPageState extends State<ReportPage> {
 
   //Cambia la pagina visualizzata in base al indice
   void _changeCurrentPage(int index) {
+    _currentIndex = index;
     setState(() {
-      _currentPage = pagesWidgets[index];
+      if (index == 0) {
+        _currentPage = NeighborsReports();
+      } else {
+        _currentPage = MyReports();
+      }
     });
   }
 

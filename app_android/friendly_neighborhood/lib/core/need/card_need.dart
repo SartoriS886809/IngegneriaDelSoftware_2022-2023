@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:friendly_neighborhood/core/core.dart';
 import 'package:friendly_neighborhood/model/need.dart';
 import 'package:friendly_neighborhood/core/need/need_show.dart';
 
 import '../../utils/elaborate_data.dart';
 
 class NeedCard extends StatelessWidget {
+  final DownloadNewDataFunction downloadNewDataFunction;
   final Need need;
   final bool
       isItMine; //indica se la card rappresenta un bisogno dell'utente corrente
@@ -14,6 +16,7 @@ class NeedCard extends StatelessWidget {
       {super.key,
       required this.need,
       required this.isItMine,
+      required this.downloadNewDataFunction,
       this.assistedByMe = false});
 
   @override
@@ -37,8 +40,9 @@ class NeedCard extends StatelessWidget {
     final TextButton showNeedButton = TextButton(
         child: const Text('Apri descrizione'),
         onPressed: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => showNeedPage));
+          Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => showNeedPage))
+              .then((value) => downloadNewDataFunction(true));
         });
 
     final TextButton satisfyButton = TextButton(
@@ -46,9 +50,10 @@ class NeedCard extends StatelessWidget {
             backgroundColor: Colors.blue,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.all(8.0)),
-        onPressed: () {
+        onPressed: () async {
           //aggiunge il proprio id come assistente se viene data conferma
-          showNeedPage.showConfirmAssistanceChangeDialog(context, true);
+          await showNeedPage.showConfirmAssistanceChangeDialog(context, true);
+          downloadNewDataFunction(true);
         },
         child: const Text('Soddisfa'));
 
@@ -57,9 +62,10 @@ class NeedCard extends StatelessWidget {
             backgroundColor: Colors.blue,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.all(8.0)),
-        onPressed: () {
+        onPressed: () async {
           //rimuove il proprio id come assistente se viene data conferma
-          showNeedPage.showConfirmAssistanceChangeDialog(context, true);
+          await showNeedPage.showConfirmAssistanceChangeDialog(context, true);
+          downloadNewDataFunction(true);
         },
         child: const Text('Ritira disponibilità'));
 
