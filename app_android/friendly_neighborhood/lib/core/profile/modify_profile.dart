@@ -4,6 +4,7 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/cache_manager/profile_db.dart';
 import 'package:friendly_neighborhood/model/localuser.dart';
+import 'package:friendly_neighborhood/utils/alertdialog.dart';
 import 'package:intl/intl.dart';
 
 import '../../API_Manager/api_manager.dart';
@@ -64,44 +65,6 @@ class _ModifyProfileState extends State<ModifyProfile> {
         return;
       }
     }
-  }
-
-  Future<void> _showAlertDialog(
-      {required String title,
-      required String message,
-      required String buttonMessage,
-      required Function f}) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // L'utente deve premere il pulsante
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(message),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Annulla'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text(buttonMessage),
-              onPressed: () {
-                Navigator.of(context).pop();
-                f();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   void updateProfile() async {
@@ -417,12 +380,13 @@ class _ModifyProfileState extends State<ModifyProfile> {
                                 onPressed: () async {
                                   //Controllo se il form è valido
                                   if (_formKey.currentState!.validate()) {
-                                    _showAlertDialog(
+                                    advancedAlertDialog(
                                         title: "Conferma aggiornamento",
                                         message:
                                             "Sei sicuro di voler aggiornare i dati del profilo",
                                         buttonMessage: "Sì",
-                                        f: updateProfile);
+                                        f: updateProfile,
+                                        context: context);
                                   }
                                 },
                                 child: const Center(

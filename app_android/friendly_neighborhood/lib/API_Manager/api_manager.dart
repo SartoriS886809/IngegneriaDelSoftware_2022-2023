@@ -1,6 +1,8 @@
 // ignore_for_file: camel_case_types, constant_identifier_names
 
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:friendly_neighborhood/cache_manager/profile_db.dart';
 import 'package:friendly_neighborhood/configuration/configuration.dart';
@@ -406,27 +408,46 @@ La funzione richiede in ingresso il token dell'utente corrente.
     };
 
     http.Response response;
-    if (type == HTTP_Method.GET) {
-      response = await http.get(Uri.parse(link), headers: headers);
-      if (response.statusCode != 200) {
-        throw "Errore nella richiesta";
-      }
-      return response;
-    } else if (type == HTTP_Method.POST) {
-      response = await http.post(
-        Uri.parse(link),
-        headers: headers,
-        body: json,
-      );
 
-      if (response.statusCode != 200) {
-        throw "Errore nella richiesta";
+    try {
+      if (type == HTTP_Method.GET) {
+        response = await http.get(Uri.parse(link), headers: headers).timeout(
+              const Duration(seconds: 4),
+            );
+        if (response.statusCode != 200) {
+          throw "Errore nella richiesta";
+        }
+        return response;
+      } else if (type == HTTP_Method.POST) {
+        response = await http
+            .post(
+              Uri.parse(link),
+              headers: headers,
+              body: json,
+            )
+            .timeout(
+              const Duration(seconds: 4),
+            );
+
+        if (response.statusCode != 200) {
+          throw "Errore nella richiesta";
+        }
+        return response;
+      } else {
+        response = await http
+            .delete(Uri.parse(link), body: json, headers: headers)
+            .timeout(const Duration(seconds: 4));
+
+        return response;
       }
-      return response;
-    } else {
-      response =
-          await http.delete(Uri.parse(link), body: json, headers: headers);
-      return response;
+    } catch (e) {
+      if (e is SocketException) {
+        throw "Errore nella richiesta, si prega di ricontrollare la connessione ad Internet";
+      }
+      if (e is TimeoutException) {
+        throw "Errore nella richiesta, si prega di ricontrollare la connessione ad Internet";
+      }
+      rethrow;
     }
   }
 }

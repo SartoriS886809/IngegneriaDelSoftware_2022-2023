@@ -1,5 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/model/report.dart';
+import 'package:friendly_neighborhood/utils/alertdialog.dart';
 
 import '../../API_Manager/api_manager.dart';
 import '../../cache_manager/profile_db.dart';
@@ -35,46 +38,7 @@ class _CreationReportState extends State<CreationReport> {
 
   late BuildContext _context;
 
-  Future<void> _showAlertDialog(
-      {required String title,
-      required String message,
-      required String buttonMessage,
-      required Function f}) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // L'utente deve premere il pulsante
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(message),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Annulla'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text(buttonMessage),
-              onPressed: () {
-                Navigator.of(context).pop();
-                f();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   Future<void> createReport() async {
-    //TODO Creator da assegnare
     widget.report = Report(
         postDate: DateTime.now(),
         title: _controllerTitle.text,
@@ -85,7 +49,6 @@ class _CreationReportState extends State<CreationReport> {
     LocalUser? user = await lum.getUser();
     token = user!.token;
     API_Manager.createElement(token, widget.report, ELEMENT_TYPE.REPORTS);
-    //TODO comunicare con DB
     Navigator.pop(_context);
   }
 
@@ -108,25 +71,23 @@ class _CreationReportState extends State<CreationReport> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: Container(
-                      child: DropdownButtonFormField<String>(
-                        value: _valueChoose,
-                        hint: const Text('Tipo Segnalazione: '),
-                        onChanged: (newValue) {
-                          setState(() {
-                            _valueChoose = newValue;
-                          });
-                        },
-                        validator: (value) => value == null
-                            ? 'il campo di Segnalazione non può essere vuoto'
-                            : null,
-                        items: listItem.map((valueItem) {
-                          return DropdownMenuItem<String>(
-                            value: valueItem,
-                            child: Text(valueItem),
-                          );
-                        }).toList(),
-                      ),
+                    child: DropdownButtonFormField<String>(
+                      value: _valueChoose,
+                      hint: const Text('Tipo Segnalazione: '),
+                      onChanged: (newValue) {
+                        setState(() {
+                          _valueChoose = newValue;
+                        });
+                      },
+                      validator: (value) => value == null
+                          ? 'il campo di Segnalazione non può essere vuoto'
+                          : null,
+                      items: listItem.map((valueItem) {
+                        return DropdownMenuItem<String>(
+                          value: valueItem,
+                          child: Text(valueItem),
+                        );
+                      }).toList(),
                     ),
                   ),
                   Padding(
@@ -253,13 +214,13 @@ class _CreationReportState extends State<CreationReport> {
                                       //Controllo se il form è valido
                                       if (_formKey.currentState!.validate()) {
                                         //implementa il pop up
-                                        //_showAlertDialog();
-                                        _showAlertDialog(
+                                        advancedAlertDialog(
                                             title: "Creazione",
                                             message:
                                                 "Sei sicuro di voler creare la segnalazione?",
                                             buttonMessage: "Crea",
-                                            f: createReport);
+                                            f: createReport,
+                                            context: context);
                                       }
                                     },
                                     child: const Center(

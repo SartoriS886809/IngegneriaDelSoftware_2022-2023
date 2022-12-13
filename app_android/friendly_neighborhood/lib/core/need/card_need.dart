@@ -20,11 +20,11 @@ class NeedCard extends StatelessWidget {
   Widget build(BuildContext context) {
     String date = convertDateTimeToDate(need.postDate);
     //"${need.postDate.day}-${need.postDate.month}-${need.postDate.year} ${need.postDate.hour}:${need.postDate.minute}";
-    String author = (!isItMine) ? ("\nAutore: " + need.creator) : "";
+    String author = (!isItMine) ? ("\nAutore: ${need.creator}") : "";
     String assistant = (!isItMine)
         ? ""
         : ((need.assistant != "")
-            ? "\nRichiesta presa in carico da: " + need.assistant
+            ? "\nRichiesta presa in carico da: ${need.assistant}"
             : "\nLa richiesta non è ancora stata presa in carico");
     ShowNeed
         showNeedPage = //riferimento alla pagina di visualizzazione bisogno collegata al rispettivo pulsante nella card
@@ -42,7 +42,6 @@ class NeedCard extends StatelessWidget {
         });
 
     final TextButton satisfyButton = TextButton(
-        child: const Text('Soddisfa'),
         style: TextButton.styleFrom(
             backgroundColor: Colors.blue,
             foregroundColor: Colors.white,
@@ -50,10 +49,10 @@ class NeedCard extends StatelessWidget {
         onPressed: () {
           //aggiunge il proprio id come assistente se viene data conferma
           showNeedPage.showConfirmAssistanceChangeDialog(context, true);
-        });
+        },
+        child: const Text('Soddisfa'));
 
     final TextButton withdrawButton = TextButton(
-        child: const Text('Ritira disponibilità'),
         style: TextButton.styleFrom(
             backgroundColor: Colors.blue,
             foregroundColor: Colors.white,
@@ -61,7 +60,8 @@ class NeedCard extends StatelessWidget {
         onPressed: () {
           //rimuove il proprio id come assistente se viene data conferma
           showNeedPage.showConfirmAssistanceChangeDialog(context, true);
-        });
+        },
+        child: const Text('Ritira disponibilità'));
 
     final List<Widget> cardButtons = (!isItMine)
         ? ((!assistedByMe)
@@ -91,13 +91,8 @@ class NeedCard extends StatelessWidget {
             Expanded(
               child: ListTile(
                 title: Text(need.title),
-                subtitle: Text("Luogo: " +
-                    need.address +
-                    "\n" +
-                    "Data creazione: " +
-                    date +
-                    author +
-                    assistant),
+                subtitle: Text(
+                    "Luogo: ${need.address}\nData creazione: $date$author$assistant"),
               ),
             ),
             Column(children: cardButtons)

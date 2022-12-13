@@ -6,6 +6,7 @@ import 'package:friendly_neighborhood/API_Manager/api_manager.dart';
 import 'package:friendly_neighborhood/First_Page/Create_Account_Screen.dart';
 import 'package:friendly_neighborhood/configuration/configuration.dart';
 import 'package:friendly_neighborhood/core/core.dart';
+import 'package:friendly_neighborhood/utils/alertdialog.dart';
 import 'package:friendly_neighborhood/utils/check_connection.dart';
 
 /*
@@ -40,33 +41,6 @@ class _LoginScreenState extends State<LoginScreen> {
     //TODO TEMP
     _controllerEmail.text = "prova2@prova.com";
     _controllerPassword.text = "passpass";
-  }
-
-  Future<void> _showAlertDialog({required String text}) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // L'utente deve premere il pulsante
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Avviso'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(text),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Ok'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override
@@ -174,12 +148,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                               builder: (context) =>
                                                   const Core()));
                                     } catch (e) {
-                                      _showAlertDialog(text: e.toString());
+                                      notificationAlertDialog(
+                                          text: e.toString(), context: context);
                                     }
                                   } else {
-                                    _showAlertDialog(
+                                    notificationAlertDialog(
                                         text:
-                                            "Impossibile connettersi. Verifica la connessione ad internet");
+                                            "Impossibile connettersi. Verifica la connessione ad internet",
+                                        context: context);
                                   }
                                 }
                               },

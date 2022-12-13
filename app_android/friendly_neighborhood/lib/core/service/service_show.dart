@@ -22,7 +22,7 @@ class ShowService extends StatefulWidget {
 class _ShowServiceState extends State<ShowService> {
   late BuildContext _context;
   LocalUserManager lum = LocalUserManager();
-  LocalUser? user = null;
+  LocalUser? user;
   Future<void> removeService() async {
     user ??= await lum.getUser();
     try {

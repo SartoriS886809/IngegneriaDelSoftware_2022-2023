@@ -1,6 +1,9 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/core/need/card_need.dart';
 import 'package:friendly_neighborhood/model/need.dart';
+import 'package:friendly_neighborhood/utils/exception_widget.dart';
 
 import '../../API_Manager/api_manager.dart';
 import '../../cache_manager/profile_db.dart';
@@ -17,7 +20,6 @@ class _NeighborsNeedsState extends State<NeighborsNeeds> {
   String token = "";
   LocalUserManager lum = LocalUserManager();
 
-  //TODO implementare interazione API
   //lista di esempio (temporanea)
   List<Need> needslist =
       []; /*
@@ -52,21 +54,23 @@ class _NeighborsNeedsState extends State<NeighborsNeeds> {
   ];*/
   //TODO INSERIRE FUNZIONE DI GESTIONE DI ERRORE IN CASO DEL TOKEN NON PIù VALIDO
 
-  //TODO Controllo connessione ad internet
   Future downloadData(bool needRefreshGUI) async {
     if (token == "") {
       LocalUser? user = await lum.getUser();
       token = user!.token;
     }
-
-    needslist = List<Need>.from(
-        await API_Manager.listOfElements(token, ELEMENT_TYPE.NEEDS, false));
+    try {
+      needslist = List<Need>.from(
+          await API_Manager.listOfElements(token, ELEMENT_TYPE.NEEDS, false));
+    } catch (e) {
+      rethrow;
+    }
     if (needRefreshGUI) setState(() {});
   }
 
   Future<Widget> generateList() async {
     await downloadData(false);
-    return (!needslist.isEmpty)
+    return (needslist.isNotEmpty)
         ? ListView.builder(
             itemCount: needslist.length,
             itemBuilder: (context, index) {
@@ -93,8 +97,10 @@ class _NeighborsNeedsState extends State<NeighborsNeeds> {
         builder: (context, AsyncSnapshot<Widget> snapshot) {
           if (snapshot.hasData) {
             return snapshot.data!;
+          } else if (snapshot.hasError) {
+            return printError(snapshot.error!, downloadData);
           } else {
-            return const CircularProgressIndicator();
+            return const Center(child: CircularProgressIndicator());
           }
         });
   }

@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/model/report.dart';
+import 'package:friendly_neighborhood/utils/exception_widget.dart';
 
 import '../../API_Manager/api_manager.dart';
 import '../../cache_manager/profile_db.dart';
@@ -44,9 +45,12 @@ class _MyReportsState extends State<MyReports> {
       LocalUser? user = await lum.getUser();
       token = user!.token;
     }
-
-    reportList = List<Report>.from(
-        await API_Manager.listOfElements(token, ELEMENT_TYPE.REPORTS, true));
+    try {
+      reportList = List<Report>.from(
+          await API_Manager.listOfElements(token, ELEMENT_TYPE.REPORTS, true));
+    } catch (e) {
+      rethrow;
+    }
     if (needRefreshGUI) setState(() {});
   }
 
@@ -106,7 +110,6 @@ class _MyReportsState extends State<MyReports> {
         : const Center(
             child: Padding(
                 padding: EdgeInsets.all(16.0),
-                //TODO
                 child: Text("Non hai pubblicato segnalazioni")));
   }
 
@@ -160,8 +163,10 @@ class _MyReportsState extends State<MyReports> {
         builder: (context, AsyncSnapshot<Widget> snapshot) {
           if (snapshot.hasData) {
             return snapshot.data!;
+          } else if (snapshot.hasError) {
+            return printError(snapshot.error!, downloadData);
           } else {
-            return const CircularProgressIndicator();
+            return const Center(child: CircularProgressIndicator());
           }
         });
   }

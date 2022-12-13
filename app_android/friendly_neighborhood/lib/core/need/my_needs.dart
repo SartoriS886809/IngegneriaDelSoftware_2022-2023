@@ -1,9 +1,12 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/API_Manager/api_manager.dart';
 import 'package:friendly_neighborhood/cache_manager/profile_db.dart';
 import 'package:friendly_neighborhood/core/need/card_need.dart';
 import 'package:friendly_neighborhood/model/localuser.dart';
 import 'package:friendly_neighborhood/model/need.dart';
+import 'package:friendly_neighborhood/utils/exception_widget.dart';
 
 class MyNeeds extends StatefulWidget {
   const MyNeeds({super.key});
@@ -39,21 +42,23 @@ class _MyNeedsState extends State<MyNeeds> {
     super.initState();
   }
 
-  //TODO Controllo connessione ad internet
   Future downloadData(bool needRefreshGUI) async {
     if (token == "") {
       LocalUser? user = await lum.getUser();
       token = user!.token;
     }
-
-    needslist = List<Need>.from(
-        await API_Manager.listOfElements(token, ELEMENT_TYPE.NEEDS, true));
+    try {
+      needslist = List<Need>.from(
+          await API_Manager.listOfElements(token, ELEMENT_TYPE.NEEDS, true));
+    } catch (e) {
+      rethrow;
+    }
     if (needRefreshGUI) setState(() {});
   }
 
   Future<Widget> generateList() async {
     await downloadData(false);
-    return (!needslist.isEmpty)
+    return (needslist.isNotEmpty)
         ? ListView.builder(
             itemCount: needslist.length,
             itemBuilder: (context, index) {
@@ -74,8 +79,10 @@ class _MyNeedsState extends State<MyNeeds> {
         builder: (context, AsyncSnapshot<Widget> snapshot) {
           if (snapshot.hasData) {
             return snapshot.data!;
+          } else if (snapshot.hasError) {
+            return printError(snapshot.error!, downloadData);
           } else {
-            return const CircularProgressIndicator();
+            return const Center(child: CircularProgressIndicator());
           }
         });
   }
