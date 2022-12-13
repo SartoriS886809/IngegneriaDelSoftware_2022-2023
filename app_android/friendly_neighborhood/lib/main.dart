@@ -1,8 +1,14 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:friendly_neighborhood/First_Page/login_screen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:friendly_neighborhood/API_Manager/api_manager.dart';
+import 'package:friendly_neighborhood/cache_manager/profile_db.dart';
 import 'package:friendly_neighborhood/core/core.dart';
+import 'package:friendly_neighborhood/first_page/login_screen.dart';
+import 'package:friendly_neighborhood/model/localuser.dart';
+import 'package:friendly_neighborhood/utils/check_connection.dart';
 
 void main() {
   runApp(const MyApp());
@@ -40,92 +46,90 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const Core(),
+      home: const LoadingScreen(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+class LoadingScreen extends StatefulWidget {
+  const LoadingScreen({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<LoadingScreen> createState() => _LoadingScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _LoadingScreenState extends State<LoadingScreen> {
+  LocalUserManager lum = LocalUserManager();
+  late BuildContext _context;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  Future<void> _showAlertDialog(
+      {required String text, required Function f}) async {
+    return showDialog<void>(
+      context: _context,
+      barrierDismissible: false, // L'utente deve premere il pulsante
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Avviso'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(text),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Riprova'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                f();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void startingProcess() async {
+    LocalUser? user = await lum.getUser();
+    if (user == null) {
+      Navigator.pop(_context);
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => LoginScreen()));
+      return;
+    }
+    if (await CheckConnection.check()) {
+      bool check = await API_Manager.checkToken(user.email, user.token);
+      if (check) {
+        Navigator.pop(_context);
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => const Core()));
+      } else {
+        lum.deleteUser(user);
+        Navigator.pop(_context);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => LoginScreen.withMessage(
+                    message:
+                        "Sessione non più valida, si prega di rieseguire il login")));
+      }
+    } else {
+      _showAlertDialog(
+          text:
+              "Connessione ad internet richiesta. Controllare la connessione e riprovare",
+          f: startingProcess);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+    _context = context;
+    startingProcess();
+    return const Scaffold(
+      //TODO Icona temporanea, da utilizzare quella ufficiale dell'app
+      body: Center(child: Icon(Icons.people)),
     );
   }
 }

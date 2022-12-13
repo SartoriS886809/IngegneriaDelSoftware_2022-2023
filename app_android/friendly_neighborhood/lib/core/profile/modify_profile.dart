@@ -1,63 +1,135 @@
-// ignore_for_file: non_constant_identifier_names, unused_field, constant_identifier_names, prefer_final_fields, file_names, use_build_context_synchronously
+// ignore_for_file: must_be_immutable, use_build_context_synchronously, non_constant_identifier_names, constant_identifier_names
 
-import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
-import 'package:friendly_neighborhood/API_Manager/api_manager.dart';
-import 'package:friendly_neighborhood/configuration/configuration.dart';
-import 'package:friendly_neighborhood/first_page/login_screen.dart';
-import 'package:friendly_neighborhood/model/localuser.dart';
-import 'package:friendly_neighborhood/model/neighborhood.dart';
-import 'package:friendly_neighborhood/utils/check_connection.dart';
-import 'package:intl/intl.dart';
-import 'package:friendly_neighborhood/utils/elaborate_data.dart';
 import 'package:dropdown_search/dropdown_search.dart';
+import 'package:flutter/material.dart';
+import 'package:friendly_neighborhood/cache_manager/profile_db.dart';
+import 'package:friendly_neighborhood/model/localuser.dart';
+import 'package:intl/intl.dart';
 
-class CreateAccountScreen extends StatefulWidget {
-  const CreateAccountScreen({super.key});
+import '../../API_Manager/api_manager.dart';
+import '../../configuration/configuration.dart';
+import '../../model/neighborhood.dart';
+import '../../utils/elaborate_data.dart';
+
+class ModifyProfile extends StatefulWidget {
+  LocalUser user;
+  ModifyProfile({super.key, required this.user});
 
   @override
-  State<CreateAccountScreen> createState() => _CreateAccountScreenState();
+  State<ModifyProfile> createState() => _ModifyProfileState();
 }
 
-class _CreateAccountScreenState extends State<CreateAccountScreen> {
+class _ModifyProfileState extends State<ModifyProfile> {
   //Variabile gestione Form
   final _formKey = GlobalKey<FormState>();
 
-  //Variabili per gestire la visibilità del testo nei campi password
-  late bool _passwordVisible;
-  late IconData _iconPassword;
-  late bool _confirmPasswordVisible;
-  late IconData _confirmIconPassword;
-  final _popupBuilderKey = GlobalKey<DropdownSearchState<String>>();
-  final _popupCustomValidationKey = GlobalKey<DropdownSearchState<int>>();
-
   //Sezione controller / variabili gestione contenuto campi
-
   final _controllerUsername = TextEditingController();
   final _controllerEmail = TextEditingController();
-  final _controllerPassword = TextEditingController();
   final _controllerName = TextEditingController();
   final _controllerLastname = TextEditingController();
   final _controllerResidence = TextEditingController();
   final _controllerFamily = TextEditingController();
   final _controllerDate = TextEditingController();
-  final _voidNeighborhood =
-      Neighborhood(id: -1, area: 0, name: "Scegli un quartiere");
   String _choice_house_type = "Scegliere una tipologia";
   late Neighborhood _choice_neighborhood;
-
   //Dati scelta utente
-  static const _house_types = [
-    "Scegliere una tipologia",
-    "Appartamento",
-    "Casa singola"
-  ];
-  List<Neighborhood> _neighborhood = [];
+  static const _house_types = ["Appartamento", "Casa singola"];
+  late List<Neighborhood> _neighborhood = [];
+
+  LocalUserManager lum = LocalUserManager();
+  late BuildContext _context;
+  @override
+  void initState() {
+    super.initState();
+    _controllerUsername.text = widget.user.username;
+    _controllerEmail.text = widget.user.email;
+    _controllerName.text = widget.user.name;
+    _controllerLastname.text = widget.user.lastname;
+    _controllerResidence.text = widget.user.address;
+    _controllerFamily.text = widget.user.family.toString();
+    _controllerDate.text =
+        DateFormat('dd-MM-yyyy').format(widget.user.birth_date);
+    _choice_house_type = widget.user.house_type;
+    _choice_neighborhood = Neighborhood(
+        id: widget.user.id_neighborhoods,
+        area: 0,
+        name: widget.user.neighborhood);
+  }
+
+  void setChoiceNeighborhood() {
+    for (Neighborhood n in _neighborhood) {
+      if (n.id == _choice_neighborhood.id) {
+        _choice_neighborhood = n;
+        return;
+      }
+    }
+  }
+
+  Future<void> _showAlertDialog(
+      {required String title,
+      required String message,
+      required String buttonMessage,
+      required Function f}) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // L'utente deve premere il pulsante
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(message),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Annulla'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text(buttonMessage),
+              onPressed: () {
+                Navigator.of(context).pop();
+                f();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void updateProfile() async {
+    LocalUser updatedUser = LocalUser(
+        _controllerEmail.text,
+        _controllerUsername.text,
+        _controllerName.text,
+        _controllerLastname.text,
+        DateFormat('dd-MM-yyyy').parse(_controllerDate.text),
+        _controllerResidence.text,
+        int.parse(_controllerFamily.text),
+        _choice_house_type,
+        _choice_neighborhood.name,
+        _choice_neighborhood.id,
+        widget.user.token);
+    try {
+      await API_Manager.updateProfile(updatedUser);
+      await lum.updateUser(updatedUser);
+      Navigator.pop(context);
+    } catch (e) {
+      //TODO Gestire errori
+    }
+  }
 
   Future<Widget> makeNeighborhoodMenu() async {
     //TODO gestire errori
     _neighborhood = await API_Manager.getNeighborhoods();
-    _neighborhood = [_voidNeighborhood] + _neighborhood;
+    setChoiceNeighborhood();
     return Row(
       children: [
         Expanded(
@@ -67,13 +139,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             itemAsString: (Neighborhood u) => u.name,
             onChanged: ((value) => _choice_neighborhood = value!),
             selectedItem: _neighborhood[0],
-            validator: (value) {
-              if (value!.name == _voidNeighborhood.name) {
-                return "Scegliere un quartiere";
-              } else {
-                return null;
-              }
-            },
             filterFn: ((item, filter) =>
                 item.functionFilterForNeighborhoods(filter)),
             dropdownDecoratorProps: const DropDownDecoratorProps(
@@ -115,54 +180,17 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _passwordVisible = false;
-    _iconPassword = Icons.visibility;
-    _confirmPasswordVisible = false;
-    _confirmIconPassword = Icons.visibility;
-    _choice_neighborhood = _voidNeighborhood;
-  }
-
-  Future<void> _showAlertDialog({required String text}) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // L'utente deve premere il pulsante
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Avviso'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(text),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Ok'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
+    _context = context;
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: const Text("Crea Account"),
+          title: const Text("Modifica profilo"),
         ),
         body: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              //Expanded(child: Container()),
               Expanded(
                   child: SingleChildScrollView(
                 child: Form(
@@ -216,87 +244,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                               },
                             ),
                           ),
-                          //Campo Password
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 15),
-                            child: TextFormField(
-                              //Parametro per nascondere la password
-                              obscureText: !_passwordVisible,
-                              controller: _controllerPassword,
-                              decoration: InputDecoration(
-                                  hintText: 'Inserisci la password',
-                                  labelText: 'Password',
-                                  //Pulsante per cambiare la visibilità del contenuto del campo password
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      _iconPassword,
-                                      color: Theme.of(context).primaryColorDark,
-                                    ),
-                                    onPressed: () {
-                                      setState(() {
-                                        if (!_passwordVisible) {
-                                          _iconPassword = Icons.visibility_off;
-                                        } else {
-                                          _iconPassword = Icons.visibility;
-                                        }
-                                        _passwordVisible = !_passwordVisible;
-                                      });
-                                    },
-                                  )),
-                              validator: (String? value) {
-                                if (value == null || value.isEmpty) {
-                                  return "Il campo password non può essere vuoto";
-                                } else if (value.length <
-                                    Configuration.minLengthPassword) {
-                                  return "La password deve essere minimo di ${Configuration.minLengthPassword} caratteri";
-                                } else {
-                                  return null;
-                                }
-                              },
-                            ),
-                          ),
-                          //Campo Conferma Password
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 15),
-                            child: TextFormField(
-                              //Parametro per nascondere la password
-                              obscureText: !_confirmPasswordVisible,
-                              decoration: InputDecoration(
-                                  hintText: 'Conferma la password inserita',
-                                  labelText: 'Conferma password',
-                                  //Pulsante per cambiare la visibilità del contenuto del campo password
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      _confirmIconPassword,
-                                      color: Theme.of(context).primaryColorDark,
-                                    ),
-                                    onPressed: () {
-                                      setState(() {
-                                        if (!_confirmPasswordVisible) {
-                                          _confirmIconPassword =
-                                              Icons.visibility_off;
-                                        } else {
-                                          _confirmIconPassword =
-                                              Icons.visibility;
-                                        }
-                                        _confirmPasswordVisible =
-                                            !_confirmPasswordVisible;
-                                      });
-                                    },
-                                  )),
-                              validator: (String? value) {
-                                if (value == null ||
-                                    value != _controllerPassword.text) {
-                                  return "Le password devono corrispondere";
-                                } else if (value.length <
-                                    Configuration.minLengthPassword) {
-                                  return "La password deve essere di almeno {$Configuration.minLengthPassword} caratteri";
-                                } else {
-                                  return null;
-                                }
-                              },
-                            ),
-                          ),
                           //Campo Nome
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -313,10 +260,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                 if (value == null || value.isEmpty) {
                                   return "Il campo nome non può essere vuoto";
                                   //Controlla che il nome sia stato inserito nel formato corretto
-                                } else if (!RegExp('[a-zA-Z]')
-                                    .hasMatch(value)) {
-                                  //TODO REGEXP NON FUNZIONA
-                                  return "Formato cognome non corretto";
                                 } else {
                                   return null;
                                 }
@@ -339,10 +282,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                 if (value == null || value.isEmpty) {
                                   return "Il campo cognome non può essere vuoto";
                                   //Controlla che il nome sia stato inserito nel formato corretto
-                                } else if (!RegExp('[a-zA-Z]')
-                                    .hasMatch(value)) {
-                                  //TODO REGEXP NON FUNZIONA
-                                  return "Formato cognome non corretto";
                                 } else {
                                   return null;
                                 }
@@ -406,7 +345,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                 //Se è vuoto dice di inserire la residenza
                                 if (value == null || value.isEmpty) {
                                   return "Il campo residenza non può essere vuoto";
-                                  //TODO inserire se possibile check della residenza
                                 } else {
                                   return null;
                                 }
@@ -418,22 +356,12 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 15),
                               child: DropdownButtonFormField<String>(
-                                decoration: const InputDecoration(
-                                  labelText: 'Tipologia abitazione',
-                                ),
                                 value: _choice_house_type,
                                 hint: const Text('Scegliere una tipologia: '),
                                 onChanged: (newValue) {
                                   setState(() {
                                     _choice_house_type = newValue!;
                                   });
-                                },
-                                validator: (value) {
-                                  if (value == _house_types[0]) {
-                                    return "Scegliere una tipologia";
-                                  } else {
-                                    return null;
-                                  }
                                 },
                                 items: _house_types.map((valueItem) {
                                   return DropdownMenuItem<String>(
@@ -481,7 +409,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                   }
                                 }),
                           ),
-                          //Pulsante Registrati
+                          //Pulsante Aggiorna dati
                           Padding(
                               padding:
                                   const EdgeInsets.symmetric(vertical: 16.0),
@@ -489,94 +417,35 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                 onPressed: () async {
                                   //Controllo se il form è valido
                                   if (_formKey.currentState!.validate()) {
-                                    //Controllo connessione internet
-                                    bool check = await CheckConnection.check();
-                                    if (check) {
-                                      //TODO inviare richiesta server
-                                      LocalUser newUser = LocalUser(
-                                          _controllerEmail.text,
-                                          _controllerUsername.text,
-                                          _controllerName.text,
-                                          _controllerLastname.text,
-                                          DateFormat('dd-MM-yyyy')
-                                              .parse(_controllerDate.text),
-                                          _controllerResidence.text,
-                                          int.parse(_controllerFamily.text),
-                                          _choice_house_type,
-                                          _choice_neighborhood.name,
-                                          _choice_neighborhood.id,
-                                          "");
-                                      try {
-                                        bool c = await API_Manager.signup(
-                                            newUser, _controllerPassword.text);
-                                        if (c) {
-                                          Navigator.pop(context);
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      LoginScreen.withMessage(
-                                                          message:
-                                                              "Creazione account avvenuta con successo. Si prega di eseguire l'accesso")));
-                                        }
-                                      } catch (e) {
-                                        _showAlertDialog(text: e.toString());
-                                      }
-                                    } else {
-                                      _showAlertDialog(
-                                          text:
-                                              "Impossibile connettersi. Verifica la connessione ad internet");
-                                    }
+                                    _showAlertDialog(
+                                        title: "Conferma aggiornamento",
+                                        message:
+                                            "Sei sicuro di voler aggiornare i dati del profilo",
+                                        buttonMessage: "Sì",
+                                        f: updateProfile);
                                   }
                                 },
                                 child: const Center(
                                     child: Padding(
                                   padding: EdgeInsets.only(top: 16, bottom: 16),
-                                  child: Text('Registrati'),
+                                  child: Text('Aggiorna profilo'),
+                                )),
+                              )),
+                          Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 16.0),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Center(
+                                    child: Padding(
+                                  padding: EdgeInsets.only(top: 16, bottom: 16),
+                                  child: Text('Annulla'),
                                 )),
                               ))
                         ])),
-              )),
-              //Elemento in fondo alla pagina
-              //Expanded(child: Container()),
-              //Creo una linea orizzontale per seperare gli elementi
-              const Divider(color: Colors.black),
-              //Se non si ha un account, c'è questo shortcut per arrivarci
-              Row(
-                mainAxisAlignment:
-                    MainAxisAlignment.center, //Centra gli elementi al centro
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 15, bottom: 15),
-                    //RichText: testo cliccabile
-                    child: RichText(
-                      text: TextSpan(children: [
-                        const TextSpan(
-                          text: 'Possiedi già un account? ',
-                          style: TextStyle(
-                            color: Colors.black,
-                          ),
-                        ),
-                        TextSpan(
-                            text: 'Accedi',
-                            style: const TextStyle(
-                              color: Colors.blue,
-                            ),
-                            //Se il testo viene cliccato
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                //Rimuovo dallo stack la pagina di login e inserisco quella di creazione account
-                                Navigator.of(context).pop();
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => LoginScreen()));
-                              }),
-                      ]),
-                    ),
-                  )
-                ],
-              )
+              ))
             ]));
   }
 }

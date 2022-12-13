@@ -1,15 +1,19 @@
-// ignore_for_file: unnecessary_getters_setters
+// ignore_for_file: unnecessary_getters_setters, non_constant_identifier_names
+
+import 'package:friendly_neighborhood/utils/elaborate_data.dart';
+import 'package:intl/intl.dart';
 
 class LocalUser {
   late String _email;
   late String _username;
   late String _name;
   late String _lastname;
-  late DateTime _birthdate;
+  late DateTime _birth_date;
   late String _address;
   late int _family;
-  late String _houseType;
+  late String _house_type;
   late String _neighborhood;
+  late int _id_neighborhoods;
   late String _token;
 
   LocalUser(
@@ -17,21 +21,23 @@ class LocalUser {
       String username,
       String name,
       String lastname,
-      DateTime birthdate,
+      DateTime birth_date,
       String address,
       int family,
-      String houseType,
+      String house_type,
       String neighborhood,
+      int id_neighborhoods,
       String token) {
     _email = email;
     _username = username;
     _name = name;
     _lastname = lastname;
-    _birthdate = birthdate;
+    _birth_date = birth_date;
     _address = address;
     _family = family;
-    _houseType = houseType;
+    _house_type = house_type;
     _neighborhood = neighborhood;
+    _id_neighborhoods = id_neighborhoods;
     _token = token;
   }
   LocalUser.fromJSON(Map<String, dynamic> json) {
@@ -39,11 +45,12 @@ class LocalUser {
     _username = json['username'];
     _name = json['name'];
     _lastname = json['lastname'];
-    _birthdate = json['birthdate'];
+    _birth_date = DateFormat('dd-MM-yyyy').parse(json['birth_date']);
     _address = json['address'];
     _family = json['family'];
-    _houseType = json['houseType'];
+    _house_type = json['house_type'];
     _neighborhood = json['neighborhood'];
+    _id_neighborhoods = json['id_neighborhoods'];
     _token = json['token'];
   }
 
@@ -52,11 +59,12 @@ class LocalUser {
     _username = map['username'];
     _name = map['name'];
     _lastname = map['lastname'];
-    _birthdate = DateTime.parse(map['birthdate']);
+    _birth_date = DateTime.parse(map['birth_date']);
     _address = map['address'];
     _family = map['family'];
-    _houseType = map['houseType'];
+    _house_type = map['house_type'];
     _neighborhood = map['neighborhood'];
+    _id_neighborhoods = map['id_neighborhoods'];
     _token = map['token'];
   }
 
@@ -65,10 +73,11 @@ class LocalUser {
   String get username => _username;
   String get name => _name;
   String get lastname => _lastname;
-  DateTime get birthdate => _birthdate;
+  DateTime get birth_date => _birth_date;
   String get address => _address;
   int get family => _family;
-  String get houseType => _houseType;
+  String get house_type => _house_type;
+  int get id_neighborhoods => _id_neighborhoods;
   String get neighborhood => _neighborhood;
   String get token => _token;
 
@@ -77,11 +86,13 @@ class LocalUser {
   set username(String username) => _username = username;
   set name(String name) => _name = name;
   set lastname(String lastname) => _lastname = lastname;
-  set birthdate(DateTime birthdate) => _birthdate = birthdate;
+  set birthdate(DateTime birth_date) => _birth_date = birth_date;
   set address(String address) => _address = address;
   set family(int family) => _family = family;
-  set houseType(String houseType) => _houseType = houseType;
+  set house_type(String house_type) => _house_type = house_type;
   set neighborhood(String neighborhood) => _neighborhood = neighborhood;
+  set id_neighborhoods(int id_neighborhoods) =>
+      _id_neighborhoods = id_neighborhoods;
 
   //CONVERSION TO JSON
   Map<String, dynamic> toJson() => {
@@ -89,12 +100,11 @@ class LocalUser {
         'username': _username,
         'name': _name,
         'lastname': _lastname,
-        'birthdate': _birthdate,
+        'birth_date': convertDateTimeToDate(birth_date),
         'address': _address,
         'family': _family,
-        'houseType': _houseType,
-        'neighborhood': _neighborhood,
-        'token': _token
+        'house_type': _house_type,
+        'id_neighborhoods': _id_neighborhoods,
       };
 
   //Mappa per database
@@ -103,11 +113,12 @@ class LocalUser {
         'username': _username,
         'name': _name,
         'lastname': _lastname,
-        'birthdate': _birthdate.toString(),
+        'birth_date': _birth_date.toString(),
         'address': _address,
         'family': _family,
-        'houseType': _houseType,
+        'house_type': _house_type,
         'neighborhood': _neighborhood,
+        'id_neighborhoods': _id_neighborhoods,
         'token': _token
       };
 }

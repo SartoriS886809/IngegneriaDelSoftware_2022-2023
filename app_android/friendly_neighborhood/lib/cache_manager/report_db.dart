@@ -1,4 +1,4 @@
-// ignore_for_file: depend_on_referenced_packages
+// ignore_for_file: depend_on_referenced_packages, avoid_init_to_null
 import 'package:friendly_neighborhood/model/report.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -10,7 +10,7 @@ class NeedDataManager {
   static final NeedDataManager _instance = NeedDataManager._internal();
   static const String dbName = "needData.db";
   static const String tableName = "need";
-  late final Database _db;
+  Database? _db = null;
   bool _isOpen = false;
 
   // using a factory is important
@@ -23,11 +23,15 @@ class NeedDataManager {
   // This named constructor is the "real" constructor
   // It'll be called exactly once, by the static property assignment above
   // it's also private, so it can only be called in this class
-  NeedDataManager._internal() {}
+  NeedDataManager._internal() {
+    open();
+  }
 
   //La funzione serve per chiudere il database
   Future close() async {
-    _db.close();
+    if (_db != null) {
+      _db!.close();
+    }
     _isOpen = false;
   }
 
@@ -47,10 +51,10 @@ class NeedDataManager {
 
   Future<void> insertReport(Report rep) async {
     if (!_isOpen) {
-      open();
+      await open();
     }
 
-    await _db.insert(
+    await _db!.insert(
       tableName,
       rep.toDb(),
       conflictAlgorithm: ConflictAlgorithm.replace,
@@ -59,10 +63,10 @@ class NeedDataManager {
 
   Future<void> updateReport(Report rep) async {
     if (!_isOpen) {
-      open();
+      await open();
     }
 
-    await _db.update(
+    await _db!.update(
       tableName,
       rep.toDb(),
       where: 'id = ?',
@@ -72,10 +76,10 @@ class NeedDataManager {
 
   Future<void> deleteReport(Report rep) async {
     if (!_isOpen) {
-      open();
+      await open();
     }
 
-    await _db.delete(
+    await _db!.delete(
       tableName,
       where: 'id = ?',
       whereArgs: [rep.id],
@@ -83,12 +87,11 @@ class NeedDataManager {
   }
 
   Future<List<Report>> getReport() async {
-    // Get a reference to the database.
     if (!_isOpen) {
-      open();
+      await open();
     }
 
-    final List<Map<String, dynamic>> res = await _db.query(tableName);
+    final List<Map<String, dynamic>> res = await _db!.query(tableName);
     return List.generate(res.length, (i) {
       return Report.fromDB(res[i]);
     });

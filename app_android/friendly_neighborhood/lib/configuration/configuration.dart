@@ -1,8 +1,11 @@
+// ignore_for_file: constant_identifier_names
+
 import 'package:flutter/material.dart';
 
 class Configuration {
   static const int minAge = 16;
   static const int minLengthPassword = 8;
+  static const String API_link = "http://neighborhood.azurewebsites.net";
 
   /*https://blog.logrocket.com/launching-urls-flutter-url_launcher/ */
 

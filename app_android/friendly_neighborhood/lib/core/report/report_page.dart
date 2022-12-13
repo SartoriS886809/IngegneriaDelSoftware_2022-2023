@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/core/core.dart';
-import 'package:friendly_neighborhood/core/report/neighbours_reports.dart';
+import 'package:friendly_neighborhood/core/report/neighbors_reports.dart';
 import 'package:friendly_neighborhood/core/report/my_reports.dart';
 import 'package:friendly_neighborhood/core/report/create_report.dart';
 
@@ -23,7 +23,7 @@ class _ReportPageState extends State<ReportPage> {
   };
 
   final List<Widget> pagesWidgets = [
-    const NeighboursReports(),
+    const NeighborsReports(),
     const MyReports()
   ];
   late Widget _currentPage;
@@ -37,7 +37,7 @@ class _ReportPageState extends State<ReportPage> {
     super.initState();
     _currentIndex = 0;
     bnb = _createBottomNavigationBar();
-    //TODO TEMPORANEO
+
     _currentPage = pagesWidgets[0];
     _createNewReport = FloatingActionButton.extended(
       onPressed: () {
@@ -46,7 +46,7 @@ class _ReportPageState extends State<ReportPage> {
           MaterialPageRoute(builder: (context) => CreationReport()),
         );
       },
-      label: const Text('Crea bisogno'),
+      label: const Text('Crea Segnalazione'),
       backgroundColor: Colors.orange[900],
     );
 

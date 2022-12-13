@@ -11,7 +11,7 @@ class LocalUserManager {
   static final LocalUserManager _instance = LocalUserManager._internal();
   static const String dbName = "localUser.db";
   static const String tableName = "user";
-  late final Database _db;
+  Database? _db;
   bool _isOpen = false;
 
   // using a factory is important
@@ -24,11 +24,15 @@ class LocalUserManager {
   // This named constructor is the "real" constructor
   // It'll be called exactly once, by the static property assignment above
   // it's also private, so it can only be called in this class
-  LocalUserManager._internal() {}
+  LocalUserManager._internal() {
+    open();
+  }
 
   //La funzione serve per chiudere il database
   Future close() async {
-    _db.close();
+    if (_db != null) {
+      _db!.close();
+    }
     _isOpen = false;
   }
 
@@ -39,7 +43,7 @@ class LocalUserManager {
       //Funzione creazione database
       onCreate: (db, version) {
         return db.execute(
-            'CREATE TABLE $tableName(email TEXT PRIMARY KEY,username TEXT,name TEXT, lastname TEXT, birthdate TEXT,address TEXT, family INTEGER,houseType TEXT,neighborhood TEXT,token TEXT)');
+            'CREATE TABLE $tableName(email TEXT PRIMARY KEY,username TEXT,name TEXT, lastname TEXT, birth_date TEXT,address TEXT, family INTEGER,house_type TEXT,neighborhood TEXT,id_neighborhoods INTEGER,token TEXT)');
       },
       version: 1,
     );
@@ -48,10 +52,14 @@ class LocalUserManager {
 
   Future<void> insertUser(LocalUser user) async {
     if (!_isOpen) {
-      open();
+      await open();
     }
-
-    await _db.insert(
+    //Controllo che non ci siano altri utenti salvati
+    LocalUser? l = await getUser();
+    if (l != null) {
+      await deleteUser(l);
+    }
+    await _db!.insert(
       tableName,
       user.mapForDb(),
       conflictAlgorithm: ConflictAlgorithm.replace,
@@ -60,7 +68,7 @@ class LocalUserManager {
 
   Future<void> updateUser(LocalUser user) async {
     if (!_isOpen) {
-      open();
+      await open();
     }
 
     //Si può aggiornare anche la chiave primaria, perciò devo rimuovere l'utente esistente
@@ -73,10 +81,10 @@ class LocalUserManager {
 
   Future<void> deleteUser(LocalUser user) async {
     if (!_isOpen) {
-      open();
+      await open();
     }
 
-    await _db.delete(
+    await _db!.delete(
       tableName,
       where: 'email = ?',
       whereArgs: [user.email],
@@ -86,10 +94,10 @@ class LocalUserManager {
   Future<LocalUser?> getUser() async {
     // Get a reference to the database.
     if (!_isOpen) {
-      open();
+      await open();
     }
 
-    final List<Map<String, dynamic>> res = await _db.query(tableName);
+    final List<Map<String, dynamic>> res = await _db!.query(tableName);
     if (res.isEmpty) return null;
     // E' possibile avere solo 1 utente nel database, non di più
     return LocalUser.fromDB(res[0]);

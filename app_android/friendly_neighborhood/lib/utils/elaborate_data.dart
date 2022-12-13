@@ -30,3 +30,26 @@ class Pair<E, F> {
     return "First: $first Last: $last";
   }
 }
+
+String convertDateTimeToDate(DateTime d) {
+  return '${d.day}/${d.month}/${d.year}';
+}
+
+const months = <String>[
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
+String extractDataFromDBString(String s) {
+  List<String> ls = s.split(' ');
+  return '${ls[1]}-${months.indexOf(ls[2]) + 1}-${ls[3]}';
+}

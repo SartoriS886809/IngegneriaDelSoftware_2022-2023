@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:friendly_neighborhood/API_Manager/api_manager.dart';
+import 'package:friendly_neighborhood/cache_manager/profile_db.dart';
 import 'package:friendly_neighborhood/core/service/card_service.dart';
+import 'package:friendly_neighborhood/model/localuser.dart';
 import 'package:friendly_neighborhood/model/service.dart';
 
 class NeighborhoodServicePage extends StatefulWidget {
@@ -14,63 +15,61 @@ class NeighborhoodServicePage extends StatefulWidget {
 
 class _NeighborhoodServicePageState extends State<NeighborhoodServicePage> {
   late List<Service> data;
+  String token = "";
+  LocalUserManager lum = LocalUserManager();
+  //TODO INSERIRE FUNZIONE DI GESTIONE DI ERRORE IN CASO DEL TOKEN NON PIù VALIDO
+
+  //TODO Controllo connessione ad internet
+  Future downloadData(bool needRefreshGUI) async {
+    if (token == "") {
+      LocalUser? user = await lum.getUser();
+      token = user!.token;
+    }
+
+    data = List<Service>.from(
+        await API_Manager.listOfElements(token, ELEMENT_TYPE.SERVICES, false));
+    if (needRefreshGUI) setState(() {});
+  }
+
+  Future<Widget> generateList() async {
+    await downloadData(false);
+    if (data.isEmpty) {
+      return const Center(
+          child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text("Non sono ancora presenti servizi")));
+    }
+    return SizedBox(
+      height: double.infinity,
+      child: ListView.builder(
+        itemCount: data.length,
+        itemBuilder: (context, index) {
+          return ServiceCardNeighborhood(service: data[index]);
+        },
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
     //TODO: Temporaneo
-    data = [
-      Service(
-          postDate: DateTime.now(),
-          title: "Pasticcere",
-          link: "telefono / cellulare:+396666888",
-          description: "Torte su ordinazione",
-          creator: "Luigina"),
-      Service(
-          postDate: DateTime.now(),
-          title: "Idraulico",
-          link: "telefono / cellulare:+396666888",
-          description: "Se perde acqua è da riparare",
-          creator: "Luigi"),
-      Service(
-          postDate: DateTime.now(),
-          title: "Pasticcere",
-          link: "telefono / cellulare:+396666888",
-          description: "Torte su ordinazione",
-          creator: "Luigina"),
-      Service(
-          postDate: DateTime.now(),
-          title: "Idraulico",
-          link: "telefono / cellulare:+396666888",
-          description: "Se perde acqua è da riparare",
-          creator: "Luigi"),
-      Service(
-          postDate: DateTime.now(),
-          title: "Pasticcere",
-          link: "telefono / cellulare:+396666888",
-          description: "Torte su ordinazione",
-          creator: "Luigina"),
-      Service(
-          postDate: DateTime.now(),
-          title: "Idraulico",
-          link: "telefono / cellulare:+396666888",
-          description: "Se perde acqua è da riparare",
-          creator: "Luigi")
-    ];
+    data = [];
   }
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        SizedBox(
-          height: double.infinity,
-          child: ListView.builder(
-            itemCount: data.length,
-            itemBuilder: (context, index) {
-              return ServiceCardNeighborhood(service: data[index]);
-            },
-          ),
-        ),
+        FutureBuilder<Widget>(
+            future: generateList(),
+            builder: (context, AsyncSnapshot<Widget> snapshot) {
+              if (snapshot.hasData) {
+                return snapshot.data!;
+              } else {
+                return const CircularProgressIndicator();
+              }
+            }),
         SizedBox(
           height: 10,
           child: Row(
@@ -81,8 +80,7 @@ class _NeighborhoodServicePageState extends State<NeighborhoodServicePage> {
               )),
               IconButton(
                   onPressed: (() {
-                    //TODO Aggiornamento dati
-                    return;
+                    downloadData(true);
                   }),
                   icon: const Icon(Icons.refresh))
             ],
