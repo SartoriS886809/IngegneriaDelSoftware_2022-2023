@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/core/service/card_service.dart';
+import 'package:friendly_neighborhood/utils/exception_widget.dart';
 
 import '../../API_Manager/api_manager.dart';
 import '../../cache_manager/profile_db.dart';
@@ -16,15 +17,19 @@ class MyServicePage extends StatefulWidget {
 class _MyServicePageState extends State<MyServicePage> {
   String token = "";
   LocalUserManager lum = LocalUserManager();
-  //TODO Controllo connessione ad internet
+
   Future downloadData(bool needRefreshGUI) async {
     if (token == "") {
       LocalUser? user = await lum.getUser();
       token = user!.token;
     }
+    try {
+      data = List<Service>.from(
+          await API_Manager.listOfElements(token, ELEMENT_TYPE.SERVICES, true));
+    } catch (e) {
+      rethrow;
+    }
 
-    data = List<Service>.from(
-        await API_Manager.listOfElements(token, ELEMENT_TYPE.SERVICES, true));
     if (needRefreshGUI) setState(() {});
   }
 
@@ -41,7 +46,8 @@ class _MyServicePageState extends State<MyServicePage> {
       child: ListView.builder(
         itemCount: data.length,
         itemBuilder: (context, index) {
-          return ServiceCardMe(service: data[index]);
+          return ServiceCardMe(
+              service: data[index], downloadNewDataFunction: downloadData);
         },
       ),
     );
@@ -51,7 +57,6 @@ class _MyServicePageState extends State<MyServicePage> {
   @override
   void initState() {
     super.initState();
-    //TODO: Temporaneo
     data = [];
   }
 
@@ -64,8 +69,10 @@ class _MyServicePageState extends State<MyServicePage> {
             builder: (context, AsyncSnapshot<Widget> snapshot) {
               if (snapshot.hasData) {
                 return snapshot.data!;
+              } else if (snapshot.hasError) {
+                return printError(snapshot.error!, downloadData);
               } else {
-                return const CircularProgressIndicator();
+                return const Center(child: CircularProgressIndicator());
               }
             }),
         SizedBox(

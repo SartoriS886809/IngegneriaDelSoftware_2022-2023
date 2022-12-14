@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/model/report.dart';
+import 'package:friendly_neighborhood/utils/exception_widget.dart';
 
 import '../../API_Manager/api_manager.dart';
 import '../../cache_manager/profile_db.dart';
@@ -55,15 +56,17 @@ class _NeighborsReportsState extends State<NeighborsReports> {
 
   //TODO INSERIRE FUNZIONE DI GESTIONE DI ERRORE IN CASO DEL TOKEN NON PIù VALIDO
 
-  //TODO Controllo connessione ad internet
   Future downloadData(bool needRefreshGUI) async {
     if (token == "") {
       LocalUser? user = await lum.getUser();
       token = user!.token;
     }
-
-    reportList = List<Report>.from(
-        await API_Manager.listOfElements(token, ELEMENT_TYPE.REPORTS, false));
+    try {
+      reportList = List<Report>.from(
+          await API_Manager.listOfElements(token, ELEMENT_TYPE.REPORTS, false));
+    } catch (e) {
+      rethrow;
+    }
     if (needRefreshGUI) setState(() {});
   }
 
@@ -100,7 +103,6 @@ class _NeighborsReportsState extends State<NeighborsReports> {
                 padding: EdgeInsets.all(16.0),
                 child: Text("Non sono ancora presenti Segnalazioni")));
   }
-  //TODO implementare la lista di segnalazioni
 
   @override
   Widget build(BuildContext context) {
@@ -109,8 +111,10 @@ class _NeighborsReportsState extends State<NeighborsReports> {
         builder: (context, AsyncSnapshot<Widget> snapshot) {
           if (snapshot.hasData) {
             return snapshot.data!;
+          } else if (snapshot.hasError) {
+            return printError(snapshot.error!, downloadData);
           } else {
-            return const CircularProgressIndicator();
+            return const Center(child: CircularProgressIndicator());
           }
         });
   }

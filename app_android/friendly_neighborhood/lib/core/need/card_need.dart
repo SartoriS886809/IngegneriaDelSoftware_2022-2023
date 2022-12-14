@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:friendly_neighborhood/core/core.dart';
 import 'package:friendly_neighborhood/model/need.dart';
 import 'package:friendly_neighborhood/core/need/need_show.dart';
 
 import '../../utils/elaborate_data.dart';
 
 class NeedCard extends StatelessWidget {
+  final DownloadNewDataFunction downloadNewDataFunction;
   final Need need;
   final bool
       isItMine; //indica se la card rappresenta un bisogno dell'utente corrente
@@ -14,17 +16,18 @@ class NeedCard extends StatelessWidget {
       {super.key,
       required this.need,
       required this.isItMine,
+      required this.downloadNewDataFunction,
       this.assistedByMe = false});
 
   @override
   Widget build(BuildContext context) {
     String date = convertDateTimeToDate(need.postDate);
     //"${need.postDate.day}-${need.postDate.month}-${need.postDate.year} ${need.postDate.hour}:${need.postDate.minute}";
-    String author = (!isItMine) ? ("\nAutore: " + need.creator) : "";
+    String author = (!isItMine) ? ("\nAutore: ${need.creator}") : "";
     String assistant = (!isItMine)
         ? ""
         : ((need.assistant != "")
-            ? "\nRichiesta presa in carico da: " + need.assistant
+            ? "\nRichiesta presa in carico da: ${need.assistant}"
             : "\nLa richiesta non è ancora stata presa in carico");
     ShowNeed
         showNeedPage = //riferimento alla pagina di visualizzazione bisogno collegata al rispettivo pulsante nella card
@@ -37,31 +40,34 @@ class NeedCard extends StatelessWidget {
     final TextButton showNeedButton = TextButton(
         child: const Text('Apri descrizione'),
         onPressed: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => showNeedPage));
+          Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => showNeedPage))
+              .then((value) => downloadNewDataFunction(true));
         });
 
     final TextButton satisfyButton = TextButton(
-        child: const Text('Soddisfa'),
         style: TextButton.styleFrom(
             backgroundColor: Colors.blue,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.all(8.0)),
-        onPressed: () {
+        onPressed: () async {
           //aggiunge il proprio id come assistente se viene data conferma
-          showNeedPage.showConfirmAssistanceChangeDialog(context, true);
-        });
+          await showNeedPage.showConfirmAssistanceChangeDialog(context, true);
+          downloadNewDataFunction(true);
+        },
+        child: const Text('Soddisfa'));
 
     final TextButton withdrawButton = TextButton(
-        child: const Text('Ritira disponibilità'),
         style: TextButton.styleFrom(
             backgroundColor: Colors.blue,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.all(8.0)),
-        onPressed: () {
+        onPressed: () async {
           //rimuove il proprio id come assistente se viene data conferma
-          showNeedPage.showConfirmAssistanceChangeDialog(context, true);
-        });
+          await showNeedPage.showConfirmAssistanceChangeDialog(context, true);
+          downloadNewDataFunction(true);
+        },
+        child: const Text('Ritira disponibilità'));
 
     final List<Widget> cardButtons = (!isItMine)
         ? ((!assistedByMe)
@@ -91,13 +97,8 @@ class NeedCard extends StatelessWidget {
             Expanded(
               child: ListTile(
                 title: Text(need.title),
-                subtitle: Text("Luogo: " +
-                    need.address +
-                    "\n" +
-                    "Data creazione: " +
-                    date +
-                    author +
-                    assistant),
+                subtitle: Text(
+                    "Luogo: ${need.address}\nData creazione: $date$author$assistant"),
               ),
             ),
             Column(children: cardButtons)

@@ -7,6 +7,7 @@ import 'package:friendly_neighborhood/cache_manager/profile_db.dart';
 import 'package:friendly_neighborhood/configuration/configuration.dart';
 import 'package:friendly_neighborhood/model/localuser.dart';
 import 'package:friendly_neighborhood/model/service.dart';
+import 'package:friendly_neighborhood/utils/alertdialog.dart';
 
 import '../../utils/elaborate_data.dart';
 
@@ -36,45 +37,7 @@ class _CreationOrModificationServiceState
   late List<Pair<String, String>> _listContact;
   late BuildContext _context;
   LocalUserManager lum = LocalUserManager();
-  LocalUser? user = null;
-
-  Future<void> _showAlertDialog(
-      {required String title,
-      required String message,
-      required String buttonMessage,
-      required Function f}) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // L'utente deve premere il pulsante
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(message),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Annulla'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text(buttonMessage),
-              onPressed: () {
-                Navigator.of(context).pop();
-                f();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+  LocalUser? user;
 
   void updateService() async {
     user ??= await lum.getUser();
@@ -86,11 +49,12 @@ class _CreationOrModificationServiceState
           user!.token, widget.service, ELEMENT_TYPE.SERVICES);
       Navigator.pop(_context);
     } catch (e) {
-      _showAlertDialog(
-          buttonMessage: "Riprova",
+      advancedAlertDialog(
           title: "Errore",
           message: e.toString(),
-          f: updateService);
+          buttonMessage: "Riprova",
+          f: updateService,
+          context: context);
     }
   }
 
@@ -107,11 +71,12 @@ class _CreationOrModificationServiceState
           user!.token, widget.service, ELEMENT_TYPE.SERVICES);
       Navigator.pop(_context);
     } catch (e) {
-      _showAlertDialog(
+      advancedAlertDialog(
           buttonMessage: "Riprova",
           title: "Errore",
           message: e.toString(),
-          f: createService);
+          f: createService,
+          context: context);
     }
   }
 
@@ -275,12 +240,9 @@ class _CreationOrModificationServiceState
                         ),
 
                         Row(children: [
-                          Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 15),
-                              child: Container(
-                                child: const Text("Metodi di contatto:"),
-                              )),
+                          const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 15),
+                              child: Text("Metodi di contatto:")),
                           Expanded(child: Container()),
                           Container(
                               decoration: BoxDecoration(
@@ -332,20 +294,23 @@ class _CreationOrModificationServiceState
                                                 .validate()) {
                                               if (widget.modification) {
                                                 //aggiornare
-                                                _showAlertDialog(
+
+                                                advancedAlertDialog(
                                                     title: "Aggiornamento",
                                                     message:
                                                         "Sei sicuro di voler aggiornare il servizio?",
                                                     buttonMessage: "Aggiorna",
-                                                    f: updateService);
+                                                    f: updateService,
+                                                    context: context);
                                               } else {
                                                 //creare da zero
-                                                _showAlertDialog(
+                                                advancedAlertDialog(
                                                     title: "Creazione",
                                                     message:
                                                         "Sei sicuro di voler creare il servizio?",
                                                     buttonMessage: "Crea",
-                                                    f: createService);
+                                                    f: createService,
+                                                    context: context);
                                               }
                                             }
                                           },

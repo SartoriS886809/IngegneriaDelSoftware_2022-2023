@@ -7,6 +7,7 @@ import 'package:friendly_neighborhood/configuration/configuration.dart';
 import 'package:friendly_neighborhood/first_page/login_screen.dart';
 import 'package:friendly_neighborhood/model/localuser.dart';
 import 'package:friendly_neighborhood/model/neighborhood.dart';
+import 'package:friendly_neighborhood/utils/alertdialog.dart';
 import 'package:friendly_neighborhood/utils/check_connection.dart';
 import 'package:intl/intl.dart';
 import 'package:friendly_neighborhood/utils/elaborate_data.dart';
@@ -122,33 +123,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     _confirmPasswordVisible = false;
     _confirmIconPassword = Icons.visibility;
     _choice_neighborhood = _voidNeighborhood;
-  }
-
-  Future<void> _showAlertDialog({required String text}) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // L'utente deve premere il pulsante
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Avviso'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(text),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Ok'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override
@@ -313,10 +287,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                 if (value == null || value.isEmpty) {
                                   return "Il campo nome non può essere vuoto";
                                   //Controlla che il nome sia stato inserito nel formato corretto
-                                } else if (!RegExp('[a-zA-Z]')
-                                    .hasMatch(value)) {
-                                  //TODO REGEXP NON FUNZIONA
-                                  return "Formato cognome non corretto";
                                 } else {
                                   return null;
                                 }
@@ -339,10 +309,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                 if (value == null || value.isEmpty) {
                                   return "Il campo cognome non può essere vuoto";
                                   //Controlla che il nome sia stato inserito nel formato corretto
-                                } else if (!RegExp('[a-zA-Z]')
-                                    .hasMatch(value)) {
-                                  //TODO REGEXP NON FUNZIONA
-                                  return "Formato cognome non corretto";
                                 } else {
                                   return null;
                                 }
@@ -406,7 +372,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                 //Se è vuoto dice di inserire la residenza
                                 if (value == null || value.isEmpty) {
                                   return "Il campo residenza non può essere vuoto";
-                                  //TODO inserire se possibile check della residenza
                                 } else {
                                   return null;
                                 }
@@ -520,12 +485,15 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                                               "Creazione account avvenuta con successo. Si prega di eseguire l'accesso")));
                                         }
                                       } catch (e) {
-                                        _showAlertDialog(text: e.toString());
+                                        notificationAlertDialog(
+                                            text: e.toString(),
+                                            context: context);
                                       }
                                     } else {
-                                      _showAlertDialog(
+                                      notificationAlertDialog(
                                           text:
-                                              "Impossibile connettersi. Verifica la connessione ad internet");
+                                              "Impossibile connettersi. Verifica la connessione ad internet",
+                                          context: context);
                                     }
                                   }
                                 },

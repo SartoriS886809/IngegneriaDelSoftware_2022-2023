@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/cache_manager/profile_db.dart';
 import 'package:friendly_neighborhood/core/service/create_modify_service.dart';
 import 'package:friendly_neighborhood/model/service.dart';
+import 'package:friendly_neighborhood/utils/alertdialog.dart';
 
 import '../../API_Manager/api_manager.dart';
 import '../../model/localuser.dart';
@@ -22,7 +23,8 @@ class ShowService extends StatefulWidget {
 class _ShowServiceState extends State<ShowService> {
   late BuildContext _context;
   LocalUserManager lum = LocalUserManager();
-  LocalUser? user = null;
+  LocalUser? user;
+
   Future<void> removeService() async {
     user ??= await lum.getUser();
     try {
@@ -30,42 +32,13 @@ class _ShowServiceState extends State<ShowService> {
           user!.token, widget.service.id, ELEMENT_TYPE.SERVICES);
       Navigator.pop(_context);
     } catch (e) {
-      //TODO Inserire dialogo con scritto l'errore e riprovare
+      advancedAlertDialog(
+          title: "Errore",
+          message: e.toString(),
+          buttonMessage: "Riprova",
+          f: removeService,
+          context: context);
     }
-  }
-
-  Future<void> _showConfirmDeleteDialog() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // L'utente deve premere il pulsante
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Eliminazione servizio'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: const <Widget>[
-                Text("Sei sicuro di voler eliminare il servizio?"),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Annulla'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Elimina'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                removeService();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   Widget generaLista() {
@@ -141,7 +114,13 @@ class _ShowServiceState extends State<ShowService> {
                           padding: const EdgeInsets.symmetric(vertical: 16.0),
                           child: ElevatedButton(
                             onPressed: () async {
-                              _showConfirmDeleteDialog();
+                              advancedAlertDialog(
+                                  title: 'Eliminazione servizio',
+                                  message:
+                                      "Sei sicuro di voler eliminare il servizio?",
+                                  buttonMessage: "Elimina",
+                                  f: removeService,
+                                  context: context);
                               //La pagina si chiude se solo se viene eliminita il servizio
                             },
                             child: const Center(

@@ -8,6 +8,7 @@ import 'package:friendly_neighborhood/cache_manager/profile_db.dart';
 import 'package:friendly_neighborhood/core/core.dart';
 import 'package:friendly_neighborhood/first_page/login_screen.dart';
 import 'package:friendly_neighborhood/model/localuser.dart';
+import 'package:friendly_neighborhood/utils/alertdialog.dart';
 import 'package:friendly_neighborhood/utils/check_connection.dart';
 
 void main() {
@@ -62,35 +63,6 @@ class _LoadingScreenState extends State<LoadingScreen> {
   LocalUserManager lum = LocalUserManager();
   late BuildContext _context;
 
-  Future<void> _showAlertDialog(
-      {required String text, required Function f}) async {
-    return showDialog<void>(
-      context: _context,
-      barrierDismissible: false, // L'utente deve premere il pulsante
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Avviso'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(text),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Riprova'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                f();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   void startingProcess() async {
     LocalUser? user = await lum.getUser();
     if (user == null) {
@@ -116,10 +88,11 @@ class _LoadingScreenState extends State<LoadingScreen> {
                         "Sessione non più valida, si prega di rieseguire il login")));
       }
     } else {
-      _showAlertDialog(
+      simpleAlertDialog(
           text:
               "Connessione ad internet richiesta. Controllare la connessione e riprovare",
-          f: startingProcess);
+          f: startingProcess,
+          context: _context);
     }
   }
 

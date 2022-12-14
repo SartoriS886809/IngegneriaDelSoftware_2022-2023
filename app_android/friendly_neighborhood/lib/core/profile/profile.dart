@@ -6,6 +6,7 @@ import 'package:friendly_neighborhood/cache_manager/profile_db.dart';
 import 'package:friendly_neighborhood/core/profile/modify_profile.dart';
 import 'package:friendly_neighborhood/first_page/login_screen.dart';
 import 'package:friendly_neighborhood/model/localuser.dart';
+import 'package:friendly_neighborhood/utils/alertdialog.dart';
 
 import '../dashboard/dashboard.dart';
 
@@ -35,44 +36,6 @@ class _ProfileState extends State<Profile> {
     Navigator.pop(context);
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => LoginScreen()));
-  }
-
-  Future<void> _showAlertDialog(
-      {required String title,
-      required String message,
-      required String buttonMessage,
-      required Function f}) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // L'utente deve premere il pulsante
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(message),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Annulla'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text(buttonMessage),
-              onPressed: () {
-                Navigator.of(context).pop();
-                f();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   Future<Widget> _asyncBuilder(BuildContext context) async {
@@ -138,11 +101,12 @@ class _ProfileState extends State<Profile> {
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: ElevatedButton(
               onPressed: () {
-                _showAlertDialog(
+                advancedAlertDialog(
                     buttonMessage: "Disconnettiti",
                     title: "Conferma disconnessione",
                     message: "Sei sicuro di volerti disconnettere?",
-                    f: logout);
+                    f: logout,
+                    context: context);
               },
               child: const Center(
                   child: Padding(
@@ -155,12 +119,13 @@ class _ProfileState extends State<Profile> {
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
               onPressed: () {
-                _showAlertDialog(
+                advancedAlertDialog(
                     buttonMessage: "Elimina",
                     title: "Eliminazione account",
                     message:
                         "Sei sicuro di voler eliminare l'account? Questa azione è irreversibile.",
-                    f: deleteAccount);
+                    f: deleteAccount,
+                    context: context);
               },
               child: const Center(
                   child: Padding(
@@ -180,7 +145,7 @@ class _ProfileState extends State<Profile> {
           if (snapshot.hasData) {
             return snapshot.data!;
           } else {
-            return const CircularProgressIndicator();
+            return const Center(child: CircularProgressIndicator());
           }
         });
   }

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/API_Manager/api_manager.dart';
 import 'package:friendly_neighborhood/cache_manager/profile_db.dart';

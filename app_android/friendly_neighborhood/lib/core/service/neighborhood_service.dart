@@ -4,6 +4,7 @@ import 'package:friendly_neighborhood/cache_manager/profile_db.dart';
 import 'package:friendly_neighborhood/core/service/card_service.dart';
 import 'package:friendly_neighborhood/model/localuser.dart';
 import 'package:friendly_neighborhood/model/service.dart';
+import 'package:friendly_neighborhood/utils/exception_widget.dart';
 
 class NeighborhoodServicePage extends StatefulWidget {
   const NeighborhoodServicePage({super.key});
@@ -19,15 +20,18 @@ class _NeighborhoodServicePageState extends State<NeighborhoodServicePage> {
   LocalUserManager lum = LocalUserManager();
   //TODO INSERIRE FUNZIONE DI GESTIONE DI ERRORE IN CASO DEL TOKEN NON PIù VALIDO
 
-  //TODO Controllo connessione ad internet
   Future downloadData(bool needRefreshGUI) async {
     if (token == "") {
       LocalUser? user = await lum.getUser();
       token = user!.token;
     }
+    try {
+      data = List<Service>.from(await API_Manager.listOfElements(
+          token, ELEMENT_TYPE.SERVICES, false));
+    } catch (e) {
+      rethrow;
+    }
 
-    data = List<Service>.from(
-        await API_Manager.listOfElements(token, ELEMENT_TYPE.SERVICES, false));
     if (needRefreshGUI) setState(() {});
   }
 
@@ -44,7 +48,10 @@ class _NeighborhoodServicePageState extends State<NeighborhoodServicePage> {
       child: ListView.builder(
         itemCount: data.length,
         itemBuilder: (context, index) {
-          return ServiceCardNeighborhood(service: data[index]);
+          return ServiceCardNeighborhood(
+            service: data[index],
+            downloadNewDataFunction: downloadData,
+          );
         },
       ),
     );
@@ -53,7 +60,6 @@ class _NeighborhoodServicePageState extends State<NeighborhoodServicePage> {
   @override
   void initState() {
     super.initState();
-    //TODO: Temporaneo
     data = [];
   }
 
@@ -66,8 +72,10 @@ class _NeighborhoodServicePageState extends State<NeighborhoodServicePage> {
             builder: (context, AsyncSnapshot<Widget> snapshot) {
               if (snapshot.hasData) {
                 return snapshot.data!;
+              } else if (snapshot.hasError) {
+                return printError(snapshot.error!, downloadData);
               } else {
-                return const CircularProgressIndicator();
+                return const Center(child: CircularProgressIndicator());
               }
             }),
         SizedBox(

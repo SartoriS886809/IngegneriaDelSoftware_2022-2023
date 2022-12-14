@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:friendly_neighborhood/core/core.dart';
 import 'package:friendly_neighborhood/core/service/service_show.dart';
 import 'package:friendly_neighborhood/model/service.dart';
 
 class ServiceCardNeighborhood extends StatelessWidget {
+  final DownloadNewDataFunction downloadNewDataFunction;
   final Service service;
-  const ServiceCardNeighborhood({super.key, required this.service});
+  const ServiceCardNeighborhood(
+      {super.key,
+      required this.service,
+      required this.downloadNewDataFunction});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +29,7 @@ class ServiceCardNeighborhood extends StatelessWidget {
                     builder: (context) => ShowService(
                           service: service,
                           myService: false,
-                        )));
+                        ))).then((value) => downloadNewDataFunction(true));
           },
         ),
         const SizedBox(width: 8),
@@ -35,7 +40,11 @@ class ServiceCardNeighborhood extends StatelessWidget {
 
 class ServiceCardMe extends StatelessWidget {
   final Service service;
-  const ServiceCardMe({super.key, required this.service});
+  final DownloadNewDataFunction downloadNewDataFunction;
+  const ServiceCardMe(
+      {super.key,
+      required this.service,
+      required this.downloadNewDataFunction});
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +65,7 @@ class ServiceCardMe extends StatelessWidget {
                     builder: (context) => ShowService(
                           service: service,
                           myService: true,
-                        )));
+                        ))).then((value) => downloadNewDataFunction(true));
           },
         ),
         const SizedBox(width: 8),

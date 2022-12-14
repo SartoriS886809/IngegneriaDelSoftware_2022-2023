@@ -1,9 +1,13 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/API_Manager/api_manager.dart';
 import 'package:friendly_neighborhood/cache_manager/profile_db.dart';
 import 'package:friendly_neighborhood/core/need/create_modify_need.dart';
 import 'package:friendly_neighborhood/model/localuser.dart';
 import 'package:friendly_neighborhood/model/need.dart';
+
+import '../../utils/alertdialog.dart';
 
 class ShowNeed extends StatefulWidget {
   final Need need;
@@ -21,7 +25,27 @@ class ShowNeed extends StatefulWidget {
 //parametro callFromList indica se la funzione è stata chiamata dalla lista nella sezione "My assignments"
   Future<void> showConfirmAssistanceChangeDialog(BuildContext context,
       [bool callFromMyAssignments = false]) async {
-    return showDialog<void>(
+    return (assistedByMe)
+        ? advancedAlertDialog(
+            title: 'Ritiro disponibilità',
+            message:
+                "Sei sicuro di voler ritirare la disponibilità all'assistenza?",
+            buttonMessage: 'Ritira disponibilità',
+            f: () {
+              // Navigator.of(context).pop();
+              changeAssistanceAvailability(context, callFromMyAssignments);
+            },
+            context: context)
+        : advancedAlertDialog(
+            title: 'Soddisfazione richiesta',
+            message: "Sei sicuro di voler soddisfare la richiesta?",
+            buttonMessage: 'Soddisfa',
+            f: () {
+              //Navigator.of(context).pop();
+              changeAssistanceAvailability(context, callFromMyAssignments);
+            },
+            context: context);
+    /*return showDialog<void>(
       context: context,
       barrierDismissible: false, // L'utente deve premere il pulsante
       builder: (BuildContext context) {
@@ -59,7 +83,7 @@ class ShowNeed extends StatefulWidget {
           ],
         );
       },
-    );
+    );*/
   }
 
 //questa funzione si occupa della richiesta al server di modifica del campo relativo all'assistente del bisogno visualizzato
@@ -71,10 +95,10 @@ class ShowNeed extends StatefulWidget {
     token = user!.token;
 
     if (assistedByMe) {
-      //TODO Richiesta al server di rimozione del proprio id come assistente dal bisogno
+      // Richiesta al server di rimozione del proprio id come assistente dal bisogno
       await API_Manager.assistanceNeed(token, need.id, false);
     } else {
-      //TODO Richiesta al server di inserimento del proprio id come assistente dal bisogno
+      // Richiesta al server di inserimento del proprio id come assistente dal bisogno
       await API_Manager.assistanceNeed(token, need.id, true);
     }
     if (!callFromMyAssignments) Navigator.pop(context);
@@ -96,8 +120,17 @@ class _ShowNeedState extends State<ShowNeed> {
     Navigator.pop(_context);
   }
 
-  Future<void> _showConfirmDeleteDialog() async {
-    return showDialog<void>(
+  Future<void> _showConfirmDeleteDialog(BuildContext context) async {
+    return advancedAlertDialog(
+        title: "Eliminazione bisogno",
+        message: "Sei sicuro di voler eliminare la richiesta?",
+        buttonMessage: "Elimina",
+        f: () {
+          //Navigator.of(context).pop();
+          removeNeed();
+        },
+        context: context);
+    /*return showDialog<void>(
       context: context,
       barrierDismissible: false, // L'utente deve premere il pulsante
       builder: (BuildContext context) {
@@ -127,7 +160,7 @@ class _ShowNeedState extends State<ShowNeed> {
           ],
         );
       },
-    );
+    );*/
   }
 
   @override
@@ -169,14 +202,14 @@ class _ShowNeedState extends State<ShowNeed> {
                           padding: const EdgeInsets.symmetric(vertical: 16.0),
                           child: ElevatedButton(
                             onPressed: () async {
-                              Navigator.pop(context);
                               Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          CreationOrModificationNeed
-                                              .modification(
-                                                  need: widget.need)));
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              CreationOrModificationNeed
+                                                  .modification(
+                                                      need: widget.need)))
+                                  .then((value) => Navigator.pop(context));
                             },
                             child: const Center(
                                 child: Padding(
@@ -190,7 +223,7 @@ class _ShowNeedState extends State<ShowNeed> {
                           padding: const EdgeInsets.symmetric(vertical: 16.0),
                           child: ElevatedButton(
                             onPressed: () async {
-                              _showConfirmDeleteDialog();
+                              _showConfirmDeleteDialog(context);
                               //La pagina si chiude se solo se viene eliminita il servizio
                             },
                             child: const Center(
