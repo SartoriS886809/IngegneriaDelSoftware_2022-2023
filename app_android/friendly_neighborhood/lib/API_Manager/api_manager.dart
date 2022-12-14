@@ -32,7 +32,7 @@ class API_Manager {
     Map<String, dynamic> json = user.toJson();
     json["password"] = password;
     //Fix Date Format
-    json["birth_date"] = convertDateTimeToDate(json["birth_date"]);
+    //json["birth_date"] = convertDateTimeToDate(json["birth_date"]);
     http.Response response =
         await sendRequest(link, jsonEncode(json), HTTP_Method.POST);
     dynamic jsonResponse = jsonDecode(response.body);
