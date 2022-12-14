@@ -13,9 +13,9 @@ class Configuration {
   static const Map<String, String> supportedContactMethods = {
     "telefono / cellulare": "tel:\$",
     "email": "mailto:\$",
-    "whatsapp": " https://api.whatsapp.com/send?phone=",
+    "whatsapp": "https://wa.me/send?phone=",
     "telegram": "https://telegram.me/",
-    "sito web": "",
+    "sito web": "https:",
   };
   static const Map<String, IconData> iconFromContactMethods = {
     "telefono / cellulare": Icons.call,

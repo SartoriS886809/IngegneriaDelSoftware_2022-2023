@@ -98,7 +98,7 @@ class Service {
                     side: const BorderSide(color: Colors.blue)))),
         onPressed: () async {
           if (await canLaunchUrl(url)) {
-            await launchUrl(url);
+            await launchUrl(url, mode: LaunchMode.externalApplication);
           } else {
             throw 'Could not launch $url';
           }
