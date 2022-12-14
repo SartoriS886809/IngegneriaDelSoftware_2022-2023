@@ -1,5 +1,5 @@
 def test_logout(client):
-	response = client.post("/logout", data={
+	response = client.post("/logout", json={
 		"email": "mario@gmail.com",
 	})
 	assert response.status_code == 200
@@ -7,7 +7,7 @@ def test_logout(client):
 
 
 def test_logout_failure(client):
-	response = client.post("/logout", data={
+	response = client.post("/logout", json={
 		"email": "none@gmail.com",
 	})
 	assert response.status_code == 200

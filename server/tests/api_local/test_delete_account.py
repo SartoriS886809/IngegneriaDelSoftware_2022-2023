@@ -4,7 +4,7 @@ from . import login
 @pytest.mark.order('last')
 def test_delete_account(client):
     token = login(client).json["token"]
-    response = client.delete("/delete-account", data={
+    response = client.delete("/delete-account", json={
         "token": token
     })
 

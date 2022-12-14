@@ -6,8 +6,8 @@ from sqlalchemy.orm import relationship
 from datetime import date
 
 
-#delete_schema()
-#create_schema()
+delete_schema()
+create_schema()
 
 
 class Neighborhood(Base):
@@ -151,4 +151,4 @@ class Need(Base):
 
 Base.metadata.create_all(engine)
 create_neigh(Neighborhood)
-#populate()
+populate()

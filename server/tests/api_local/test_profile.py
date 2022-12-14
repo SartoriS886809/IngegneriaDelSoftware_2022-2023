@@ -1,7 +1,7 @@
 from . import login
 
 def test_view_profile(client):
-    response = client.post("/profile", data={
+    response = client.post("/profile", json={
         "token": login(client).json["token"]
     })
 
@@ -22,13 +22,13 @@ def test_view_profile(client):
 def test_modify_profile(client):
     token = login(client).json["token"]
 
-    old_response = client.post("/profile", data={
+    old_response = client.post("/profile", json={
         "token": token
     })
     assert old_response.status_code == 200
     assert old_response.json["status"] == "success"
 
-    new_response = client.post("/profile", data={
+    new_response = client.post("/profile", json={
         "token": token,
         "address": "new_address",
         "family": 5

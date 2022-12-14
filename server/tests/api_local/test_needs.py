@@ -7,7 +7,7 @@ token = None
 def test_create_need(client):
     global token
     token = login(client).json["token"]
-    response = client.post("/new/" + elem , data={
+    response = client.post("/new/" + elem , json={
         "token": token,
         "title": "Idraulico",
         "desc" : "Offro il mio supporto per tagliare l'erba del giardino",
@@ -18,7 +18,7 @@ def test_create_need(client):
     assert response.json["status"] == "success"  
       
 def test_view_my_needs(client):
-    response = client.post("/mylist/" + elem, data={
+    response = client.post("/mylist/" + elem, json={
         "token": token
     })
     #print(old_response.json)
@@ -27,7 +27,7 @@ def test_view_my_needs(client):
     assert response.json["list"] != []
     
 def test_view_needs(client):
-    response = client.post("/list/needs", data={
+    response = client.post("/list/needs", json={
         "token": token,
     })
     assert response.status_code == 200
@@ -36,12 +36,12 @@ def test_view_needs(client):
 
 def test_modify_need(client):
    # get list of elem
-    old_response = client.post("/mylist/" + elem, data={
+    old_response = client.post("/mylist/" + elem, json={
         "token": token
     })
 
     # return the single element
-    new_response = client.post("/mylist/" + elem, data={
+    new_response = client.post("/mylist/" + elem, json={
         "token": token,
         "id": old_response.json["list"][0]["id"],
         "desc": "new desc",
@@ -52,10 +52,10 @@ def test_modify_need(client):
     assert old_response.json["list"][0]["desc"] != new_response.json["desc"]
     
 def test_resolved_need(client):
-    old_response = client.post("/mylist/" + elem, data={
+    old_response = client.post("/mylist/" + elem, json={
         "token": token
     })
-    response = client.post("/assist", data={
+    response = client.post("/assist", json={
         "token": "token",
         "id": old_response.json["list"][0]["id"]
     })
@@ -63,17 +63,17 @@ def test_resolved_need(client):
     assert response.json["status"] == "success"
     
     # update old_response
-    old_response = client.post("/mylist/" + elem, data={
+    old_response = client.post("/mylist/" + elem, json={
         "token": token
     })
     assert old_response.json["list"][0]["assistant"] == "username1"
 
 
 def test_get_assist_list(client):
-    old_response = client.post("/mylist/" + elem, data={
+    old_response = client.post("/mylist/" + elem, json={
         "token": token
     }).json["list"][0]
-    response = client.post("/assist-list", data={
+    response = client.post("/assist-list", json={
         "token": "token"
     })
 
@@ -86,36 +86,36 @@ def test_get_assist_list(client):
 
 
 def test_delete_assist(client):
-    old_response = client.post("/mylist/" + elem, data={
+    old_response = client.post("/mylist/" + elem, json={
         "token": token
     })
     assert old_response.json["list"][0]["assistant"] == "username1"
 
-    response = client.delete("/assist", data={
+    response = client.delete("/assist", json={
         "token": "token",
         "id": old_response.json["list"][0]["id"]
     })
     assert response.status_code == 200
     assert response.json["status"] == "success"
 
-    old_response = client.post("/mylist/" + elem, data={
+    old_response = client.post("/mylist/" + elem, json={
         "token": token
     })
     assert old_response.json["list"][0]["assistant"] == ""
 
     
 def test_delete_need(client):
-    response1 = client.post("/mylist/" + elem, data={
+    response1 = client.post("/mylist/" + elem, json={
         "token": token
     })
-    response2 = client.delete("/delete/" + elem, data={
+    response2 = client.delete("/delete/" + elem, json={
         "token": token,
         "id": response1.json["list"][0]["id"]
     })
     assert response2.status_code == 200
     assert response2.json["status"] == "success"
 
-    response3 = client.post("/mylist/" + elem, data={
+    response3 = client.post("/mylist/" + elem, json={
         "token": token
     })
     assert response3.json["list"] == []

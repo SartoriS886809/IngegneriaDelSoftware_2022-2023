@@ -12,7 +12,7 @@ def post_request(client):
     house_type = "house type"
     id_neighborhoods = 1
 
-    return client.post("/signup", data={
+    return client.post("/signup", json={
         "email": email,
         "password": password,
         "username": username,

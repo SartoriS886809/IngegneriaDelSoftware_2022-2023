@@ -6,7 +6,7 @@ token = None
 @pytest.mark.order(2)
 def test_normal_login(client):
     password = "ciaociao123"
-    response = client.post("/login", data={
+    response = client.post("/login", json={
             "email": email,
             "password": password,
             })
@@ -22,7 +22,7 @@ def test_normal_login(client):
 @pytest.mark.order(2)
 def test_wrong_password(client):
     password = "ciao"
-    response = client.post("/login", data={
+    response = client.post("/login", json={
             "email": email,
             "password": password,
             })
@@ -36,7 +36,7 @@ def test_wrong_password(client):
 def test_login_incorrect_email(client):
     email = "r@gmail.com"
     password = "ciaociao123"
-    response = client.post("/login", data={
+    response = client.post("/login", json={
             "email": email,
             "password": password,
             })
@@ -48,7 +48,7 @@ def test_login_incorrect_email(client):
 
 @pytest.mark.order(2)
 def test_compare_token(client):
-    response = client.post("/token", data={
+    response = client.post("/token", json={
         "email": email,
         "token": token,
     })
@@ -59,7 +59,7 @@ def test_compare_token(client):
 
 @pytest.mark.order(2)
 def test_compare_token_wrong(client):
-    response = client.post("/token", data={
+    response = client.post("/token", json={
         "email": email,
         "token": "wrong_token",
     })
