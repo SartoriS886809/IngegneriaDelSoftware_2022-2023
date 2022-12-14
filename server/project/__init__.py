@@ -1,9 +1,6 @@
 from flask import Flask
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
-import os
-from . import config
-
 
 def create_app():
     app = Flask(__name__)

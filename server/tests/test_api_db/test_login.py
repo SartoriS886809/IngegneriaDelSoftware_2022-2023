@@ -1,10 +1,19 @@
 import pytest
+import requests as rq
 
 email = "mario@gmail.com"
+password = "ciaociao123"
 token = None
 
 @pytest.mark.order(2)
-def test_normal_login(client):
+def test_normal_login(base_url):
+    send = {
+        "email": email,
+        "password": password
+    }
+    rq.post(base_url+'/login', json=)
+
+
     password = "ciaociao123"
     response = client.post("/login", json={
             "email": email,

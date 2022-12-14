@@ -9,6 +9,6 @@ def test_delete_account():
     #assert resp.json()["status"] == "success"
 
     url = 'http://neighborhood.azurewebsites.net/delete-account'
-    send = {'token': resp.json()['token']}
-    resp = requests.post(url, json=send)
+    #send = {'token': resp.json()['token']}
+    #resp = requests.post(url, json=send)
     #assert resp.json()["status"] == "success"
