@@ -13,7 +13,7 @@ class Configuration {
   static const Map<String, String> supportedContactMethods = {
     "telefono / cellulare": "tel:\$",
     "email": "mailto:\$",
-    "whatsapp": " https://api.whatsapp.com/send?phone=",
+    "whatsapp": "https://api.whatsapp.com/send?phone=",
     "telegram": "https://telegram.me/",
     "sito web": "",
   };
