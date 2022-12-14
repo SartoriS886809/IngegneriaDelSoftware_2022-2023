@@ -1,12 +1,12 @@
 # IngegneriaDelSoftware_2022-2023
 **Gruppo:** G.A.M.E.S. <br/>
 **Project leader:** Sebastiano Sartori 886809@stud.unive.it  <br/>
-**Membri:**  <br/>
+**Altri membri:**  <br/>
 * Giovanni Berto 886060@stud.unive.it
 * Edoardo Cecchinato 880759@stud.unive.it
 * Andrea Da Lio 884046@stud.unive.it
 * Mattia Dei Rossi 885768@stud.unive.it
-#Versione 1.0 del codice per il progetto "Friendly Neighborhood"
+# Versione 1.0 del codice per il progetto "Friendly Neighborhood"
 ## Frontend: 
 ### Aspetti implementati:
 * Struttura di base dell'applicazione, con navigazione tra le pagine;
@@ -35,4 +35,36 @@
 * Inserire aggiornamento manuale delle liste
 ## Backend:
 ### Aspetti implementati:
+#### Api:
+* signup
+* login
+* logout
+* delete-account
+* token
+* neighborhoods
+* profile
+* list/elem
+* mylist/elem
+* assist-list
+* new/elem
+* delete/elem
+* assist
+#### Test:
+* Api:
+  * test1
+* Unit
+  * test2
+#### Database:
+* schema a oggetti
+* schema relazionale
+* populate
+* token management
+#### Azure Cloud:
+* impostazione Azure
+* app services
+* postgreSQL servers flexible
 ### TO DO:
+* completamento test
+* miglioramento sicurezza
+* stress test
+
