@@ -15,7 +15,7 @@ def test_create_need(client):
         })
     #print(response.json)
     assert response.status_code == 200
-    assert response.json["status"] == "success"  
+    assert response.json["status"] == "success"
       
 def test_view_my_needs(client):
     response = client.post("/mylist/" + elem, json={

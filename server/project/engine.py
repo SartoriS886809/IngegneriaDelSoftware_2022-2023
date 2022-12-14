@@ -5,7 +5,7 @@ from sqlalchemy_utils import database_exists, create_database
 from sqlalchemy.ext.declarative import declarative_base
 
 #url = f"postgresql://{owner}:{password_owner}@{db_ip}:{db_port}/{db_name}"
-url = "postgresql://postgres%40neighdb:games_123@neighdb.postgres.database.azure.com:5432/neighdb"
+url = "postgresql+psycopg2://postgres:games_123@neighdbserver.postgres.database.azure.com:5432/neighdb"
 if not database_exists(url):
     create_database(url)
 
