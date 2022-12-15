@@ -36,24 +36,47 @@
 ## Backend:
 ### Aspetti implementati:
 #### Api:
-* signup
-* login
-* logout
-* delete-account
-* token
-* neighborhoods
-* profile
-* list/elem
-* mylist/elem
-* assist-list
-* new/elem
-* delete/elem
-* assist
+* *signup:* 
+  * signup the new user with the data specified in the post request
+* *login:* 
+  * login the user with the data specified in the post request, return the session token of the user
+* *logout:* 
+  * logout the user with the email specified in the post request
+* *delete-account:* 
+  * delete the user specified
+* *token:* 
+  * compare the token passed and the token in the db for the user specified
+* *neighborhoods:* 
+  * return a list of dictionary that represent all the neighborhoods present in the app
+* *profile:*
+  * get the injsonation of the user with the token specified 
+  * update the specified fields in the profile of the user with the token specified
+* *list/elem:*
+  * get a list of elem (services, needs, reports) for the user with the token specified
+* *mylist/elem:*
+  * get the personal list of elem (services, needs, reports) for user specified
+  * update the specified fields in the personal list of type elem (services, needs, reports) for user specified
+* *assist-list:*
+  * get the list of needs the user specified have to assist
+* *new/elem:*
+  * create a new element of type elem (services, needs, reports), return the id of the new element
+* *delete/elem:*
+  * delete element of type elem (services, needs, reports) with the id passed
+* *assist:*
+  * the user specified can solve the need with id passed
 #### Test:
-* Api:
-  * test1
-* Unit
-  * test2
+* *Api:*
+  * test_signup
+  * test_login
+  * test_neighborhoods
+  * test_reports
+  * test_needs
+  * test_services
+  * test_profile
+  * test_logout
+  * test_delete_account
+* *Unit:*
+  * test_models
 #### Database:
 * schema a oggetti
 * schema relazionale
