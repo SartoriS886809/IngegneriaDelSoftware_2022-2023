@@ -93,8 +93,6 @@ class _ReportPageState extends State<ReportPage> {
           //VALUE => 0 o 1
           _currentIndex = value;
           _changeCurrentPage(value);
-          //debug
-          debugPrint(value.toString());
           widget.navCallback(_createBottomNavigationBar());
         },
         items: _createListBNB(pages));

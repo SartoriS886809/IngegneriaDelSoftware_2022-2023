@@ -159,16 +159,34 @@ class _MyReportsState extends State<MyReports> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Widget>(
-        future: generateList(),
-        builder: (context, AsyncSnapshot<Widget> snapshot) {
-          if (snapshot.hasData) {
-            return snapshot.data!;
-          } else if (snapshot.hasError) {
-            return printError(snapshot.error!, downloadData);
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        });
+    return Stack(children: [
+      FutureBuilder<Widget>(
+          future: generateList(),
+          builder: (context, AsyncSnapshot<Widget> snapshot) {
+            if (snapshot.hasData) {
+              return snapshot.data!;
+            } else if (snapshot.hasError) {
+              return printError(snapshot.error!, downloadData);
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
+          }),
+      SizedBox(
+        height: 10,
+        child: Row(
+          children: [
+            Expanded(
+                child: Container(
+              width: double.infinity,
+            )),
+            IconButton(
+                onPressed: (() {
+                  downloadData(true);
+                }),
+                icon: const Icon(Icons.refresh))
+          ],
+        ),
+      ),
+    ]);
   }
 }

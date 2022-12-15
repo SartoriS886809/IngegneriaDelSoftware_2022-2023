@@ -17,35 +17,9 @@ class NeighborsReports extends StatefulWidget {
 class _NeighborsReportsState extends State<NeighborsReports> {
   String token = "";
   LocalUserManager lum = LocalUserManager();
-  //API
 
-  //test list
-
+  // Lista delle segnalazioni
   List<Report> reportList = [];
-  /*
-    Report(
-        postDate: DateTime(2022, 11, 23, 14, 20),
-        title: 'Albero caduto',
-        priority: 1,
-        category: 'problemi ambientali',
-        address: 'via papa luciani',
-        creator: 'paolino'),
-    Report(
-        postDate: DateTime(2022, 11, 23, 14, 20),
-        title: 'tombino rotto',
-        priority: 1,
-        category: 'problemi ambientali',
-        address: 'via cristo',
-        creator: 'creator'),
-    Report(
-        postDate: DateTime(2022, 11, 23, 14, 20),
-        title: 'ladri in casa',
-        priority: 3,
-        category: 'crimine',
-        address: 'via Col Vento',
-        creator: 'Lucio Wolf')
-  ];
-  */
 
   //initState() è il costruttore delle classi stato
 
@@ -106,16 +80,34 @@ class _NeighborsReportsState extends State<NeighborsReports> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Widget>(
-        future: generateList(),
-        builder: (context, AsyncSnapshot<Widget> snapshot) {
-          if (snapshot.hasData) {
-            return snapshot.data!;
-          } else if (snapshot.hasError) {
-            return printError(snapshot.error!, downloadData);
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        });
+    return Stack(children: [
+      FutureBuilder<Widget>(
+          future: generateList(),
+          builder: (context, AsyncSnapshot<Widget> snapshot) {
+            if (snapshot.hasData) {
+              return snapshot.data!;
+            } else if (snapshot.hasError) {
+              return printError(snapshot.error!, downloadData);
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
+          }),
+      SizedBox(
+        height: 10,
+        child: Row(
+          children: [
+            Expanded(
+                child: Container(
+              width: double.infinity,
+            )),
+            IconButton(
+                onPressed: (() {
+                  downloadData(true);
+                }),
+                icon: const Icon(Icons.refresh))
+          ],
+        ),
+      ),
+    ]);
   }
 }
