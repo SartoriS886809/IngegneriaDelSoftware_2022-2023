@@ -1,26 +1,15 @@
-import pytest
-from project import *
+import pytest, requests
+
+url = 'http://neighborhood.azurewebsites.net'
 
 
-@pytest.fixture()
-def application():
-    #app = create_app()
-    app.config.update({
-        "TESTING": True,
-    })
-
-    # other setup can go here
-
-    yield app
-    
-    # clean up / reset resources here
+def post_request(route, json):
+    return requests.post(url+route, json=json).json()
 
 
-@pytest.fixture()
-def client(application):
-    return application.test_client()
+def get_request(route):
+    return requests.get(url+route).json()
 
 
-@pytest.fixture()
-def runner(application):
-    return application.test_cli_runner()
+def delete_request(route, json):
+    return requests.delete(url+route, json=json).json()
