@@ -74,7 +74,7 @@ def test_get_assist_list():
     })["list"][0]
 
     response = post_request('/assist-list', json={
-        "token": "token"
+        "token": "token1"
     })
 
     assert response["status"] == "success"
@@ -91,8 +91,8 @@ def test_delete_assist():
     assert old_response["list"][0]["assistant"] == "username1"
 
     response = delete_request('/assist', json={
-        "token": "token",
-        "id": old_response.json["list"][0]["id"]
+        "token": "token1",
+        "id": old_response["list"][0]["id"]
     })
     assert response["status"] == "success"
 
