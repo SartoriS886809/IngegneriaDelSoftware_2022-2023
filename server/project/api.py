@@ -282,7 +282,7 @@ def get_list(elem):
 '''
 Method: POST to retrieve elem data (only one field in the body)
 Route: '/mylist/<elem>'
-Desc: get the list of <elem> (services, needs, reports) for user specified
+Desc: get the personal list of <elem> (services, needs, reports) for user specified
 
 Need: {'token': string}
 
@@ -292,7 +292,7 @@ Return failure: {'status': 'failure', 'reason': string}
 
 Method: POST to update elem data (more than one field in the body)
 Route: '/mylist/<elem>'
-Desc: update the specified fields in the list of type <elem> (services, needs, reports) for user specified
+Desc: update the specified fields in the personal list of type <elem> (services, needs, reports) for user specified
 
 You can choose how many arguments want to change
 Need: { 'token': string,
