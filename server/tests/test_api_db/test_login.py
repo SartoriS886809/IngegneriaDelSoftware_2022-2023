@@ -1,80 +1,63 @@
 import pytest
 import requests as rq
+from tests.conftest import post_request, get_request, delete_request
 
 email = "mario@gmail.com"
-password = "ciaociao123"
 token = None
 
 @pytest.mark.order(2)
-def test_normal_login(base_url):
-    send = {
+def test_normal_login():
+    json = {
         "email": email,
-        "password": password
+        "password": "ciaociao123"
     }
-    rq.post(base_url+'/login', json=)
 
-
-    password = "ciaociao123"
-    response = client.post("/login", json={
-            "email": email,
-            "password": password,
-            })
-    assert response.status_code == 200
-    #print(response.json)
-
-    assert response.json["token"] != ""
-    assert response.json["status"] == "success"
+    response = post_request('/login', json=json)
+    assert response["status"] == "success"
+    assert response["token"] != ""
 
     global token
-    token = response.json["token"]
+    token = response["token"]
 
 @pytest.mark.order(2)
-def test_wrong_password(client):
-    password = "ciao"
-    response = client.post("/login", json={
-            "email": email,
-            "password": password,
-            })
-    assert response.status_code == 200
-    #print(response.json)
-
-    assert response.json["status"] == "failure"
-    assert response.json["reason"] == "password is not correct"
-
-@pytest.mark.order(2)
-def test_login_incorrect_email(client):
-    email = "r@gmail.com"
-    password = "ciaociao123"
-    response = client.post("/login", json={
-            "email": email,
-            "password": password,
-            })
-    assert response.status_code == 200
-    #print(response.json)
-
-    assert response.json["status"] == "failure"
-    assert response.json["reason"] == "user does not exist"
-
-@pytest.mark.order(2)
-def test_compare_token(client):
-    response = client.post("/token", json={
+def test_wrong_password():
+    json = {
         "email": email,
-        "token": token,
-    })
+        "password": "ciao"
+    }
 
-    assert response.status_code == 200
-    assert response.json["status"] == "success"
-
+    response = post_request('/login', json=json)
+    assert response["status"] == "failure"
+    assert response["reason"] == "password is not correct"
 
 @pytest.mark.order(2)
-def test_compare_token_wrong(client):
-    response = client.post("/token", json={
+def test_login_incorrect_email():
+    json = {
+        "email": "r@gmail.com",
+        "password": "ciao"
+    }
+
+    response = post_request('/login', json=json)
+    assert response["status"] == "failure"
+    assert response["reason"] == "user does not exist"
+
+@pytest.mark.order(2)
+def test_compare_token():
+    json = {
         "email": email,
-        "token": "wrong_token",
-    })
+        "token": token
+    }
 
-    assert response.status_code == 200
-    assert response.json["status"] == "failure"
-    assert response.json["reason"] == "token is not valid"
+    response = post_request('/token', json=json)
+    assert response["status"] == "success"
 
-new_token = token
+@pytest.mark.order(2)
+def test_compare_token_wrong():
+    json = {
+        "email": email,
+        "token": "wrong_token"
+    }
+
+    response = post_request('/token', json=json)
+    assert response["status"] == "failure"
+    assert response["reason"] == "token is not valid"

@@ -1,5 +1,6 @@
-def test_neighborhoods(client):
-    response = client.get('/neighborhoods')
-    assert response.status_code == 200
-    assert response.json["status"] == "success"
-    assert response.json["neighborhoods"] != []
+from tests.conftest import post_request, get_request, delete_request
+
+def test_neighborhoods():
+    response = get_request('/neighborhoods')
+    assert response["status"] == "success"
+    assert response["neighborhoods"] != []

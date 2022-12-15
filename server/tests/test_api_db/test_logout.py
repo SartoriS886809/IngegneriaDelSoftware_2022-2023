@@ -1,19 +1,21 @@
-def test_logout(client):
-	response = client.post("/logout", json={
+from tests.conftest import post_request, get_request, delete_request
+
+def test_logout():
+	json = {
 		"email": "mario@gmail.com",
-	})
-	assert response.status_code == 200
-	assert response.json["status"] == "success"
+	}
 
+	response = post_request('/logout', json=json)
+	assert response["status"] == "success"
 
-def test_logout_failure(client):
-	response = client.post("/logout", json={
-		"email": "none@gmail.com",
-	})
-	assert response.status_code == 200
-	assert response.json["status"] == "failure"
-	assert response.json["reason"] == "user does not exist"
+def test_logout_failure():
+	json = {
+		"email": "none@gmail.com"
+	}
 
+	response = post_request('/logout', json=json)
+	assert response["status"] == "failure"
+	assert response["reason"] == "user does not exist"
  
-def test_automatic_logout(client):
+def test_automatic_logout():
 	None

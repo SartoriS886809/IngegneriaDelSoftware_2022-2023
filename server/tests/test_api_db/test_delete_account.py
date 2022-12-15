@@ -1,14 +1,12 @@
 import pytest
 from . import login
+from tests.conftest import post_request, get_request, delete_request
 
 @pytest.mark.order('last')
-def test_delete_account(client):
-    token = login(client).json["token"]
-    response = client.delete("/delete-account", json={
+def test_delete_account():
+    token = login(post_request)["token"]
+    response = delete_request('/delete-account', json={
         "token": token
     })
-
-    assert response.status_code == 200
-    assert response.json["status"] == "success"
-
-    assert login(client).json["status"] == "failure"
+    assert response["status"] == "success"
+    assert login(post_request)["status"] == "failure"

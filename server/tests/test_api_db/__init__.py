@@ -1,5 +1,5 @@
-def login(client):
-    return client.post("/login", json={
+def login(post_request):
+    return post_request('/login', json={
         "email": "mario@gmail.com",
-        "password": "ciaociao123",
+        "password": "ciaociao123"
     })

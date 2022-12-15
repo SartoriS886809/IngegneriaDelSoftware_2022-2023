@@ -1,40 +1,34 @@
 from . import login
+from tests.conftest import post_request, get_request, delete_request
 
-def test_view_profile(client):
-    response = client.post("/profile", json={
-        "token": login(client).json["token"]
+def test_view_profile():
+    response = post_request('/profile', json={
+        "token": login(post_request)["token"]
     })
+    assert response["status"] == "success"
+    assert response["email"] != ""
+    assert response["username"] != ""
+    assert response["name"] != ""
+    assert response["lastname"] != ""
+    assert response["birth_date"] != ""
+    assert response["address"] != ""
+    assert response["family"] is not None
+    assert response["house_type"] != ""
+    assert response["neighborhood"] != ""
+    assert response["id_neighborhoods"] != ""
 
-    assert response.status_code == 200
-    assert response.json["status"] == "success"
-    assert response.json["email"] != ""
-    assert response.json["username"] != ""
-    assert response.json["name"] != ""
-    assert response.json["lastname"] != ""
-    assert response.json["birth_date"] != ""
-    assert response.json["address"] != ""
-    assert response.json["family"] is not None
-    assert response.json["house_type"] != ""
-    assert response.json["neighborhood"] != ""
-    assert response.json["id_neighborhoods"] != ""
-
-
-def test_modify_profile(client):
-    token = login(client).json["token"]
-
-    old_response = client.post("/profile", json={
+def test_modify_profile():
+    token = login(post_request)["token"]
+    old_response = post_request('/profile', json={
         "token": token
     })
-    assert old_response.status_code == 200
-    assert old_response.json["status"] == "success"
+    assert old_response["status"] == "success"
 
-    new_response = client.post("/profile", json={
+    new_response = post_request('/profile', json={
         "token": token,
         "address": "new_address",
         "family": 5
     })
-    #print(new_response.json)
-    assert new_response.status_code == 200
-    assert new_response.json["status"] == "success"
-    assert old_response.json["address"] != new_response.json["address"]
-    assert old_response.json["family"] != new_response.json["family"]
+    assert new_response["status"] == "success"
+    assert old_response["address"] != new_response["address"]
+    assert old_response["family"] != new_response["family"]

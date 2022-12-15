@@ -1,121 +1,119 @@
 from . import login
+from tests.conftest import post_request, get_request, delete_request
+
 elem = "needs"
 email = "mario@gmail.com"
 
 token = None
 
-def test_create_need(client):
+def test_create_need():
     global token
-    token = login(client).json["token"]
-    response = client.post("/new/" + elem , json={
+    token = login(post_request)["token"]
+
+    json = {
         "token": token,
         "title": "Idraulico",
         "desc" : "Offro il mio supporto per tagliare l'erba del giardino",
         "address" : "via Genova 1"
-        })
-    #print(response.json)
-    assert response.status_code == 200
-    assert response.json["status"] == "success"
+    }
+
+    response = post_request('/new/' + elem, json=json)
+    assert response["status"] == "success"
       
-def test_view_my_needs(client):
-    response = client.post("/mylist/" + elem, json={
+def test_view_my_needs():
+    json = {
+        "token": token
+    }
+
+    response = post_request('/mylist/' + elem, json=json)
+    assert response["status"] == "success"
+    assert response["list"] != []
+    
+def test_view_needs():
+    json = {
+        "token": token
+    }
+
+    response = post_request('/list/' + elem, json=json)
+    assert response["status"] == "success"
+    assert response["list"] != []
+
+def test_modify_need():
+    old_response = post_request('/mylist/' + elem, json={
         "token": token
     })
-    #print(old_response.json)
-    assert response.status_code == 200
-    assert response.json["status"] == "success"
-    assert response.json["list"] != []
-    
-def test_view_needs(client):
-    response = client.post("/list/needs", json={
+
+    new_response = post_request('/mylist/' + elem, json={
         "token": token,
+        "id": old_response["list"][0]["id"],
+        "desc": "new desc"
     })
-    assert response.status_code == 200
-    assert response.json["status"] == "success"
-    assert response.json["list"] != []
-
-def test_modify_need(client):
-   # get list of elem
-    old_response = client.post("/mylist/" + elem, json={
-        "token": token
-    })
-
-    # return the single element
-    new_response = client.post("/mylist/" + elem, json={
-        "token": token,
-        "id": old_response.json["list"][0]["id"],
-        "desc": "new desc",
-    })
-    # print(new_response.json)
-    assert new_response.status_code == 200
-    assert new_response.json["status"] == "success"
-    assert old_response.json["list"][0]["desc"] != new_response.json["desc"]
+    assert new_response["status"] == "success"
+    assert old_response["list"][0]["desc"] != new_response["desc"]
     
-def test_resolved_need(client):
-    old_response = client.post("/mylist/" + elem, json={
+def test_resolved_need():
+    old_response = post_request('/mylist/' + elem, json={
         "token": token
     })
-    response = client.post("/assist", json={
-        "token": "token",
-        "id": old_response.json["list"][0]["id"]
+
+    response = post_request('/assist', json={
+        "token": "token1",
+        "id": old_response["list"][0]["id"]
     })
-    assert response.status_code == 200
-    assert response.json["status"] == "success"
-    
-    # update old_response
-    old_response = client.post("/mylist/" + elem, json={
+    assert response["status"] == "success"
+
+    updated_response = post_request('/mylist/' + elem, json={
         "token": token
     })
-    assert old_response.json["list"][0]["assistant"] == "username1"
+    assert updated_response["list"][0]["assistant"] == "username1"
 
 
-def test_get_assist_list(client):
-    old_response = client.post("/mylist/" + elem, json={
+def test_get_assist_list():
+    old_response = post_request('/mylist/' + elem, json={
         "token": token
-    }).json["list"][0]
-    response = client.post("/assist-list", json={
+    })["list"][0]
+
+    response = post_request('/assist-list', json={
         "token": "token"
     })
 
-    assert response.status_code == 200
-    assert response.json["status"] == "success"
-    assert response.json["list"][0]["id"] == old_response["id"]
-    assert response.json["list"][0]["title"] == old_response["title"]
-    assert response.json["list"][0]["creator"] == old_response["creator"]
-    assert response.json["list"][0]["assistant"] == old_response["assistant"]
+    assert response["status"] == "success"
+    assert response["list"][0]["id"] == old_response["id"]
+    assert response["list"][0]["title"] == old_response["title"]
+    assert response["list"][0]["creator"] == old_response["creator"]
+    assert response["list"][0]["assistant"] == old_response["assistant"]
 
 
-def test_delete_assist(client):
-    old_response = client.post("/mylist/" + elem, json={
+def test_delete_assist():
+    old_response = post_request('/mylist/' + elem, json={
         "token": token
     })
-    assert old_response.json["list"][0]["assistant"] == "username1"
+    assert old_response["list"][0]["assistant"] == "username1"
 
-    response = client.delete("/assist", json={
+    response = delete_request('/assist', json={
         "token": "token",
         "id": old_response.json["list"][0]["id"]
     })
-    assert response.status_code == 200
-    assert response.json["status"] == "success"
+    assert response["status"] == "success"
 
-    old_response = client.post("/mylist/" + elem, json={
+    old_response = post_request('/mylist/' + elem, json={
         "token": token
     })
-    assert old_response.json["list"][0]["assistant"] == ""
+    assert old_response["list"][0]["assistant"] == ""
 
     
-def test_delete_need(client):
-    response1 = client.post("/mylist/" + elem, json={
+def test_delete_need():
+    response1 = post_request('/mylist/' + elem, json={
         "token": token
     })
-    response2 = client.delete("/delete/" + elem, json={
-        "token": token,
-        "id": response1.json["list"][0]["id"]
-    })
-    assert response2.status_code == 200
-    assert response2.json["status"] == "success"
 
-    response3 = client.post("/mylist/" + elem, json={
+    response2 = delete_request('/delete/' + elem, json={
+        "token": token,
+        "id": response1["list"][0]["id"]
+    })
+    assert response2["status"] == "success"
+
+    response3 = post_request('/mylist/' + elem, json={
         "token": token
     })
-    assert response3.json["list"] == []
+    assert response3["list"] == []

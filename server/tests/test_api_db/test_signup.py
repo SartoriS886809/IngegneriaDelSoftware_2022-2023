@@ -1,4 +1,5 @@
 import pytest
+from tests.conftest import post_request, get_request, delete_request
 
 json = {
         "email": "mario@gmail.com",
@@ -14,11 +15,11 @@ json = {
 }
 
 @pytest.mark.order(1)
-def test_signup(post_request):
-    response = post_request('/signup', json)
+def test_signup():
+    response = post_request('/signup', json=json)
     assert response["status"] == "success"
 
-def test_signup_failure(post_request):
-    response = post_request('/signup', json)
+def test_signup_failure():
+    response = post_request('/signup', json=json)
     assert response["status"] == "failure"
     assert response["reason"] == "user already exists"

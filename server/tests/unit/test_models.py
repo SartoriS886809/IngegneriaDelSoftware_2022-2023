@@ -1,3 +1,4 @@
+'''
 from project.models import *
 from datetime import date
 
@@ -76,4 +77,4 @@ def test_new_need():
     assert String(srv.desc) != desc
     assert String(srv.address) != address
     assert srv.id_assistant is None
-    
+'''

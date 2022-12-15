@@ -1,67 +1,61 @@
 from . import login
+from tests.conftest import post_request, get_request, delete_request
+
 elem = "services"
 email = "mario@gmail.com"
 token = None
 
-def test_create_service(client):
+def test_create_service():
     global token
-    token = login(client).json["token"]
-    response = client.post("/new/" + elem , json={
+    token = login(post_request)["token"]
+
+    response = post_request('/new/' + elem, json={
         "token": token,
         "title": "Giardiniere",
-        "desc" : "Offro il mio supporto per tagliare l'erba del giardino",
-        "link" : "https://www.google.com"
-        })
-    #print(response.json)
-    assert response.status_code == 200
-    assert response.json["status"] == "success"
+        "desc": "Offro il mio supporto per tagliare l'erba del giardino",
+        "link": "https://www.google.com"
+    })
+    assert response["status"] == "success"
     
-def test_view_my_services(client):
-    response = client.post("/mylist/" + elem, json={
+def test_view_my_services():
+    response = post_request('/mylist/' + elem, json={
         "token": token
     })
-    #print(old_response.json)
-    assert response.status_code == 200
-    assert response.json["status"] == "success"
-    assert response.json["list"] != []
+    assert response["status"] == "success"
+    assert response["list"] != []
     
-def test_modify_my_service(client):
-    # get list of elem
-    old_response = client.post("/mylist/" + elem, json={
+def test_modify_my_service():
+    old_response = post_request('/mylist/' + elem, json={
         "token": token
     })
 
-    # return the single element
-    new_response = client.post("/mylist/" + elem, json={
+    new_response = post_request('/mylist/' + elem, json={
         "token": token,
-        "id": old_response.json["list"][0]["id"],
+        "id": old_response["list"][0]["id"],
         "desc": "new desc",
     })
-    # print(new_response.json)
-    assert new_response.status_code == 200
-    assert new_response.json["status"] == "success"
-    assert old_response.json["list"][0]["desc"] != new_response.json["desc"]
+    assert new_response["status"] == "success"
+    assert old_response["list"][0]["desc"] != new_response["desc"]
 
-def test_view_services(client):
-    response = client.post("/list/services", json={
+def test_view_services():
+    response = post_request('/list/' + elem, json={
         "token": token
     })
-    assert response.status_code == 200
-    assert response.json["status"] == "success"
-    assert response.json["list"] != []
+    assert response["status"] == "success"
+    assert response["list"] != []
     
-def test_delete_service(client):
-    response1 = client.post("/mylist/" + elem, json={
+def test_delete_service():
+    response1 = post_request('/mylist/' + elem, json={
         "token": token
     })
-    response2 = client.delete("/delete/" + elem, json={
-        "token": token,
-        "id": response1.json["list"][0]["id"]
-    })
-    assert response2.status_code == 200
-    assert response2.json["status"] == "success"
 
-    response3 = client.post("/mylist/" + elem, json={
+    response2 = delete_request('/delete/' + elem, json={
+        "token": token,
+        "id": response1["list"][0]["id"]
+    })
+    assert response2["status"] == "success"
+
+    response3 = post_request('/mylist/' + elem, json={
         "token": token
     })
-    assert response3.json["list"] == []
+    assert response3["list"] == []
