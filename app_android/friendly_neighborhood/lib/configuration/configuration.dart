@@ -6,6 +6,8 @@ class Configuration {
   static const int minAge = 16;
   static const int minLengthPassword = 8;
   static const String API_link = "http://neighborhood.azurewebsites.net";
+  static const Duration NotificationRefreshTimer =
+      Duration(seconds: 15); //TODO Da modificare
 
   /*https://blog.logrocket.com/launching-urls-flutter-url_launcher/ */
 

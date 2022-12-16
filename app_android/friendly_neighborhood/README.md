@@ -5,6 +5,8 @@ Link JSON to Dart Model: https://javiercbk.github.io/json_to_dart/
 Mini corso Flutter: https://gitlab.com/divino.marchese/flutter
 Useful Dart & Flutter packages that are neatly categorized: https://fluttergems.dev/
 Dropdown menu with search: https://pub.dev/packages/dropdown_search
+Tutorial notification: https://www.kodeco.com/34019063-creating-local-notifications-in-flutter
+Tutorial background: https://www.geeksforgeeks.org/background-local-notifications-in-flutter/
 
 ## Getting Started
 
