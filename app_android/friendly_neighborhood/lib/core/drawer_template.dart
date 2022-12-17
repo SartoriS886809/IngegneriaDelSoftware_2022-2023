@@ -17,7 +17,37 @@ class ConstructDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-        child: ListView.builder(
+      child: ListView.builder(
+        itemCount: _routes.length+1,
+        itemBuilder: (context, index) {
+          if(index==0){
+            return DrawerHeader(
+              child:Row(
+                children: const [
+                  Expanded(child:Text("(logo)")),
+                  Expanded(child:
+                  Text("Friendly Neighborhood")
+                  )
+                ],
+              )
+              //decoration: 
+              //child: Text('Drawer Header'),
+            );
+          }else{
+            final value = _routes.elementAt(index-1);
+            return ListTile(
+              title: Text(value),
+              onTap: () {
+                _currentRoute = value;
+                Navigator.pop(context);
+              },
+            );
+          }
+        },
+      ));
+
+
+      /*  child: ListView.builder(
       itemCount: _routes.length,
       itemBuilder: (context, index) {
         final value = _routes.elementAt(index);
@@ -29,6 +59,6 @@ class ConstructDrawer extends StatelessWidget {
           },
         );
       },
-    ));
+    ));*/
   }
 }
