@@ -1,6 +1,8 @@
-from project.models import User, Neighborhood, Service, Report, Need
-from project.engine import session
+from project.engine import Engine, User, Neighborhood, Service, Report, Need
 from sqlalchemy.exc import IntegrityError
+
+engine = Engine()
+session = engine.session
 
 tables = {'users': User,
           'neighborhoods': Neighborhood,
