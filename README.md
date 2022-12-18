@@ -30,7 +30,6 @@
 ### TO DO:
 * Sistema di notifica delle segnalazioni
 * Miglioramenti grafici
-* Completare metodi di contatto per servizi
 * Completare gestione errori 
 * Inserire aggiornamento manuale delle liste
 ## Backend:

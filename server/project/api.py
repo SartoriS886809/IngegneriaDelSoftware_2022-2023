@@ -1,9 +1,10 @@
-from . import app
+from project.app import FlaskApp
 from flask import request
 from project.operations import commit, rollback, flush, add_and_commit, add_no_commit, delete_tuple, update_tuple, get_all, get_table, get_user_by_token
 from uuid import uuid4
 from sqlalchemy.exc import SQLAlchemyError
 
+app = FlaskApp().get_app()
 
 @app.errorhandler(Exception)
 def handle_error(e):
