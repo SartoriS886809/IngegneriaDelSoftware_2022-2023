@@ -43,6 +43,7 @@ dependencies:
   sqflite: ^2.2.1
   http: ^0.13.5
   flutter_local_notifications: ^12.0.4
+  workmanager: ^0.5.1
 
 
 dev_dependencies:

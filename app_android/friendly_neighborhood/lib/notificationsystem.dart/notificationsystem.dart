@@ -1,29 +1,29 @@
 //Singlenton class
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+//import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/API_Manager/api_manager.dart';
 import 'package:friendly_neighborhood/cache_manager/profile_db.dart';
 import 'package:friendly_neighborhood/cache_manager/report_db.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:friendly_neighborhood/configuration/configuration.dart';
+//import 'package:friendly_neighborhood/configuration/configuration.dart';
 import 'package:friendly_neighborhood/model/localuser.dart';
 import 'package:friendly_neighborhood/model/report.dart';
-import 'package:timezone/timezone.dart' as tz;
-import 'package:timezone/data/latest.dart' as tz;
+//import 'package:timezone/timezone.dart' as tz;
+//import 'package:timezone/data/latest.dart' as tz;
 
 class NotificationSystem {
   static final NotificationSystem _instance = NotificationSystem._internal();
   final LocalUserManager lum = LocalUserManager();
   final ReportDataManager rdm = ReportDataManager();
-  final FlutterLocalNotificationsPlugin _localNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-  Stream timer = Stream<bool>.periodic(
+  // final FlutterLocalNotificationsPlugin _localNotificationsPlugin =
+  //    FlutterLocalNotificationsPlugin();
+  /*Stream timer = Stream<bool>.periodic(
       Configuration.NotificationRefreshTimer, ((clock) => true));
-  StreamSubscription? event;
+  StreamSubscription? event;*/
 
   List<Report> _downloadedList = [];
-  int _idNot = 0;
+  // int _idNot = 0;
   bool isStarted = false;
   //Per migliorare le performance dell'app
   String _userToken = "";
@@ -32,26 +32,27 @@ class NotificationSystem {
     return _instance;
   }
   NotificationSystem._internal() {
-    _setup();
+    /*   _setup();
     tz.initializeTimeZones();
     _localNotificationsPlugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()!
-        .requestPermission();
+        .requestPermission();*/
   }
-
+/*
   Future<void> _setup() async {
     const androidSetting = AndroidInitializationSettings('@mipmap/ic_launcher');
 
     const initSettings = InitializationSettings(android: androidSetting);
 
-    await _localNotificationsPlugin.initialize(initSettings).then((_) {
+    await _localNotificationsPlugin.initialize(
+        initSettings); /*.then((_) {
       print('setupPlugin: setup success');
     }).catchError((Object error) {
       print('Error: $error');
-    });
+    });*/
   }
-
+*/
   Future start() async {
     if (!isStarted) {
       LocalUser? user = await lum.getUser();
@@ -66,25 +67,28 @@ class NotificationSystem {
       //TODO avvia servizio in background
       _userToken = user.token;
       isStarted = true;
-      event = timer.listen((event) {
+      return Future.value(true);
+      /* event = timer.listen((event) {
         elaborateDataList();
-      });
+      });*/
     }
   }
 
-  Future stop() async {
+  /*
+  void stop() {
     //TODO Ferma servizio in background
     isStarted = false;
     _userToken = "";
     _downloadedList = [];
-    if (event != null) {
+if (event != null) {
       event!.cancel();
       event = null;
     }
   }
-
+*/
   //Può generare eccezioni, se viene il messaggio "user does not exist" terminare il servizio
   Future<bool> downloadReports() async {
+    await start();
     if (_userToken == "") {
       _downloadedList = [];
       return false;
@@ -99,29 +103,32 @@ class NotificationSystem {
   }
 
   //TODO non richiede nulla, è gia tutto presente nella classe
-  void elaborateDataList() async {
+  Future<void> elaborateDataList(FlutterLocalNotificationsPlugin flnp) async {
     try {
-      await downloadReports();
+      if (!await downloadReports()) {
+        showNotificationWithDefaultSound(
+            flnp, "Errore", "Errore nel download segnalazioni");
+      }
     } catch (e) {
+      showNotificationWithDefaultSound(flnp, "Errore", e.toString());
       if (e.toString() == "user does not exist") {
-        stop();
+        showNotificationWithDefaultSound(flnp, "Errore",
+            "Rieseguire il login, per rimanere sintonizzati con le nuove segnalazioni del quartiere");
+        //stop();
       }
       return;
     }
     List<Report> fromDB = await rdm.getReport();
-    //Primo avvio, non mando notifiche per evitare spam
 
     if (_downloadedList.isNotEmpty) {
       if (fromDB.isEmpty) {
         for (Report r in _downloadedList) {
-          //TODO da cambiare con r passato per parametro
-          sendNotification(r);
+          sendNotificationReport(r, flnp);
         }
       } else {
         for (Report r in _downloadedList) {
           if (!fromDB.contains(r)) {
-            //TODO da cambiare con r passato per parametro
-            sendNotification(r);
+            sendNotificationReport(r, flnp);
           } else {
             break;
           }
@@ -132,8 +139,14 @@ class NotificationSystem {
     rdm.insertListOfReports(_downloadedList);
   }
 
+  void sendNotificationReport(Report r, FlutterLocalNotificationsPlugin flnp) {
+    showNotificationWithDefaultSound(
+        flnp, r.title, r.address); //da cambiare configurazione
+  }
+
+/*
   //TODO Rifare la notifica (inserire i dati messi nel documento di progetto)
-  Future sendNotification(Report r) async {
+  Future sendNotificationReport(Report r) async {
     bool? permission = await _localNotificationsPlugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()!
@@ -161,5 +174,51 @@ class NotificationSystem {
           UILocalNotificationDateInterpretation.absoluteTime,
       androidAllowWhileIdle: true,
     );
+  }
+
+  //TODO Rifare la notifica (inserire i dati messi nel documento di progetto)
+  Future sendNotification(String message) async {
+    print("here");
+    bool? permission = await _localNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()!
+        .requestPermission();
+    //Se non ci sono i permessi, non invia nessuna notifica
+    if (permission != null && !permission) return;
+
+    const androidDetail = AndroidNotificationDetails(
+        "2", // channel Id
+        "Avvisi" // channel Name
+        );
+
+    const noticeDetail = NotificationDetails(
+      android: androidDetail,
+    );
+
+    await _localNotificationsPlugin.zonedSchedule(
+      _idNot++,
+      "Avviso",
+      message,
+      tz.TZDateTime.now(tz.local).add(const Duration(seconds: 1)),
+      noticeDetail,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      androidAllowWhileIdle: true,
+    );
+  }
+*/
+  static Future showNotificationWithDefaultSound(
+      FlutterLocalNotificationsPlugin flnp,
+      String title,
+      String message) async {
+    var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
+        "0", "FriendlyNeighoborhood",
+        importance: Importance.high, priority: Priority.high);
+
+    var platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+    );
+    await flnp.show(0, title, message, platformChannelSpecifics,
+        payload: 'Default_Sound');
   }
 }
