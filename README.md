@@ -76,8 +76,8 @@
   * test_delete_account
 * *Unit:*
   * test_models
-  
-risultati dei test [report](./server/report_local.html)
+
+risultati dei test [report](./server/report.log)
 #### Database:
 * schema a oggetti
 * schema relazionale

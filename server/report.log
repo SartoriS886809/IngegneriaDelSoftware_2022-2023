@@ -1,0 +1,46 @@
+========================================================= test session starts =========================================================
+platform win32 -- Python 3.11.1, pytest-7.2.0, pluggy-1.0.0 -- C:\Users\matty\AppData\Local\Programs\Python\Python311\python.exe
+cachedir: .pytest_cache
+metadata: {'Python': '3.11.1', 'Platform': 'Windows-10-10.0.22621-SP0', 'Packages': {'pytest': '7.2.0', 'pluggy': '1.0.0'}, 'Plugins': {'html': '3.2.0', 'metadata': '2.0.4', 'order': '1.0.1'}, 'JAVA_HOME': 'C:\\Programmi\\Android\\Android Studio\\jre'}
+rootdir: C:\Users\matty\Documents\Unive\Corsi\3anno\IngegneriaDelSoftware\IngegneriaDelSoftware_2022-2023\server
+plugins: html-3.2.0, metadata-2.0.4, order-1.0.1
+collected 36 items
+
+tests/test_api_db/test_signup.py::test_signup PASSED                                                                             [  2%]
+tests/test_api_db/test_login.py::test_normal_login PASSED                                                                        [  5%]
+tests/test_api_db/test_login.py::test_wrong_password PASSED                                                                      [  8%]
+tests/test_api_db/test_login.py::test_login_incorrect_email PASSED                                                               [ 11%]
+tests/test_api_db/test_login.py::test_compare_token PASSED                                                                       [ 13%]
+tests/test_api_db/test_login.py::test_compare_token_wrong PASSED                                                                 [ 16%]
+tests/test_api_db/test_logout.py::test_logout PASSED                                                                             [ 19%]
+tests/test_api_db/test_logout.py::test_logout_failure PASSED                                                                     [ 22%]
+tests/test_api_db/test_logout.py::test_automatic_logout PASSED                                                                   [ 25%] 
+tests/test_api_db/test_needs.py::test_create_need PASSED                                                                         [ 27%]
+tests/test_api_db/test_needs.py::test_view_my_needs PASSED                                                                       [ 30%]
+tests/test_api_db/test_needs.py::test_view_needs PASSED                                                                          [ 33%]
+tests/test_api_db/test_needs.py::test_modify_need PASSED                                                                         [ 36%]
+tests/test_api_db/test_needs.py::test_resolved_need PASSED                                                                       [ 38%]
+tests/test_api_db/test_needs.py::test_get_assist_list PASSED                                                                     [ 41%]
+tests/test_api_db/test_needs.py::test_delete_assist PASSED                                                                       [ 44%]
+tests/test_api_db/test_needs.py::test_delete_need PASSED                                                                         [ 47%]
+tests/test_api_db/test_neighborhoods.py::test_neighborhoods PASSED                                                               [ 50%]
+tests/test_api_db/test_profile.py::test_view_profile PASSED                                                                      [ 52%]
+tests/test_api_db/test_profile.py::test_modify_profile PASSED                                                                    [ 55%]
+tests/test_api_db/test_reports.py::test_create_report PASSED                                                                     [ 58%]
+tests/test_api_db/test_reports.py::test_view_my_reports PASSED                                                                   [ 61%]
+tests/test_api_db/test_reports.py::test_view_reports PASSED                                                                      [ 63%]
+tests/test_api_db/test_reports.py::test_delete_report PASSED                                                                     [ 66%]
+tests/test_api_db/test_services.py::test_create_service PASSED                                                                   [ 69%]
+tests/test_api_db/test_services.py::test_view_my_services PASSED                                                                 [ 72%]
+tests/test_api_db/test_services.py::test_modify_my_service PASSED                                                                [ 75%]
+tests/test_api_db/test_services.py::test_view_services PASSED                                                                    [ 77%]
+tests/test_api_db/test_services.py::test_delete_service PASSED                                                                   [ 80%]
+tests/test_api_db/test_signup.py::test_signup_failure PASSED                                                                     [ 83%]
+tests/unit/test_models.py::test_new_neighborhood PASSED                                                                          [ 86%]
+tests/unit/test_models.py::test_new_user PASSED                                                                                  [ 88%]
+tests/unit/test_models.py::test_new_report PASSED                                                                                [ 91%] 
+tests/unit/test_models.py::test_new_service PASSED                                                                               [ 94%] 
+tests/unit/test_models.py::test_new_need PASSED                                                                                  [ 97%] 
+tests/test_api_db/test_delete_account.py::test_delete_account PASSED                                                             [100%]
+
+========================================================= 36 passed in 17.44s =========================================================
