@@ -27,6 +27,14 @@ class _CoreState extends State<Core> {
     "Servizi",
     "Profilo"
   ];
+  final List<Icon> _icons = [
+    const Icon(Icons.home),
+    const Icon(Icons.announcement),
+    const Icon(Icons.assignment),
+    const Icon(Icons.business_center_rounded),
+    const Icon(Icons.account_circle),
+  ];
+
   late Widget _openPage;
   late BottomNavigationBar? _bottomNavbar;
   late FloatingActionButton? _floatingButton;
@@ -35,7 +43,7 @@ class _CoreState extends State<Core> {
   void initState() {
     super.initState();
     _currentPage = _routes[0];
-    _drawer = ConstructDrawer(_routes, _currentPage);
+    _drawer = ConstructDrawer(_routes, _currentPage, _icons);
     _openPage = _getBodyPage(_currentPage);
     _bottomNavbar = null;
   }

@@ -54,20 +54,30 @@ class _ProfileState extends State<Profile> {
         ],
       );
     }
-    return Column(
+    
+    return ListView(
+    //return Column(
       children: [
-        const Text("Il tuo profilo:"),
-        Text("Email: ${user!.email}"),
-        Text("Nome: ${user!.name}"),
-        Text("Cognome: ${user!.lastname}"),
-        Text(
-            "Data di nascita: ${user!.birth_date.day}-${user!.birth_date.month}-${user!.birth_date.year}"),
-        Text("Indirizzo: ${user!.address}"),
-        Text("Nucleo familiare: ${user!.family}"),
-        Text("Tipologia abitazione: ${user!.house_type}"),
-        Text("Quartiere: ${user!.neighborhood}"),
+        //const Text("Il tuo profilo:"),
+        ListTile(title: Text("Username"),subtitle:Text(user!.username)),
+        ListTile(title: Text("E-mail"),subtitle:Text(user!.email)),
+          //Text("Email: ${user!.email}"),
+        ListTile(title: Text("Nome"),subtitle:Text(user!.name)),  
+          //Text("Nome: ${user!.name}"),
+        ListTile(title: Text("Cognome"),subtitle:Text(user!.lastname)),
+          //Text("Cognome: ${user!.lastname}"),
+        ListTile(title: Text("Data di nascita"),subtitle:Text("${user!.birth_date.day}-${user!.birth_date.month}-${user!.birth_date.year}")),  
+          //Text("Data di nascita: ${user!.birth_date.day}-${user!.birth_date.month}-${user!.birth_date.year}"),
+        ListTile(title: Text("Indirizzo"),subtitle:Text(user!.address)),
+          //Text("Indirizzo: ${user!.address}"),
+        ListTile(title: Text("Nucleo familiare"),subtitle:Text("${user!.family}")),
+          //Text("Nucleo familiare: ${user!.family}"),
+        ListTile(title: Text("Tipologia abitazione"),subtitle:Text(user!.house_type)),
+          //Text("Tipologia abitazione: ${user!.house_type}"),
+        ListTile(title: Text("Quartiere"),subtitle:Text(user!.neighborhood)),
+          //Text("Quartiere: ${user!.neighborhood}"),
         Container(
-          height: 50,
+          //height: 50,
         ),
         Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),

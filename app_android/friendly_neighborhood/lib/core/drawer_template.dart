@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 // ignore: must_be_immutable
 class ConstructDrawer extends StatelessWidget {
   late List<String> _routes;
+  late List<Icon> _icons;
   late String _currentRoute;
-  ConstructDrawer(List<String> routes, String defaultRoute, {super.key}) {
+  ConstructDrawer(List<String> routes, String defaultRoute, List<Icon> icons, {super.key}) {
     _routes = routes;
     _currentRoute = defaultRoute;
+    _icons=icons;
   }
 
   String get currentRoute => _currentRoute;
@@ -37,6 +39,7 @@ class ConstructDrawer extends StatelessWidget {
             final value = _routes.elementAt(index-1);
             return ListTile(
               title: Text(value),
+              trailing: _icons.elementAt(index-1),
               onTap: () {
                 _currentRoute = value;
                 Navigator.pop(context);
