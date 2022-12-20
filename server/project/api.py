@@ -273,9 +273,8 @@ def get_list(elem):
         return check(elem, token)
 
     user_email = get_user_by_token(token).email
-    assistant = user_email if elem == 'needs' else None
 
-    l = [x.get_all_elements() for x in get_all(table=elem, not_creator=user_email, assistant=assistant)]
+    l = [x.get_all_elements() for x in get_all(elem, user_email, False, False)]
 
     return {'list': sorted(l, reverse=True, key=lambda x: x["postdate"]), 'status': 'success'}
 
@@ -312,7 +311,7 @@ def get_mylist(elem):
         return check(elem, token)
 
     if len(request.json) == 1:
-        l = [x.get_all_elements() for x in get_all(table=elem, creator=get_user_by_token(token).email)]
+        l = [x.get_all_elements() for x in get_all(elem, get_user_by_token(token).email, True, False)]
         return {'list': sorted(l, reverse=True, key=lambda x: x["postdate"]), 'status': 'success'}
 
     update_tuple(elem, request.json.get('id'), **request.json)
@@ -338,7 +337,7 @@ def get_assist_list():
     if not user:
         return {'status': 'failure', 'reason': 'the user does not exist'}
 
-    l = [x.get_all_elements() for x in get_all(assistant=user.email)]
+    l = [x.get_all_elements() for x in get_all('needs', user.email, False, True)]
     return {'list': sorted(l, reverse=True, key=lambda x: x["postdate"]), 'status': 'success'}
 
 
