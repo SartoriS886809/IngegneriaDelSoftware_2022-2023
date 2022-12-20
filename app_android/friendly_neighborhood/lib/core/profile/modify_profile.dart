@@ -39,7 +39,6 @@ class _ModifyProfileState extends State<ModifyProfile> {
   late List<Neighborhood> _neighborhood = [];
 
   LocalUserManager lum = LocalUserManager();
-  late BuildContext _context;
   @override
   void initState() {
     super.initState();
@@ -90,7 +89,6 @@ class _ModifyProfileState extends State<ModifyProfile> {
   }
 
   Future<Widget> makeNeighborhoodMenu() async {
-    //TODO gestire errori
     _neighborhood = await API_Manager.getNeighborhoods();
     setChoiceNeighborhood();
     return Row(
@@ -144,7 +142,6 @@ class _ModifyProfileState extends State<ModifyProfile> {
 
   @override
   Widget build(BuildContext context) {
-    _context = context;
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(

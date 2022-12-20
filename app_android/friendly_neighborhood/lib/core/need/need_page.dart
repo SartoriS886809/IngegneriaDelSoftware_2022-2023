@@ -25,7 +25,6 @@ class _NeedPageState extends State<NeedPage> {
     "Mie richieste": Icons.account_circle,
     "Miei incarichi": Icons.assignment_turned_in
   };
-  //TODO mappare insieme su pages anche le pagine
   /*final List<Type super Widget> pagesWidgets = [
     NeighborsNeeds,
     MyNeeds,

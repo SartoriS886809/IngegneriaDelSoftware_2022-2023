@@ -13,23 +13,25 @@ class DashBoard extends StatelessWidget {
     List<String> routesFiltered = [...routes];
     routesFiltered.removeAt(0);
     LocalUserManager lum = LocalUserManager();
-    LocalUser? user=await lum.getUser();
+    LocalUser? user = await lum.getUser();
     return Stack(children: [
       ListView.builder(
-        itemCount: routesFiltered.length+1,
+        itemCount: routesFiltered.length + 1,
         itemBuilder: (context, index) {
-          if(index==0) //return Container(height: 5);
-          return Padding(
-            padding: EdgeInsets.all(10),
-            child:(Text.rich(TextSpan(text:"Benvenuto, ${user?.username}", style: Theme.of(context).textTheme.headline6)))
-          );
-          else 
-          return ElevatedButton(
-            onPressed: () {
-              switchBody(routesFiltered[index-1]);
-            },
-            child: Text(routesFiltered[index-1]),
-          );
+          if (index == 0) {
+            return Padding(
+                padding: const EdgeInsets.all(10),
+                child: (Text.rich(TextSpan(
+                    text: "Benvenuto, ${user?.username}",
+                    style: Theme.of(context).textTheme.headline6))));
+          } else {
+            return ElevatedButton(
+              onPressed: () {
+                switchBody(routesFiltered[index - 1]);
+              },
+              child: Text(routesFiltered[index - 1]),
+            );
+          }
         },
       )
     ]);

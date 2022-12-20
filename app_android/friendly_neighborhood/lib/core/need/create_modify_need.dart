@@ -51,24 +51,21 @@ class _CreationOrModificationNeedState
     widget.need!.title = _controllerTitle.text;
     widget.need!.description = _controllerDescription.text;
     widget.need!.address = _controllerAddress.text;
-    //TODO: invia al server
     LocalUser? user = await lum.getUser();
     token = user!.token;
     await API_Manager.updateElement(token, widget.need, ELEMENT_TYPE.NEEDS);
-    //
     Navigator.pop(_context);
   }
 
   void createNeed() async {
-    //TODO Creator da assegnare
     widget.need = Need(
         postDate: DateTime.now(),
         title: _controllerTitle.text,
         address: _controllerAddress.text,
         description: _controllerDescription.text,
         assistant: "",
-        creator: ""); //TODO: creator preso da profilo
-    //TODO: invia al server
+        creator: "");
+
     LocalUser? user = await lum.getUser();
     token = user!.token;
     await API_Manager.createElement(token, widget.need, ELEMENT_TYPE.NEEDS);

@@ -64,7 +64,6 @@ class NotificationSystem {
         return;
       }
       if (!isValidSession) return;
-      //TODO avvia servizio in background
       _userToken = user.token;
       isStarted = true;
       return Future.value(true);
@@ -76,7 +75,6 @@ class NotificationSystem {
 
   /*
   void stop() {
-    //TODO Ferma servizio in background
     isStarted = false;
     _userToken = "";
     _downloadedList = [];
@@ -102,7 +100,6 @@ if (event != null) {
     return true;
   }
 
-  //TODO non richiede nulla, è gia tutto presente nella classe
   Future<void> elaborateDataList(FlutterLocalNotificationsPlugin flnp) async {
     try {
       if (!await downloadReports()) {
@@ -145,7 +142,6 @@ if (event != null) {
   }
 
 /*
-  //TODO Rifare la notifica (inserire i dati messi nel documento di progetto)
   Future sendNotificationReport(Report r) async {
     bool? permission = await _localNotificationsPlugin
         .resolvePlatformSpecificImplementation<
@@ -157,7 +153,7 @@ if (event != null) {
     const androidDetail = AndroidNotificationDetails(
         "1", // channel Id
         "Segnalazioni" // channel Name
-        //largeIcon:  TODO Da mettere l'icona dell'app
+        //largeIcon:  
         );
 
     const noticeDetail = NotificationDetails(
@@ -176,7 +172,6 @@ if (event != null) {
     );
   }
 
-  //TODO Rifare la notifica (inserire i dati messi nel documento di progetto)
   Future sendNotification(String message) async {
     print("here");
     bool? permission = await _localNotificationsPlugin

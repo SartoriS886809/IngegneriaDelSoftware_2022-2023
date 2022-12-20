@@ -457,7 +457,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                     //Controllo connessione internet
                                     bool check = await CheckConnection.check();
                                     if (check) {
-                                      //TODO inviare richiesta server
                                       LocalUser newUser = LocalUser(
                                           _controllerEmail.text,
                                           _controllerUsername.text,
