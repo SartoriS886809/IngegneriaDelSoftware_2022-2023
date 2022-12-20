@@ -18,7 +18,7 @@
     </queries>
    <uses-permission android:name="android.permission.INTERNET"/>
    <application
-        android:label="friendly_neighborhood"
+        android:label="Friendly Neighborhood"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
             <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />

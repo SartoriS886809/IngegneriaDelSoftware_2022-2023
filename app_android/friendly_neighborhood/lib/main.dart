@@ -161,8 +161,12 @@ class _LoadingScreenState extends State<LoadingScreen> {
     _context = context;
     startingProcess();
     return const Scaffold(
-      //TODO Icona temporanea, da utilizzare quella ufficiale dell'app
-      body: Center(child: Icon(Icons.people)),
-    );
+        body: Center(
+            child: SizedBox(
+                child: Image(
+      image: AssetImage('assets/app_icon.png'),
+      width: 100,
+      height: 100,
+    ))));
   }
 }
