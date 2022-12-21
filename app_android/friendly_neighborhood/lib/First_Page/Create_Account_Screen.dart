@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, unused_field, constant_identifier_names, prefer_final_fields, file_names, use_build_context_synchronously
+// ignore_for_file: non_constant_identifier_names, constant_identifier_names, use_build_context_synchronously
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -29,8 +29,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   late IconData _iconPassword;
   late bool _confirmPasswordVisible;
   late IconData _confirmIconPassword;
-  final _popupBuilderKey = GlobalKey<DropdownSearchState<String>>();
-  final _popupCustomValidationKey = GlobalKey<DropdownSearchState<int>>();
 
   //Sezione controller / variabili gestione contenuto campi
 

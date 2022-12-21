@@ -9,11 +9,6 @@ import 'package:friendly_neighborhood/core/core.dart';
 import 'package:friendly_neighborhood/utils/alertdialog.dart';
 import 'package:friendly_neighborhood/utils/check_connection.dart';
 
-/*
-Lista di todo:
-//TODO Gestire errori da richiesta
-//TODO se possibile utilizzare un testo per notifiche di errori riguardanti email/password
-*/
 class LoginScreen extends StatefulWidget {
   String message = "";
   LoginScreen({super.key}) {
@@ -148,8 +143,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                               builder: (context) =>
                                                   const Core()));
                                     } catch (e) {
-                                      notificationAlertDialog(
-                                          text: e.toString(), context: context);
+                                      if (e.toString() ==
+                                          "user does not exist") {
+                                        setState(() {
+                                          widget.message =
+                                              "L'email o la password inserite non sono corrette";
+                                        });
+                                      } else {
+                                        notificationAlertDialog(
+                                            text: e.toString(),
+                                            context: context);
+                                      }
                                     }
                                   } else {
                                     notificationAlertDialog(

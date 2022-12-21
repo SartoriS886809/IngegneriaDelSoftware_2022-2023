@@ -210,18 +210,25 @@ if (event != null) {
       String title,
       String message,
       bool withSound) async {
-    var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
-        "0", "FriendlyNeighoborhood",
-        importance: Importance.high, priority: Priority.high);
+    AndroidNotificationDetails androidPlatformChannelSpecifics;
+    if (withSound) {
+      androidPlatformChannelSpecifics = const AndroidNotificationDetails(
+          "0", "FriendlyNeighoborhood",
+          importance: Importance.high,
+          priority: Priority.high,
+          playSound: true);
+    } else {
+      androidPlatformChannelSpecifics = const AndroidNotificationDetails(
+          "0", "FriendlyNeighoborhood-no-sound",
+          importance: Importance.high,
+          priority: Priority.high,
+          playSound: false);
+    }
 
     var platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
     );
-    if (withSound) {
-      await flnp.show(0, title, message, platformChannelSpecifics,
-          payload: 'Default_Sound');
-    } else {
-      await flnp.show(0, title, message, platformChannelSpecifics);
-    }
+    await flnp.show(0, title, message, platformChannelSpecifics,
+        payload: 'Default_Sound');
   }
 }
