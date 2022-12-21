@@ -34,11 +34,8 @@ void callbackDispatcher() {
           NotificationSystem n = NotificationSystem();
           await n
               .sendNotification("L'applicazione è in esecuzione in background");*/
-          NotificationSystem.showNotificationWithDefaultSound(
-            flip,
-            "Avviso",
-            "L'applicazione è in esecuzione in background",
-          );
+          NotificationSystem.showNotificationWithDefaultSound(flip, "Avviso",
+              "L'applicazione è in esecuzione in background", false);
           return Future.value(true);
         default:
           return Future.value(true);

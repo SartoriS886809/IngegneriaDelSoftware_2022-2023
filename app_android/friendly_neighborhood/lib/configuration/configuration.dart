@@ -13,7 +13,7 @@ class Configuration {
   //La seguente mappa serve per definire metodi di contatto nella pagina servizi
   static const Map<String, String> supportedContactMethods = {
     "telefono / cellulare": "tel:\$",
-    "email": "mailto:\$",
+    "email": "mailto:",
     "whatsapp": "https://wa.me/send?phone=",
     "telegram": "https://telegram.me/",
     "sito web": "https:",

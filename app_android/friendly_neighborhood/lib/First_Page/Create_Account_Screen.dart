@@ -341,7 +341,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                 DateTime? pickedDate = await showDatePicker(
                                     context: context,
                                     locale: const Locale("it", "IT"),
-                                    initialDate: DateTime.now(),
+                                    initialDate: (_controllerDate.text != "")
+                                        ? DateFormat('dd-MM-yyyy')
+                                            .parse(_controllerDate.text)
+                                        : DateTime.now(),
                                     firstDate: DateTime(1900),
                                     //Blocco le date future.
                                     lastDate: DateTime.now());

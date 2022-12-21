@@ -104,13 +104,16 @@ if (event != null) {
     try {
       if (!await downloadReports()) {
         showNotificationWithDefaultSound(
-            flnp, "Errore", "Errore nel download segnalazioni");
+            flnp, "Errore", "Errore nel download segnalazioni", true);
       }
     } catch (e) {
-      showNotificationWithDefaultSound(flnp, "Errore", e.toString());
+      showNotificationWithDefaultSound(flnp, "Errore", e.toString(), true);
       if (e.toString() == "user does not exist") {
-        showNotificationWithDefaultSound(flnp, "Errore",
-            "Rieseguire il login, per rimanere sintonizzati con le nuove segnalazioni del quartiere");
+        showNotificationWithDefaultSound(
+            flnp,
+            "Errore",
+            "Rieseguire il login, per rimanere sintonizzati con le nuove segnalazioni del quartiere",
+            true);
         //stop();
       }
       return;
@@ -138,7 +141,7 @@ if (event != null) {
 
   void sendNotificationReport(Report r, FlutterLocalNotificationsPlugin flnp) {
     showNotificationWithDefaultSound(
-        flnp, r.title, r.address); //da cambiare configurazione
+        flnp, r.title, r.address, true); //da cambiare configurazione
   }
 
 /*
@@ -205,7 +208,8 @@ if (event != null) {
   static Future showNotificationWithDefaultSound(
       FlutterLocalNotificationsPlugin flnp,
       String title,
-      String message) async {
+      String message,
+      bool withSound) async {
     var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
         "0", "FriendlyNeighoborhood",
         importance: Importance.high, priority: Priority.high);
@@ -213,7 +217,11 @@ if (event != null) {
     var platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
     );
-    await flnp.show(0, title, message, platformChannelSpecifics,
-        payload: 'Default_Sound');
+    if (withSound) {
+      await flnp.show(0, title, message, platformChannelSpecifics,
+          payload: 'Default_Sound');
+    } else {
+      await flnp.show(0, title, message, platformChannelSpecifics);
+    }
   }
 }

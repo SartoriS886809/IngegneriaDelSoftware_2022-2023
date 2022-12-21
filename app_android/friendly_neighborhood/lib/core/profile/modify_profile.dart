@@ -38,6 +38,7 @@ class _ModifyProfileState extends State<ModifyProfile> {
   static const _house_types = ["Appartamento", "Casa singola"];
   late List<Neighborhood> _neighborhood = [];
 
+  late BuildContext _context;
   LocalUserManager lum = LocalUserManager();
   @override
   void initState() {
@@ -84,7 +85,12 @@ class _ModifyProfileState extends State<ModifyProfile> {
       await lum.updateUser(updatedUser);
       Navigator.pop(context);
     } catch (e) {
-      //TODO Gestire errori
+      advancedAlertDialog(
+          title: "Errore",
+          message: e.toString(),
+          buttonMessage: "Riprova",
+          f: updateProfile,
+          context: _context);
     }
   }
 
@@ -142,6 +148,7 @@ class _ModifyProfileState extends State<ModifyProfile> {
 
   @override
   Widget build(BuildContext context) {
+    _context = context;
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -253,6 +260,7 @@ class _ModifyProfileState extends State<ModifyProfile> {
                             padding: const EdgeInsets.symmetric(horizontal: 15),
                             child: TextFormField(
                               controller: _controllerDate,
+                              keyboardType: TextInputType.datetime,
                               validator: (String? value) {
                                 //Se è vuoto dice di inserire la data
                                 if (value == null || value.isEmpty) {
@@ -272,9 +280,13 @@ class _ModifyProfileState extends State<ModifyProfile> {
                               readOnly: true,
                               onTap: () async {
                                 DateTime? pickedDate = await showDatePicker(
+                                    keyboardType: TextInputType.datetime,
                                     context: context,
                                     locale: const Locale("it", "IT"),
-                                    initialDate: DateTime.now(),
+                                    initialDate: (_controllerDate.text != "")
+                                        ? DateFormat('dd-MM-yyyy')
+                                            .parse(_controllerDate.text)
+                                        : DateTime.now(),
                                     firstDate: DateTime(1900),
                                     //Blocco le date future.
                                     lastDate: DateTime.now());
