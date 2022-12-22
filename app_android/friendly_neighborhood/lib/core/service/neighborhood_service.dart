@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/API_Manager/api_manager.dart';
 import 'package:friendly_neighborhood/cache_manager/profile_db.dart';
@@ -5,6 +7,8 @@ import 'package:friendly_neighborhood/core/service/card_service.dart';
 import 'package:friendly_neighborhood/model/localuser.dart';
 import 'package:friendly_neighborhood/model/service.dart';
 import 'package:friendly_neighborhood/utils/exception_widget.dart';
+
+import '../../first_page/login_screen.dart';
 
 class NeighborhoodServicePage extends StatefulWidget {
   const NeighborhoodServicePage({super.key});
@@ -18,7 +22,6 @@ class _NeighborhoodServicePageState extends State<NeighborhoodServicePage> {
   late List<Service> data;
   String token = "";
   LocalUserManager lum = LocalUserManager();
-  //TODO INSERIRE FUNZIONE DI GESTIONE DI ERRORE IN CASO DEL TOKEN NON PIù VALIDO
 
   Future downloadData(bool needRefreshGUI) async {
     if (token == "") {
@@ -29,6 +32,15 @@ class _NeighborhoodServicePageState extends State<NeighborhoodServicePage> {
       data = List<Service>.from(await API_Manager.listOfElements(
           token, ELEMENT_TYPE.SERVICES, false));
     } catch (e) {
+      if (e.toString() == "user does not exist") {
+        Navigator.pop(context);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => LoginScreen.withMessage(
+                    message:
+                        "Sessione non più valida, si prega di rieseguire il login")));
+      }
       rethrow;
     }
 

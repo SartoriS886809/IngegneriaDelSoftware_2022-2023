@@ -34,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _passwordVisible = false;
     _iconPassword = Icons.visibility;
     //TODO TEMP
-    _controllerEmail.text = "prova2@prova.com";
+    _controllerEmail.text = "a@a.a";
     _controllerPassword.text = "passpass";
   }
 

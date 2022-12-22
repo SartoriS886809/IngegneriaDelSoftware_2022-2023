@@ -3,6 +3,7 @@
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/cache_manager/profile_db.dart';
+import 'package:friendly_neighborhood/first_page/login_screen.dart';
 import 'package:friendly_neighborhood/model/localuser.dart';
 import 'package:friendly_neighborhood/utils/alertdialog.dart';
 import 'package:intl/intl.dart';
@@ -39,6 +40,7 @@ class _ModifyProfileState extends State<ModifyProfile> {
   late List<Neighborhood> _neighborhood = [];
 
   late BuildContext _context;
+  late bool alreadyOpenAlertDialog = false;
   LocalUserManager lum = LocalUserManager();
   @override
   void initState() {
@@ -94,8 +96,26 @@ class _ModifyProfileState extends State<ModifyProfile> {
     }
   }
 
+  void retry() {
+    setState(() {});
+  }
+
   Future<Widget> makeNeighborhoodMenu() async {
-    _neighborhood = await API_Manager.getNeighborhoods();
+    try {
+      _neighborhood = await API_Manager.getNeighborhoods();
+    } catch (e) {
+      return Future.error(e);
+    }
+    //Controllo sessione valida
+    if (!await API_Manager.checkToken(widget.user.email, widget.user.token)) {
+      Navigator.pop(context);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => LoginScreen.withMessage(
+                  message:
+                      "Sessione non più valida, si prega di rieseguire il login")));
+    }
     setChoiceNeighborhood();
     return Row(
       children: [
@@ -376,6 +396,23 @@ class _ModifyProfileState extends State<ModifyProfile> {
                                     (context, AsyncSnapshot<Widget> snapshot) {
                                   if (snapshot.hasData) {
                                     return snapshot.data!;
+                                  } else if (snapshot.hasError) {
+                                    WidgetsBinding.instance
+                                        .addPostFrameCallback((_) {
+                                      if (!alreadyOpenAlertDialog) {
+                                        alreadyOpenAlertDialog = true;
+                                        simpleAlertDialog(
+                                            text: "${snapshot.error!}",
+                                            f: () {
+                                              alreadyOpenAlertDialog = false;
+                                              retry();
+                                            },
+                                            context: context);
+                                      }
+                                    });
+
+                                    return const Text(
+                                        "Si è verificato un errore");
                                   } else {
                                     return const CircularProgressIndicator();
                                   }

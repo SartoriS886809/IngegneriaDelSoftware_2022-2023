@@ -6,6 +6,7 @@ import 'package:friendly_neighborhood/utils/alertdialog.dart';
 
 import '../../API_Manager/api_manager.dart';
 import '../../cache_manager/profile_db.dart';
+import '../../first_page/login_screen.dart';
 import '../../model/localuser.dart';
 
 //ignore: must_be_immutable
@@ -52,9 +53,34 @@ class _CreationReportState extends State<CreationReport> {
     Navigator.pop(_context);
   }
 
+  Future<bool> checkSession() async {
+    LocalUser? user = await lum.getUser();
+    if (user == null) {
+      Navigator.pop(context);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => LoginScreen.withMessage(
+                  message: "Errore interno, si prega di rieseguire il login")));
+      return false;
+    }
+    if (!await API_Manager.checkToken(user.email, user.token)) {
+      Navigator.pop(context);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => LoginScreen.withMessage(
+                  message:
+                      "Sessione non più valida, si prega di rieseguire il login")));
+      return false;
+    }
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     _context = context;
+    checkSession();
     return Scaffold(
         //Evita l'overflow una volta aperta la tastiera
         resizeToAvoidBottomInset: false,
@@ -213,6 +239,8 @@ class _CreationReportState extends State<CreationReport> {
                                       debugPrint(_valueChoose?.toLowerCase());
                                       //Controllo se il form è valido
                                       if (_formKey.currentState!.validate()) {
+                                        bool check = await checkSession();
+                                        if (!check) return;
                                         //implementa il pop up
                                         advancedAlertDialog(
                                             title: "Creazione",

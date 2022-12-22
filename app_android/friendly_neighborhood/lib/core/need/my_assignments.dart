@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/API_Manager/api_manager.dart';
 import 'package:friendly_neighborhood/cache_manager/profile_db.dart';
 import 'package:friendly_neighborhood/core/need/card_need.dart';
+import 'package:friendly_neighborhood/first_page/login_screen.dart';
 import 'package:friendly_neighborhood/model/localuser.dart';
 import 'package:friendly_neighborhood/utils/exception_widget.dart';
 import '../../model/need.dart';
@@ -42,6 +43,17 @@ class _MyAssignments extends State<MyAssignments> {
     try {
       needslist = List<Need>.from(await API_Manager.assistList(token));
     } catch (e) {
+      if (e.toString() == "user does not exist") {
+        // ignore: use_build_context_synchronously
+        Navigator.pop(context);
+        // ignore: use_build_context_synchronously
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => LoginScreen.withMessage(
+                    message:
+                        "Sessione non più valida, si prega di rieseguire il login")));
+      }
       rethrow;
     }
     if (needRefreshGUI) setState(() {});
@@ -72,16 +84,16 @@ class _MyAssignments extends State<MyAssignments> {
     return Stack(
       children: [
         FutureBuilder<Widget>(
-          future: generateList(),
-          builder: (context, AsyncSnapshot<Widget> snapshot) {
-            if (snapshot.hasData) {
-              return snapshot.data!;
-            } else if (snapshot.hasError) {
-              return printError(snapshot.error!, downloadData);
-            } else {
-              return const Center(child: CircularProgressIndicator());
-            }
-        }),
+            future: generateList(),
+            builder: (context, AsyncSnapshot<Widget> snapshot) {
+              if (snapshot.hasData) {
+                return snapshot.data!;
+              } else if (snapshot.hasError) {
+                return printError(snapshot.error!, downloadData);
+              } else {
+                return const Center(child: CircularProgressIndicator());
+              }
+            }),
         SizedBox(
           height: 10,
           child: Row(

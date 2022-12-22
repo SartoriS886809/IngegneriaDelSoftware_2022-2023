@@ -1,7 +1,8 @@
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/core/need/card_need.dart';
+import 'package:friendly_neighborhood/first_page/login_screen.dart';
 import 'package:friendly_neighborhood/model/need.dart';
 import 'package:friendly_neighborhood/utils/exception_widget.dart';
 
@@ -52,7 +53,6 @@ class _NeighborsNeedsState extends State<NeighborsNeeds> {
         idAssistant: 0,
         creator: "Diego Sartori")
   ];*/
-  //TODO INSERIRE FUNZIONE DI GESTIONE DI ERRORE IN CASO DEL TOKEN NON PIù VALIDO
 
   Future downloadData(bool needRefreshGUI) async {
     if (token == "") {
@@ -63,6 +63,15 @@ class _NeighborsNeedsState extends State<NeighborsNeeds> {
       needslist = List<Need>.from(
           await API_Manager.listOfElements(token, ELEMENT_TYPE.NEEDS, false));
     } catch (e) {
+      if (e.toString() == "user does not exist") {
+        Navigator.pop(context);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => LoginScreen.withMessage(
+                    message:
+                        "Sessione non più valida, si prega di rieseguire il login")));
+      }
       rethrow;
     }
     if (needRefreshGUI) setState(() {});
@@ -98,16 +107,16 @@ class _NeighborsNeedsState extends State<NeighborsNeeds> {
     return Stack(
       children: [
         FutureBuilder<Widget>(
-          future: generateList(),
-          builder: (context, AsyncSnapshot<Widget> snapshot) {
-            if (snapshot.hasData) {
-              return snapshot.data!;
-            } else if (snapshot.hasError) {
-              return printError(snapshot.error!, downloadData);
-            } else {
-              return const Center(child: CircularProgressIndicator());
-            }
-        }),
+            future: generateList(),
+            builder: (context, AsyncSnapshot<Widget> snapshot) {
+              if (snapshot.hasData) {
+                return snapshot.data!;
+              } else if (snapshot.hasError) {
+                return printError(snapshot.error!, downloadData);
+              } else {
+                return const Center(child: CircularProgressIndicator());
+              }
+            }),
         SizedBox(
           height: 10,
           child: Row(
@@ -126,6 +135,5 @@ class _NeighborsNeedsState extends State<NeighborsNeeds> {
         )
       ],
     );
-    
   }
 }
