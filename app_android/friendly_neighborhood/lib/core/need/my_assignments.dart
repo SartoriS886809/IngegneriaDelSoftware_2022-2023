@@ -43,7 +43,7 @@ class _MyAssignments extends State<MyAssignments> {
     try {
       needslist = List<Need>.from(await API_Manager.assistList(token));
     } catch (e) {
-      if (e.toString() == "user does not exist") {
+      if (e.toString() == "the user does not exist") {
         // ignore: use_build_context_synchronously
         Navigator.pop(context);
         // ignore: use_build_context_synchronously

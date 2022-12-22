@@ -108,7 +108,7 @@ if (event != null) {
       }
     } catch (e) {
       showNotificationWithDefaultSound(flnp, "Errore", e.toString(), true);
-      if (e.toString() == "user does not exist") {
+      if (e.toString() == "the user does not exist") {
         showNotificationWithDefaultSound(
             flnp,
             "Errore",

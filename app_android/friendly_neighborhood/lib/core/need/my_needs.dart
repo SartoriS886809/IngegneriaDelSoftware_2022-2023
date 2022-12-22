@@ -52,7 +52,7 @@ class _MyNeedsState extends State<MyNeeds> {
       needslist = List<Need>.from(
           await API_Manager.listOfElements(token, ELEMENT_TYPE.NEEDS, true));
     } catch (e) {
-      if (e.toString() == "user does not exist") {
+      if (e.toString() == "the user does not exist") {
         // ignore: use_build_context_synchronously
         Navigator.pop(context);
         // ignore: use_build_context_synchronously

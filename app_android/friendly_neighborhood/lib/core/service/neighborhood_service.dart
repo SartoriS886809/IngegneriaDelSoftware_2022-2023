@@ -32,7 +32,7 @@ class _NeighborhoodServicePageState extends State<NeighborhoodServicePage> {
       data = List<Service>.from(await API_Manager.listOfElements(
           token, ELEMENT_TYPE.SERVICES, false));
     } catch (e) {
-      if (e.toString() == "user does not exist") {
+      if (e.toString() == "the user does not exist") {
         Navigator.pop(context);
         Navigator.push(
             context,
