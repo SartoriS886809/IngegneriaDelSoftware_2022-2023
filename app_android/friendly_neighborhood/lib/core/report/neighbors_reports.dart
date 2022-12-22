@@ -58,9 +58,10 @@ class _NeighborsReportsState extends State<NeighborsReports> {
     await downloadData(false);
     return (reportList.isNotEmpty)
         ? ListView.builder(
-            itemCount: reportList.length,
+            itemCount: reportList.length+1,
             itemBuilder: (context, index) {
-              final Report reportIter = reportList.elementAt(index);
+              if(index==0) return Container(height:40);
+              final Report reportIter = reportList.elementAt(index-1);
               final String dateIter =
                   convertDateTimeToDate(reportIter.postDate);
               return Card(
@@ -102,22 +103,16 @@ class _NeighborsReportsState extends State<NeighborsReports> {
               return const Center(child: CircularProgressIndicator());
             }
           }),
-      SizedBox(
-        height: 10,
-        child: Row(
-          children: [
-            Expanded(
-                child: Container(
-              width: double.infinity,
-            )),
-            IconButton(
+      Align(
+              alignment: Alignment.topRight,
+              child:
+              IconButton(
+              iconSize: 35,
                 onPressed: (() {
                   downloadData(true);
                 }),
                 icon: const Icon(Icons.refresh))
-          ],
-        ),
-      ),
+          ),
     ]);
   }
 }

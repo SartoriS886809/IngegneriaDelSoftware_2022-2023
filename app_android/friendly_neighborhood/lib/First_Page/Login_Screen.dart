@@ -49,7 +49,6 @@ class _LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(widget.message),
               Expanded(child: Container()),
               Form(
                   key: _formKey,
@@ -121,6 +120,17 @@ class _LoginScreenState extends State<LoginScreen> {
                             },
                           ),
                         ),
+                        //messaggio di errore
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: Text.rich(TextSpan(
+                              text: widget.message,
+                              style: const TextStyle(color: Colors.red),
+                            )),
+                          ),
+                        ),
+
                         //Pulsante Accedi
                         Padding(
                             padding: const EdgeInsets.symmetric(vertical: 16.0),

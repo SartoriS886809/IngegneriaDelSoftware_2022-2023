@@ -140,8 +140,10 @@ if (event != null) {
   }
 
   void sendNotificationReport(Report r, FlutterLocalNotificationsPlugin flnp) {
+    String message =
+        "Categoria: ${r.category}\nIndirizzo:${r.address}\nCreato da: ${r.creator}";
     showNotificationWithDefaultSound(
-        flnp, r.title, r.address, true); //da cambiare configurazione
+        flnp, r.title, message, true); //da cambiare configurazione
   }
 
 /*

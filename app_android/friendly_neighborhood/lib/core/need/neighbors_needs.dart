@@ -81,9 +81,10 @@ class _NeighborsNeedsState extends State<NeighborsNeeds> {
     await downloadData(false);
     return (needslist.isNotEmpty)
         ? ListView.builder(
-            itemCount: needslist.length,
+            itemCount: needslist.length+1,
             itemBuilder: (context, index) {
-              final Need need_i = needslist.elementAt(index);
+              if(index==0) return Container(height:40);
+              final Need need_i = needslist.elementAt(index-1);
               return NeedCard(
                   need: need_i,
                   downloadNewDataFunction: downloadData,
@@ -117,22 +118,16 @@ class _NeighborsNeedsState extends State<NeighborsNeeds> {
                 return const Center(child: CircularProgressIndicator());
               }
             }),
-        SizedBox(
-          height: 10,
-          child: Row(
-            children: [
-              Expanded(
-                  child: Container(
-                width: double.infinity,
-              )),
+        Align(
+              alignment: Alignment.topRight,
+              child:
               IconButton(
-                  onPressed: (() {
-                    downloadData(true);
-                  }),
-                  icon: const Icon(Icons.refresh))
-            ],
+              iconSize: 35,
+                onPressed: (() {
+                  downloadData(true);
+                }),
+                icon: const Icon(Icons.refresh))
           ),
-        )
       ],
     );
   }

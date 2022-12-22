@@ -56,10 +56,11 @@ class _MyServicePageState extends State<MyServicePage> {
     return SizedBox(
       height: double.infinity,
       child: ListView.builder(
-        itemCount: data.length,
+        itemCount: data.length+1,
         itemBuilder: (context, index) {
+          if(index==0) return Container(height:40);
           return ServiceCardMe(
-              service: data[index], downloadNewDataFunction: downloadData);
+              service: data[index-1], downloadNewDataFunction: downloadData);
         },
       ),
     );
@@ -87,22 +88,16 @@ class _MyServicePageState extends State<MyServicePage> {
                 return const Center(child: CircularProgressIndicator());
               }
             }),
-        SizedBox(
-          height: 10,
-          child: Row(
-            children: [
-              Expanded(
-                  child: Container(
-                width: double.infinity,
-              )),
+        Align(
+              alignment: Alignment.topRight,
+              child:
               IconButton(
-                  onPressed: (() {
-                    downloadData(true);
-                  }),
-                  icon: const Icon(Icons.refresh))
-            ],
+              iconSize: 35,
+                onPressed: (() {
+                  downloadData(true);
+                }),
+                icon: const Icon(Icons.refresh))
           ),
-        ),
       ],
     );
   }
