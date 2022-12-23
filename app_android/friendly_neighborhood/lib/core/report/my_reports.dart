@@ -6,6 +6,7 @@ import 'package:friendly_neighborhood/utils/exception_widget.dart';
 
 import '../../API_Manager/api_manager.dart';
 import '../../cache_manager/profile_db.dart';
+import '../../first_page/login_screen.dart';
 import '../../model/localuser.dart';
 import '../../utils/elaborate_data.dart';
 
@@ -49,6 +50,15 @@ class _MyReportsState extends State<MyReports> {
       reportList = List<Report>.from(
           await API_Manager.listOfElements(token, ELEMENT_TYPE.REPORTS, true));
     } catch (e) {
+      if (e.toString() == "the user does not exist") {
+        Navigator.pop(context);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => LoginScreen.withMessage(
+                    message:
+                        "Sessione non più valida, si prega di rieseguire il login")));
+      }
       rethrow;
     }
     if (needRefreshGUI) setState(() {});
@@ -58,9 +68,10 @@ class _MyReportsState extends State<MyReports> {
     await downloadData(false);
     return (reportList.isNotEmpty)
         ? ListView.builder(
-            itemCount: reportList.length,
+            itemCount: reportList.length+1,
             itemBuilder: (context, index) {
-              final Report reportIter = reportList.elementAt(index);
+              if(index==0) return Container(height:40);
+              final Report reportIter = reportList.elementAt(index-1);
               final String dateIter =
                   convertDateTimeToDate(reportIter.postDate);
               return Card(
@@ -159,16 +170,28 @@ class _MyReportsState extends State<MyReports> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Widget>(
-        future: generateList(),
-        builder: (context, AsyncSnapshot<Widget> snapshot) {
-          if (snapshot.hasData) {
-            return snapshot.data!;
-          } else if (snapshot.hasError) {
-            return printError(snapshot.error!, downloadData);
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        });
+    return Stack(children: [
+      FutureBuilder<Widget>(
+          future: generateList(),
+          builder: (context, AsyncSnapshot<Widget> snapshot) {
+            if (snapshot.hasData) {
+              return snapshot.data!;
+            } else if (snapshot.hasError) {
+              return printError(snapshot.error!, downloadData);
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
+          }),
+      Align(
+              alignment: Alignment.topRight,
+              child:
+              IconButton(
+              iconSize: 35,
+                onPressed: (() {
+                  downloadData(true);
+                }),
+                icon: const Icon(Icons.refresh))
+          ),
+    ]);
   }
 }

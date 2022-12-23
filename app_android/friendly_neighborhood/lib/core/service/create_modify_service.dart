@@ -9,6 +9,7 @@ import 'package:friendly_neighborhood/model/localuser.dart';
 import 'package:friendly_neighborhood/model/service.dart';
 import 'package:friendly_neighborhood/utils/alertdialog.dart';
 
+import '../../first_page/login_screen.dart';
 import '../../utils/elaborate_data.dart';
 
 // ignore: must_be_immutable
@@ -161,6 +162,30 @@ class _CreationOrModificationServiceState
         });
   }
 
+  Future<bool> checkSession() async {
+    user ??= await lum.getUser();
+    if (user == null) {
+      Navigator.pop(context);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => LoginScreen.withMessage(
+                  message: "Errore interno, si prega di rieseguire il login")));
+      return false;
+    }
+    if (!await API_Manager.checkToken(user!.email, user!.token)) {
+      Navigator.pop(context);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => LoginScreen.withMessage(
+                  message:
+                      "Sessione non più valida, si prega di rieseguire il login")));
+      return false;
+    }
+    return true;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -181,6 +206,7 @@ class _CreationOrModificationServiceState
   @override
   Widget build(BuildContext context) {
     _context = context;
+    checkSession();
     return Scaffold(
       appBar: AppBar(
           title: (widget.modification)
@@ -283,46 +309,45 @@ class _CreationOrModificationServiceState
                                           )),
                                         ))),
                             Expanded(
-                                child: //Pulsante Registrati
-                                    Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 16.0),
-                                        child: ElevatedButton(
-                                          onPressed: () async {
-                                            //Controllo se il form è valido
-                                            if (_formKey.currentState!
-                                                .validate()) {
-                                              if (widget.modification) {
-                                                //aggiornare
-
-                                                advancedAlertDialog(
-                                                    title: "Aggiornamento",
-                                                    message:
-                                                        "Sei sicuro di voler aggiornare il servizio?",
-                                                    buttonMessage: "Aggiorna",
-                                                    f: updateService,
-                                                    context: context);
-                                              } else {
-                                                //creare da zero
-                                                advancedAlertDialog(
-                                                    title: "Creazione",
-                                                    message:
-                                                        "Sei sicuro di voler creare il servizio?",
-                                                    buttonMessage: "Crea",
-                                                    f: createService,
-                                                    context: context);
-                                              }
-                                            }
-                                          },
-                                          child: Center(
-                                              child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 16, bottom: 16),
-                                            child: (widget.modification)
-                                                ? const Text("Aggiorna")
-                                                : const Text("Crea"),
-                                          )),
-                                        ))),
+                                child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 16.0),
+                                    child: ElevatedButton(
+                                      onPressed: () async {
+                                        //Controllo se il form è valido
+                                        if (_formKey.currentState!.validate()) {
+                                          bool check = await checkSession();
+                                          if (!check) return;
+                                          if (widget.modification) {
+                                            //aggiornare
+                                            advancedAlertDialog(
+                                                title: "Aggiornamento",
+                                                message:
+                                                    "Sei sicuro di voler aggiornare il servizio?",
+                                                buttonMessage: "Aggiorna",
+                                                f: updateService,
+                                                context: context);
+                                          } else {
+                                            //creare da zero
+                                            advancedAlertDialog(
+                                                title: "Creazione",
+                                                message:
+                                                    "Sei sicuro di voler creare il servizio?",
+                                                buttonMessage: "Crea",
+                                                f: createService,
+                                                context: context);
+                                          }
+                                        }
+                                      },
+                                      child: Center(
+                                          child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 16, bottom: 16),
+                                        child: (widget.modification)
+                                            ? const Text("Aggiorna")
+                                            : const Text("Crea"),
+                                      )),
+                                    ))),
                           ],
                         )
                       ])),

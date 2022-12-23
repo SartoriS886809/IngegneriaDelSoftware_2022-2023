@@ -63,13 +63,23 @@ class _ShowServiceState extends State<ShowService> {
         appBar: AppBar(title: Text(widget.service.title)),
         body: Column(
           children: [
-            Text('Creato da:${widget.service.creator}'),
-            Text(
-                'Pubblicato il:${widget.service.postDate.day}-${widget.service.postDate.month}-${widget.service.postDate.year}'),
-            Text('Descrizione:${widget.service.description}'),
+            ListTile(
+                title: const Text("Autore"),
+                subtitle: Text(widget.service.creator)),
+            //Text('Creato da:${widget.service.creator}'),
+            ListTile(
+                title: const Text("Data pubblicazione"),
+                subtitle: Text(
+                    "${widget.service.postDate.day}-${widget.service.postDate.month}-${widget.service.postDate.year}")),
+            //Text('Pubblicato il:${widget.service.postDate.day}-${widget.service.postDate.month}-${widget.service.postDate.year}'),
+            ListTile(
+                title: const Text("Descrizione"),
+                subtitle: Text(widget.service.description)),
+            //Text('Descrizione:${widget.service.description}'),
             //Contatti
             if (widget.service.link != "") ...[
-              const Text("Contatti:"),
+              const ListTile(title: Text("Contatti")),
+              //const Text("Contatti:"),
             ],
             Expanded(child: generaLista()),
             Row(

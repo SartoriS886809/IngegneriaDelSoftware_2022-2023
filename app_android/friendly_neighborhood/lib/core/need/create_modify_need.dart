@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/API_Manager/api_manager.dart';
 import 'package:friendly_neighborhood/cache_manager/profile_db.dart';
+import 'package:friendly_neighborhood/first_page/login_screen.dart';
 import 'package:friendly_neighborhood/model/localuser.dart';
 import 'package:friendly_neighborhood/model/need.dart';
 
@@ -34,6 +35,30 @@ class _CreationOrModificationNeedState
   String token = "";
   LocalUserManager lum = LocalUserManager();
 
+  Future<bool> checkSession() async {
+    LocalUser? user = await lum.getUser();
+    if (user == null) {
+      Navigator.pop(context);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => LoginScreen.withMessage(
+                  message: "Errore interno, si prega di rieseguire il login")));
+      return false;
+    }
+    if (!await API_Manager.checkToken(user.email, user.token)) {
+      Navigator.pop(context);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => LoginScreen.withMessage(
+                  message:
+                      "Sessione non più valida, si prega di rieseguire il login")));
+      return false;
+    }
+    return true;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -51,24 +76,21 @@ class _CreationOrModificationNeedState
     widget.need!.title = _controllerTitle.text;
     widget.need!.description = _controllerDescription.text;
     widget.need!.address = _controllerAddress.text;
-    //TODO: invia al server
     LocalUser? user = await lum.getUser();
     token = user!.token;
     await API_Manager.updateElement(token, widget.need, ELEMENT_TYPE.NEEDS);
-    //
     Navigator.pop(_context);
   }
 
   void createNeed() async {
-    //TODO Creator da assegnare
     widget.need = Need(
         postDate: DateTime.now(),
         title: _controllerTitle.text,
         address: _controllerAddress.text,
         description: _controllerDescription.text,
         assistant: "",
-        creator: ""); //TODO: creator preso da profilo
-    //TODO: invia al server
+        creator: "");
+
     LocalUser? user = await lum.getUser();
     token = user!.token;
     await API_Manager.createElement(token, widget.need, ELEMENT_TYPE.NEEDS);
@@ -118,6 +140,7 @@ class _CreationOrModificationNeedState
 
   @override
   Widget build(BuildContext context) {
+    checkSession();
     _context = context;
     return Scaffold(
       appBar: AppBar(
@@ -216,27 +239,27 @@ class _CreationOrModificationNeedState
                                           )),
                                         ))),
                             Expanded(
-                                child: //Pulsante Registrati
-                                    Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 16.0),
-                                        child: ElevatedButton(
-                                          onPressed: () async {
-                                            //Controllo se il form è valido
-                                            if (_formKey.currentState!
-                                                .validate()) {
-                                              _showAlertDialog();
-                                            }
-                                          },
-                                          child: Center(
-                                              child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 16, bottom: 16),
-                                            child: (widget.modification)
-                                                ? const Text("Aggiorna")
-                                                : const Text("Crea"),
-                                          )),
-                                        ))),
+                                child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 16.0),
+                                    child: ElevatedButton(
+                                      onPressed: () async {
+                                        //Controllo se il form è valido
+                                        if (_formKey.currentState!.validate()) {
+                                          bool check = await checkSession();
+                                          if (!check) return;
+                                          _showAlertDialog();
+                                        }
+                                      },
+                                      child: Center(
+                                          child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 16, bottom: 16),
+                                        child: (widget.modification)
+                                            ? const Text("Aggiorna")
+                                            : const Text("Crea"),
+                                      )),
+                                    ))),
                           ],
                         )
                       ])),

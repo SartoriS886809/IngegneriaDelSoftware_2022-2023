@@ -171,15 +171,36 @@ class _ShowNeedState extends State<ShowNeed> {
         appBar: AppBar(title: Text(widget.need.title)),
         body: Column(
           children: [
-            Text('Creato da: ${widget.need.creator}'),
-            Text(
-                'Pubblicato il: ${widget.need.postDate.day}-${widget.need.postDate.month}-${widget.need.postDate.year}'),
-            Text('Luogo associato: ${widget.need.address}'),
+            ListTile(
+                title: const Text("Autore"),
+                subtitle: Text(widget.need.creator)),
+            //Text('Creato da: ${widget.need.creator}'),
+            ListTile(
+                title: const Text("Data pubblicazione"),
+                subtitle: Text(
+                    "${widget.need.postDate.day}-${widget.need.postDate.month}-${widget.need.postDate.year}")),
+            //Text('Pubblicato il: ${widget.need.postDate.day}-${widget.need.postDate.month}-${widget.need.postDate.year}'),
+            ListTile(
+                title: const Text("Luogo"),
+                subtitle: Text(widget.need.address)),
+            //Text('Luogo associato: ${widget.need.address}'),
             if (widget.isItMine && widget.need.assistant != "")
-              Text('Richiesta presa in carico da: ${widget.need.assistant}'),
+              ListTile(
+                  title: const Text("Assistente volontario"),
+                  subtitle: Text(widget.need.assistant)),
+            //Text('Richiesta presa in carico da: ${widget.need.assistant}'),
             if (widget.isItMine && widget.need.assistant == "")
-              const Text('La richiesta non è ancora stata presa in carico'),
-            Text('Descrizione: ${widget.need.description}'),
+              const ListTile(
+                  title: Text("Autore"),
+                  subtitle:
+                      Text("La richiesta non è ancora stata presa in carico")),
+            //const Text('La richiesta non è ancora stata presa in carico'),
+            ListTile(
+              title: const Text("Descrizione"),
+              subtitle: Text(widget.need.description),
+            ),
+            //Text('Descrizione: ${widget.need.description}'),
+
             Expanded(child: Container()),
             Row(
               children: [

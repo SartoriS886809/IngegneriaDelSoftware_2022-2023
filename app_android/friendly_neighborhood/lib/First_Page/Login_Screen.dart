@@ -9,11 +9,6 @@ import 'package:friendly_neighborhood/core/core.dart';
 import 'package:friendly_neighborhood/utils/alertdialog.dart';
 import 'package:friendly_neighborhood/utils/check_connection.dart';
 
-/*
-Lista di todo:
-//TODO Gestire errori da richiesta
-//TODO se possibile utilizzare un testo per notifiche di errori riguardanti email/password
-*/
 class LoginScreen extends StatefulWidget {
   String message = "";
   LoginScreen({super.key}) {
@@ -39,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _passwordVisible = false;
     _iconPassword = Icons.visibility;
     //TODO TEMP
-    _controllerEmail.text = "prova2@prova.com";
+    _controllerEmail.text = "a@a.a";
     _controllerPassword.text = "passpass";
   }
 
@@ -54,7 +49,6 @@ class _LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(widget.message),
               Expanded(child: Container()),
               Form(
                   key: _formKey,
@@ -126,6 +120,17 @@ class _LoginScreenState extends State<LoginScreen> {
                             },
                           ),
                         ),
+                        //messaggio di errore
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: Text.rich(TextSpan(
+                              text: widget.message,
+                              style: const TextStyle(color: Colors.red),
+                            )),
+                          ),
+                        ),
+
                         //Pulsante Accedi
                         Padding(
                             padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -148,8 +153,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                               builder: (context) =>
                                                   const Core()));
                                     } catch (e) {
-                                      notificationAlertDialog(
-                                          text: e.toString(), context: context);
+                                      if (e.toString() ==
+                                          "user does not exist") {
+                                        setState(() {
+                                          widget.message =
+                                              "L'email o la password inserite non sono corrette";
+                                        });
+                                      } else {
+                                        notificationAlertDialog(
+                                            text: e.toString(),
+                                            context: context);
+                                      }
                                     }
                                   } else {
                                     notificationAlertDialog(

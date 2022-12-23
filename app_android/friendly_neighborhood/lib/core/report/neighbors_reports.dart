@@ -1,9 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/model/report.dart';
 import 'package:friendly_neighborhood/utils/exception_widget.dart';
 
 import '../../API_Manager/api_manager.dart';
 import '../../cache_manager/profile_db.dart';
+import '../../first_page/login_screen.dart';
 import '../../model/localuser.dart';
 import '../../utils/elaborate_data.dart';
 
@@ -17,35 +20,9 @@ class NeighborsReports extends StatefulWidget {
 class _NeighborsReportsState extends State<NeighborsReports> {
   String token = "";
   LocalUserManager lum = LocalUserManager();
-  //API
 
-  //test list
-
+  // Lista delle segnalazioni
   List<Report> reportList = [];
-  /*
-    Report(
-        postDate: DateTime(2022, 11, 23, 14, 20),
-        title: 'Albero caduto',
-        priority: 1,
-        category: 'problemi ambientali',
-        address: 'via papa luciani',
-        creator: 'paolino'),
-    Report(
-        postDate: DateTime(2022, 11, 23, 14, 20),
-        title: 'tombino rotto',
-        priority: 1,
-        category: 'problemi ambientali',
-        address: 'via cristo',
-        creator: 'creator'),
-    Report(
-        postDate: DateTime(2022, 11, 23, 14, 20),
-        title: 'ladri in casa',
-        priority: 3,
-        category: 'crimine',
-        address: 'via Col Vento',
-        creator: 'Lucio Wolf')
-  ];
-  */
 
   //initState() è il costruttore delle classi stato
 
@@ -53,8 +30,6 @@ class _NeighborsReportsState extends State<NeighborsReports> {
   void initState() {
     super.initState();
   }
-
-  //TODO INSERIRE FUNZIONE DI GESTIONE DI ERRORE IN CASO DEL TOKEN NON PIù VALIDO
 
   Future downloadData(bool needRefreshGUI) async {
     if (token == "") {
@@ -65,6 +40,15 @@ class _NeighborsReportsState extends State<NeighborsReports> {
       reportList = List<Report>.from(
           await API_Manager.listOfElements(token, ELEMENT_TYPE.REPORTS, false));
     } catch (e) {
+      if (e.toString() == "the user does not exist") {
+        Navigator.pop(context);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => LoginScreen.withMessage(
+                    message:
+                        "Sessione non più valida, si prega di rieseguire il login")));
+      }
       rethrow;
     }
     if (needRefreshGUI) setState(() {});
@@ -74,9 +58,10 @@ class _NeighborsReportsState extends State<NeighborsReports> {
     await downloadData(false);
     return (reportList.isNotEmpty)
         ? ListView.builder(
-            itemCount: reportList.length,
+            itemCount: reportList.length+1,
             itemBuilder: (context, index) {
-              final Report reportIter = reportList.elementAt(index);
+              if(index==0) return Container(height:40);
+              final Report reportIter = reportList.elementAt(index-1);
               final String dateIter =
                   convertDateTimeToDate(reportIter.postDate);
               return Card(
@@ -106,16 +91,28 @@ class _NeighborsReportsState extends State<NeighborsReports> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Widget>(
-        future: generateList(),
-        builder: (context, AsyncSnapshot<Widget> snapshot) {
-          if (snapshot.hasData) {
-            return snapshot.data!;
-          } else if (snapshot.hasError) {
-            return printError(snapshot.error!, downloadData);
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        });
+    return Stack(children: [
+      FutureBuilder<Widget>(
+          future: generateList(),
+          builder: (context, AsyncSnapshot<Widget> snapshot) {
+            if (snapshot.hasData) {
+              return snapshot.data!;
+            } else if (snapshot.hasError) {
+              return printError(snapshot.error!, downloadData);
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
+          }),
+      Align(
+              alignment: Alignment.topRight,
+              child:
+              IconButton(
+              iconSize: 35,
+                onPressed: (() {
+                  downloadData(true);
+                }),
+                icon: const Icon(Icons.refresh))
+          ),
+    ]);
   }
 }

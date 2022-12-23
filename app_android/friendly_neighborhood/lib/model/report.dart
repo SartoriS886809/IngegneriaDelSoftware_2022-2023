@@ -69,6 +69,15 @@ class Report {
     }
   }
 
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is Report && runtimeType == other.runtimeType && _id == other._id;
+  }
+
+  @override
+  int get hashCode => _id.hashCode;
+
   //GETTER
   int get id => _id;
   DateTime get postDate => _postDate;

@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, unused_field, constant_identifier_names, prefer_final_fields, file_names, use_build_context_synchronously
+// ignore_for_file: non_constant_identifier_names, constant_identifier_names, use_build_context_synchronously, file_name
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -29,8 +29,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   late IconData _iconPassword;
   late bool _confirmPasswordVisible;
   late IconData _confirmIconPassword;
-  final _popupBuilderKey = GlobalKey<DropdownSearchState<String>>();
-  final _popupCustomValidationKey = GlobalKey<DropdownSearchState<int>>();
 
   //Sezione controller / variabili gestione contenuto campi
 
@@ -46,6 +44,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       Neighborhood(id: -1, area: 0, name: "Scegli un quartiere");
   String _choice_house_type = "Scegliere una tipologia";
   late Neighborhood _choice_neighborhood;
+  late bool alreadyOpenAlertDialog = false;
 
   //Dati scelta utente
   static const _house_types = [
@@ -56,8 +55,12 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   List<Neighborhood> _neighborhood = [];
 
   Future<Widget> makeNeighborhoodMenu() async {
-    //TODO gestire errori
-    _neighborhood = await API_Manager.getNeighborhoods();
+    try {
+      _neighborhood = await API_Manager.getNeighborhoods();
+    } catch (e) {
+      return Future.error(e);
+    }
+
     _neighborhood = [_voidNeighborhood] + _neighborhood;
     return Row(
       children: [
@@ -113,6 +116,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         title: Text(item?.name ?? ''),
       ),
     );
+  }
+
+  void retry() {
+    setState(() {});
   }
 
   @override
@@ -341,7 +348,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                 DateTime? pickedDate = await showDatePicker(
                                     context: context,
                                     locale: const Locale("it", "IT"),
-                                    initialDate: DateTime.now(),
+                                    initialDate: (_controllerDate.text != "")
+                                        ? DateFormat('dd-MM-yyyy')
+                                            .parse(_controllerDate.text)
+                                        : DateTime.now(),
                                     firstDate: DateTime(1900),
                                     //Blocco le date future.
                                     lastDate: DateTime.now());
@@ -441,6 +451,23 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                     (context, AsyncSnapshot<Widget> snapshot) {
                                   if (snapshot.hasData) {
                                     return snapshot.data!;
+                                  } else if (snapshot.hasError) {
+                                    WidgetsBinding.instance
+                                        .addPostFrameCallback((_) {
+                                      if (!alreadyOpenAlertDialog) {
+                                        alreadyOpenAlertDialog = true;
+                                        simpleAlertDialog(
+                                            text: "${snapshot.error!}",
+                                            f: () {
+                                              alreadyOpenAlertDialog = false;
+                                              retry();
+                                            },
+                                            context: context);
+                                      }
+                                    });
+
+                                    return const Text(
+                                        "Si è verificato un errore");
                                   } else {
                                     return const CircularProgressIndicator();
                                   }
@@ -457,7 +484,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                     //Controllo connessione internet
                                     bool check = await CheckConnection.check();
                                     if (check) {
-                                      //TODO inviare richiesta server
                                       LocalUser newUser = LocalUser(
                                           _controllerEmail.text,
                                           _controllerUsername.text,
