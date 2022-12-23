@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/API_Manager/api_manager.dart';
+import 'package:friendly_neighborhood/internal_test/stress_test.dart';
 import 'package:friendly_neighborhood/model/localuser.dart';
 import 'package:friendly_neighborhood/model/neighborhood.dart';
 
@@ -12,7 +13,14 @@ class Test extends StatefulWidget {
 
 class _TestState extends State<Test> {
   String token = "";
-  Map<String, dynamic> utente = {};
+  LocalUser u = LocalUser("prova@prova.com", "gree", "gino", "paolino",
+      DateTime.now(), "ciao", 1, "prova", "provaQuart", 1, "");
+  String password = "prova";
+  String creationResult = "in attesa di essere avviato";
+  String loginResult = "in attesa di essere avviato";
+  String deleteResult = "in attesa di essere avviato";
+  String getProfileResult = "in attesa di essere avviato";
+
   Future<Widget> testNeighborhoods() async {
     List<Neighborhood> l = await API_Manager.getNeighborhoods();
     String s = "";
@@ -22,50 +30,75 @@ class _TestState extends State<Test> {
     return Text(s);
   }
 
-  Future<Widget> testAccountCreation() async {
-    LocalUser u = LocalUser("prova@prova.com", "gree", "gino", "paolino",
-        DateTime.now(), "ciao", 1, "prova", "provaQuart", 1, "");
-    String s = "";
+  void testAccountCreation() async {
+    setState(() {
+      creationResult = "test avviato";
+    });
     try {
-      await API_Manager.signup(u, "prova");
-      s = "Test creazione completato con successo";
+      bool check = await API_Manager.signup(u, password);
+      if (check) {
+        setState(() {
+          creationResult = "Test creazione completato con successo";
+        });
+      }
     } catch (e) {
-      s = e.toString();
+      setState(() {
+        creationResult = e.toString();
+        loginResult = "errore nei test precedenti, impossibile avviare";
+        deleteResult = "errore nei test precedenti, impossibile avviare";
+        getProfileResult = "errore nei test precedenti, impossibile avviare";
+      });
+      return;
     }
-    return Text(s);
+    testLogin();
   }
 
-  Future<Widget> testLogin() async {
-    String s = "";
+  void testLogin() async {
+    setState(() {
+      loginResult = "test avviato";
+    });
+
     try {
       token = await API_Manager.login("prova@prova.com", "prova");
-      s = "Login completato";
+      setState(() {
+        loginResult = "Login completato";
+      });
     } catch (e) {
-      s = e.toString();
+      setState(() {
+        loginResult = e.toString();
+        deleteResult = "errore nei test precedenti, impossibile avviare";
+        getProfileResult = "errore nei test precedenti, impossibile avviare";
+      });
     }
-    return Text(s);
+    testgetProfile();
   }
 
-  Future<Widget> testgetProfile() async {
-    String s = "";
+  void testgetProfile() async {
     try {
-      utente = await API_Manager.getProfile(token);
-      s = utente.toString();
+      await API_Manager.getProfile(token);
+      setState(() {
+        getProfileResult = "get profile completato";
+      });
     } catch (e) {
-      s = e.toString();
+      setState(() {
+        getProfileResult = e.toString();
+        deleteResult = "errore nei test precedenti, impossibile avviare";
+      });
     }
-    return Text(s);
+    testremoveProfile();
   }
 
-  Future<Widget> testremoveProfile() async {
-    String s = "";
+  void testremoveProfile() async {
     try {
-      await API_Manager.deleteAccount(utente["email"]);
-      s = "Rimozione avvenuta";
+      await API_Manager.deleteAccount(token);
+      setState(() {
+        deleteResult = "rimozione profilo completata";
+      });
     } catch (e) {
-      s = e.toString();
+      setState(() {
+        deleteResult = e.toString();
+      });
     }
-    return Text(s);
   }
 
   @override
@@ -84,44 +117,32 @@ class _TestState extends State<Test> {
                 }
               }),
           //TEST CREAZIONE ACCOUNT
-          FutureBuilder<Widget>(
-              future: testAccountCreation(),
-              builder: (context, AsyncSnapshot<Widget> snapshot) {
-                if (snapshot.hasData) {
-                  return snapshot.data!;
-                } else {
-                  return const Text("Reciving data...");
-                }
-              }),
+          Text("Test creazione account: $creationResult"),
           //TEST LOGIN
-          FutureBuilder<Widget>(
-              future: testLogin(),
-              builder: (context, AsyncSnapshot<Widget> snapshot) {
-                if (snapshot.hasData) {
-                  return snapshot.data!;
-                } else {
-                  return const Text("Reciving data...");
-                }
-              }), //TEST GET PROFILE
-          FutureBuilder<Widget>(
-              future: testgetProfile(),
-              builder: (context, AsyncSnapshot<Widget> snapshot) {
-                if (snapshot.hasData) {
-                  return snapshot.data!;
-                } else {
-                  return const Text("Reciving data...");
-                }
-              }),
+          Text("Test login: $loginResult"),
+          //TEST GET PROFILE
+          Text("Test get profile: $getProfileResult"),
           //TEST DELETE PROFILE
-          FutureBuilder<Widget>(
-              future: testremoveProfile(),
-              builder: (context, AsyncSnapshot<Widget> snapshot) {
-                if (snapshot.hasData) {
-                  return snapshot.data!;
-                } else {
-                  return const Text("Reciving data...");
-                }
+          Text("Test eliminazione profilo: $deleteResult"),
+          TextButton(
+              onPressed: (() {
+                token = "";
+                creationResult = "in attesa di essere avviato";
+                loginResult = "in attesa di essere avviato";
+                deleteResult = "in attesa di essere avviato";
+                getProfileResult = "in attesa di essere avviato";
+                testAccountCreation();
               }),
+              child: const Text("Avvia / Riavvia test")),
+          TextButton(
+              onPressed: (() {
+                Navigator.pop(context);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const StressTest()));
+              }),
+              child: const Text("Vai a stress test")),
         ],
       ),
     );
