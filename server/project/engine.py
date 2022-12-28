@@ -10,12 +10,12 @@ class Engine():
         self.create_engine(url)
         self.create_session()
         # create models
-        #self.delete_schema()
+        self.delete_schema()
         self.create_schema()
         self.Base = Base.metadata.create_all(self.engine)
         # populate
-        #self.create_neigh(Neighborhood)
-        #self.populate()
+        self.create_neigh(Neighborhood)
+        self.populate()
     
     def create_engine(self, url):
         if not database_exists(url):
