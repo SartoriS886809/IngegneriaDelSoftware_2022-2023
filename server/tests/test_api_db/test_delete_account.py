@@ -10,3 +10,12 @@ def test_delete_account():
     })
     assert response["status"] == "success"
     assert login(post_request)["status"] == "failure"
+
+    other_token = post_request('/login', json={
+        "email": "dario@gmail.com",
+        "password": "ciaociao123"
+    })["token"]
+    response = delete_request('/delete-account', json={
+        "token": other_token
+    })
+    assert response["status"] == "success"

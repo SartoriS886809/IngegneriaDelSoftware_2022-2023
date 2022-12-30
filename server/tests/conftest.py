@@ -1,6 +1,6 @@
 import requests
 
-url = 'http://neighborhood.azurewebsites.net'
+url = 'https://neighborhood.azurewebsites.net'
 #url = 'http://127.0.0.1:5000'
 
 def post_request(route, json):

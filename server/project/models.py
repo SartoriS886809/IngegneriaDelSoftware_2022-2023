@@ -37,6 +37,7 @@ class User(Base, UserMixin):
     house_type = Column(String, nullable=False)
     token = Column(String, nullable=False)
     id_neighborhoods = Column(ForeignKey(Neighborhood.id, ondelete='CASCADE'), nullable=False)
+    last_access = Column(Date, nullable=True)
 
     neigh = relationship('Neighborhood', backref='user')
     services = relationship('Service', backref='creator')
