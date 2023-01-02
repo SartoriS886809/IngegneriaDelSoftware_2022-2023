@@ -126,7 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             padding: const EdgeInsets.symmetric(vertical: 8.0),
                             child: Text.rich(TextSpan(
                               text: widget.message,
-                              style: const TextStyle(color: Colors.red),
+                              style: TextStyle(color: widget.message!="Creazione account avvenuta con successo. Si prega di eseguire l'accesso"?Colors.red:Colors.green),
                             )),
                           ),
                         ),
