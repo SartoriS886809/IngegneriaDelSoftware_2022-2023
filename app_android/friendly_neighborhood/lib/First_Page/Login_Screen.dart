@@ -9,6 +9,10 @@ import 'package:friendly_neighborhood/core/core.dart';
 import 'package:friendly_neighborhood/utils/alertdialog.dart';
 import 'package:friendly_neighborhood/utils/check_connection.dart';
 
+/*
+* Classe LoginScreen e _LoginScreenState:
+* La seguente classe gestisce la pagina di accesso al sistema
+*/
 class LoginScreen extends StatefulWidget {
   String message = "";
   LoginScreen({super.key}) {
@@ -33,9 +37,6 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
     _passwordVisible = false;
     _iconPassword = Icons.visibility;
-    //TODO TEMP
-    _controllerEmail.text = "a@a.a";
-    _controllerPassword.text = "passpass";
   }
 
   @override

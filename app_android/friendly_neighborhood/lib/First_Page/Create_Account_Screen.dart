@@ -13,6 +13,10 @@ import 'package:intl/intl.dart';
 import 'package:friendly_neighborhood/utils/elaborate_data.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 
+/*
+* Classe CreateAccountScreen e _CreateAccountScreenState:
+* La seguente classe gestisce la pagina di creazione account
+*/
 class CreateAccountScreen extends StatefulWidget {
   const CreateAccountScreen({super.key});
 
@@ -54,6 +58,11 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   ];
   List<Neighborhood> _neighborhood = [];
 
+/*
+* Metodo makeNeighborhoodMenu
+* -Scarica dal server i dati riguardanti i vari quartieri
+* -Genera il pulsante per cercare e selezionare il quartiere desiderato
+*/
   Future<Widget> makeNeighborhoodMenu() async {
     try {
       _neighborhood = await API_Manager.getNeighborhoods();
@@ -97,6 +106,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     );
   }
 
+/*
+* Metodo _popupSearchBox
+* Mostra a schermo un pop-up che permette di cercare e selezionare un quartiere
+*/
   Widget _popupSearchBox(
     BuildContext context,
     Neighborhood? item,
@@ -118,6 +131,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     );
   }
 
+/*
+* Metodo retry
+* Metodo per riprovare a scaricare i dati dal server
+*/
   void retry() {
     setState(() {});
   }
