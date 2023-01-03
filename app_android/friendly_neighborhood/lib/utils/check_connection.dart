@@ -1,5 +1,9 @@
 import 'dart:io';
 
+/*
+* Classe CheckConnection:
+* Gestisce il metodo per testare la presenza di una connessione ad Internet
+*/
 class CheckConnection {
   static Future<bool> check() async {
     var isOnline = false;

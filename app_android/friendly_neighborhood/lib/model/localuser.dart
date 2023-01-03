@@ -3,6 +3,11 @@
 import 'package:friendly_neighborhood/utils/elaborate_data.dart';
 import 'package:intl/intl.dart';
 
+/*
+* Classe LocalUser:
+* Modello per rappresentare un LocalUser
+*/
+
 class LocalUser {
   late String _email;
   late String _username;
@@ -40,6 +45,8 @@ class LocalUser {
     _id_neighborhoods = id_neighborhoods;
     _token = token;
   }
+
+  //Costruttore per i dati ricevuti dal server
   LocalUser.fromJSON(Map<String, dynamic> json) {
     _email = json['email'];
     _username = json['username'];
@@ -54,6 +61,7 @@ class LocalUser {
     _token = json['token'];
   }
 
+  //Costruttore per i dati ricevuti dal database locale
   LocalUser.fromDB(Map<String, dynamic> map) {
     _email = map['email'];
     _username = map['username'];
