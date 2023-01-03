@@ -42,10 +42,8 @@
 ----------------------------
 ## Backend:
 ### Schema
-<object data="documenti/schema/Schema_relazionale.pdf" type="application/pdf" width="700px" height="700px">
-</object>
-<object data="documenti/schema/Schema_a_oggetti.pdf" type="application/pdf" width="700px" height="700px">
-</object>
+- [Schema relazionale](./documenti/schema/Schema_relazionale.pdf)
+- [Schema ad oggetti](./documenti/schema/Schema_a_oggetti.pdf)
 
 ### Api:
 * *signup:* 
