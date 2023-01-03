@@ -1,6 +1,6 @@
 # IngegneriaDelSoftware_2022-2023
 <a >
-    <img src="documenti/img/logo.png" alt="logo" title="AutomationWare" align="right" height="80" />
+    <img src="documenti/img/logo.png" alt="logo" title="AutomationWare" align="right" height="120" />
 </a>
 
 **Gruppo:** G.A.M.E.S. <br/>
