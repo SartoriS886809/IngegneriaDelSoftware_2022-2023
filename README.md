@@ -33,11 +33,6 @@
 #### Dashboard:
 * pagina iniziale 
 * reindirizzamento alle altre pagine. 
-### TO DO:
-* Sistema di notifica delle segnalazioni
-* Miglioramenti grafici
-* Completare gestione errori 
-* Inserire aggiornamento manuale delle liste
 
 ----------------------------
 ## Backend:
@@ -98,8 +93,3 @@ risultati dei test [report](./server/report.log)
 * impostazione Azure
 * app services
 * postgreSQL servers flexible
-### TO DO:
-* completamento test
-* miglioramento sicurezza
-* stress test
-
