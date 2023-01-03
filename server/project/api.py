@@ -20,7 +20,7 @@ def check_last_access():
                     commit()
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(check_last_access, 'interval', minutes=1440)
+scheduler.add_job(check_last_access, 'interval', minutes=20160)
 scheduler.start()
 
 @app.errorhandler(Exception)
