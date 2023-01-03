@@ -1,4 +1,8 @@
 # IngegneriaDelSoftware_2022-2023
+<a >
+    <img src="documenti/img/logo.png" alt="logo" title="AutomationWare" align="right" height="80" />
+</a>
+
 **Gruppo:** G.A.M.E.S. <br/>
 **Project leader:** Sebastiano Sartori 886809@stud.unive.it  <br/>
 **Altri membri:**  <br/>
@@ -6,7 +10,9 @@
 * Edoardo Cecchinato 880759@stud.unive.it
 * Andrea Da Lio 884046@stud.unive.it
 * Mattia Dei Rossi 885768@stud.unive.it
-# Versione 1.0 del codice per il progetto "Friendly Neighborhood"
+
+----------------------------
+
 ## Frontend: 
 ### Aspetti implementati:
 * Struttura di base dell'applicazione, con navigazione tra le pagine;
@@ -32,9 +38,16 @@
 * Miglioramenti grafici
 * Completare gestione errori 
 * Inserire aggiornamento manuale delle liste
+
+----------------------------
 ## Backend:
-### Aspetti implementati:
-#### Api:
+### Schema
+<object data="documenti/schema/Schema_relazionale.pdf" type="application/pdf" width="700px" height="700px">
+</object>
+<object data="documenti/schema/Schema_a_oggetti.pdf" type="application/pdf" width="700px" height="700px">
+</object>
+
+### Api:
 * *signup:* 
   * signup the new user with the data specified in the post request
 * *login:* 
@@ -63,7 +76,7 @@
   * delete element of type elem (services, needs, reports) with the id passed
 * *assist:*
   * the user specified can solve the need with id passed
-#### Test:
+### Test:
 * *Api:*
   * test_signup
   * test_login
@@ -78,12 +91,12 @@
   * test_models
 
 risultati dei test [report](./server/report.log)
-#### Database:
+### Database:
 * schema a oggetti
 * schema relazionale
 * populate
 * token management
-#### Azure Cloud:
+### Azure Cloud:
 * impostazione Azure
 * app services
 * postgreSQL servers flexible
