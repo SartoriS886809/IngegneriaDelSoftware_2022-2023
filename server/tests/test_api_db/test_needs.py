@@ -90,7 +90,7 @@ def test_resolved_need():
     updated_response = post_request('/mylist/' + elem, json={
         "token": token
     })
-    assert updated_response["list"][0]["assistant"] == "username2"
+    assert updated_response["list"][0]["assistant"] == "ec"
 
 
 def test_get_assist_list():
@@ -113,7 +113,7 @@ def test_delete_assist():
     old_response = post_request('/mylist/' + elem, json={
         "token": token
     })
-    assert old_response["list"][0]["assistant"] == "username2"
+    assert old_response["list"][0]["assistant"] == "ec"
 
     response = delete_request('/assist', json={
         "token": "token2",

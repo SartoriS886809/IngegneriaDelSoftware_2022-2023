@@ -11,7 +11,7 @@ json = {
         "address": "address",
         "family": 4,
         "house_type": "house type",
-        "id_neighborhoods": 1
+        "id_neighborhoods": 7
 }
 
 @pytest.mark.order(1)
@@ -29,7 +29,7 @@ def test_signup():
         "address": "address",
         "family": 4,
         "house_type": "house type",
-        "id_neighborhoods": 1
+        "id_neighborhoods": 7
     })
     assert response["status"] == "success"
 
