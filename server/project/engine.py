@@ -32,9 +32,11 @@ class Engine():
     def create_schema(self):
         self.engine.execute(DDL("CREATE SCHEMA IF NOT EXISTS public"))
 
+    # May be
     def populate(self):
         self.engine.execute(text(open("db_scripts/populate.sql").read()))
         
+    # Must be 
     def create_neigh(self, table):
         self.session.add(table(name='San Polo', area=0.70))
         self.session.add(table(name='Dorsoduro', area=0.70))
