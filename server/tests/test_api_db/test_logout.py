@@ -21,6 +21,3 @@ def test_logout_failure():
 	response = post_request('/logout', json=json)
 	assert response["status"] == "failure"
 	assert response["reason"] == "user does not exist"
- 
-def test_automatic_logout():
-	None

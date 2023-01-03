@@ -60,7 +60,7 @@ def test_view_needs():
     response = post_request('/list/' + elem, json=json)
     assert response["status"] == "success"
     assert response["list"] != []
-    print(response["list"])
+    #print(response["list"])
     assert response["list"][0]["title"] == "Cambio lampadina"
 
 def test_modify_need():
