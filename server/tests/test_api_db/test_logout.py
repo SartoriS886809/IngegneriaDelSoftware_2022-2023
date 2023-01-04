@@ -2,10 +2,15 @@ from tests.conftest import post_request, get_request, delete_request
 
 def test_logout():
 	json = {
-		"email": "mario@gmail.com",
+		"email": "mario@gmail.com"
 	}
 
 	response = post_request('/logout', json=json)
+	assert response["status"] == "success"
+
+	response = post_request('/logout', json={
+		"email": "dario@gmail.com"
+	})
 	assert response["status"] == "success"
 
 def test_logout_failure():
@@ -16,6 +21,3 @@ def test_logout_failure():
 	response = post_request('/logout', json=json)
 	assert response["status"] == "failure"
 	assert response["reason"] == "user does not exist"
- 
-def test_automatic_logout():
-	None

@@ -1,9 +1,27 @@
-from . import app
+from project.app import FlaskApp
 from flask import request
 from project.operations import commit, rollback, flush, add_and_commit, add_no_commit, delete_tuple, update_tuple, get_all, get_table, get_user_by_token
 from uuid import uuid4
 from sqlalchemy.exc import SQLAlchemyError
+from datetime import date
+from apscheduler.schedulers.background import BackgroundScheduler
 
+app = FlaskApp().get_app()
+
+def check_last_access():
+    users = get_all('users')
+    if users is not None:
+        for user in users:
+            if user.last_access is not None:
+                diff = date.today() - user.last_access
+                if diff.days >= 14:
+                    user.token = ''
+                    user.last_access = None
+                    commit()
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(check_last_access, 'interval', minutes=20160)
+scheduler.start()
 
 @app.errorhandler(Exception)
 def handle_error(e):
@@ -77,6 +95,7 @@ def login():
     while get_user_by_token(rand_token):
         rand_token = str(uuid4())
     user.token = rand_token
+    user.last_access = date.today()
     commit()
 
     return {'token': rand_token, 'status': 'success'}
@@ -101,6 +120,7 @@ def logout():
         return {'status': 'failure', 'reason': 'user does not exist'}
 
     user.token = ''
+    user.last_access = None
     commit()
 
     return {'status': 'success'}
@@ -272,9 +292,8 @@ def get_list(elem):
         return check(elem, token)
 
     user_email = get_user_by_token(token).email
-    assistant = user_email if elem == 'needs' else None
 
-    l = [x.get_all_elements() for x in get_all(table=elem, not_creator=user_email, assistant=assistant)]
+    l = [x.get_all_elements() for x in get_all(elem, user_email, False, False)]
 
     return {'list': sorted(l, reverse=True, key=lambda x: x["postdate"]), 'status': 'success'}
 
@@ -311,7 +330,7 @@ def get_mylist(elem):
         return check(elem, token)
 
     if len(request.json) == 1:
-        l = [x.get_all_elements() for x in get_all(table=elem, creator=get_user_by_token(token).email)]
+        l = [x.get_all_elements() for x in get_all(elem, get_user_by_token(token).email, True, False)]
         return {'list': sorted(l, reverse=True, key=lambda x: x["postdate"]), 'status': 'success'}
 
     update_tuple(elem, request.json.get('id'), **request.json)
@@ -337,7 +356,7 @@ def get_assist_list():
     if not user:
         return {'status': 'failure', 'reason': 'the user does not exist'}
 
-    l = [x.get_all_elements() for x in get_all(assistant=user.email)]
+    l = [x.get_all_elements() for x in get_all('needs', user.email, False, True)]
     return {'list': sorted(l, reverse=True, key=lambda x: x["postdate"]), 'status': 'success'}
 
 

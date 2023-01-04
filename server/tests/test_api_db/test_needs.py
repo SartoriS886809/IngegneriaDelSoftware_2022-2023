@@ -5,6 +5,7 @@ elem = "needs"
 email = "mario@gmail.com"
 
 token = None
+other_token = None
 
 def test_create_need():
     global token
@@ -17,7 +18,21 @@ def test_create_need():
         "address" : "via Genova 1"
     }
 
-    response = post_request('/new/' + elem, json=json)
+    response = post_request("/new/" + elem, json=json)
+    assert response["status"] == "success"
+
+    global other_token
+    other_token = post_request('/login', json={
+        "email": "dario@gmail.com",
+        "password": "ciaociao123"
+    })["token"]
+
+    response = post_request("/new/" + elem, json={
+        "token": other_token,
+        "title": "Cambio lampadina",
+        "desc": "Offro il mio supporto per cambiare lampadina",
+        "address": "via Genova 1"
+    })
     assert response["status"] == "success"
       
 def test_view_my_needs():
@@ -28,6 +43,14 @@ def test_view_my_needs():
     response = post_request('/mylist/' + elem, json=json)
     assert response["status"] == "success"
     assert response["list"] != []
+    assert response["list"][0]["title"] == "Idraulico"
+
+    response = post_request('/mylist/' + elem, json={
+        "token": other_token
+    })
+    assert response["status"] == "success"
+    assert response["list"] != []
+    assert response["list"][0]["title"] == "Cambio lampadina"
     
 def test_view_needs():
     json = {
@@ -37,6 +60,8 @@ def test_view_needs():
     response = post_request('/list/' + elem, json=json)
     assert response["status"] == "success"
     assert response["list"] != []
+    #print(response["list"])
+    assert response["list"][0]["title"] == "Cambio lampadina"
 
 def test_modify_need():
     old_response = post_request('/mylist/' + elem, json={
@@ -57,7 +82,7 @@ def test_resolved_need():
     })
 
     response = post_request('/assist', json={
-        "token": "token1",
+        "token": "token2",
         "id": old_response["list"][0]["id"]
     })
     assert response["status"] == "success"
@@ -65,7 +90,7 @@ def test_resolved_need():
     updated_response = post_request('/mylist/' + elem, json={
         "token": token
     })
-    assert updated_response["list"][0]["assistant"] == "username1"
+    assert updated_response["list"][0]["assistant"] == "ec"
 
 
 def test_get_assist_list():
@@ -74,7 +99,7 @@ def test_get_assist_list():
     })["list"][0]
 
     response = post_request('/assist-list', json={
-        "token": "token1"
+        "token": "token2"
     })
 
     assert response["status"] == "success"
@@ -88,10 +113,10 @@ def test_delete_assist():
     old_response = post_request('/mylist/' + elem, json={
         "token": token
     })
-    assert old_response["list"][0]["assistant"] == "username1"
+    assert old_response["list"][0]["assistant"] == "ec"
 
     response = delete_request('/assist', json={
-        "token": "token1",
+        "token": "token2",
         "id": old_response["list"][0]["id"]
     })
     assert response["status"] == "success"

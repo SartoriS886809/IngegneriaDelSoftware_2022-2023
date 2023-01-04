@@ -1,14 +1,12 @@
-from project.engine import *
-from . import login_manager, bcrypt
+from sqlalchemy.ext.declarative import declarative_base
 from flask_login import UserMixin
 from sqlalchemy import Column, String, Integer, Date, ForeignKey, Float, Boolean, Table, CheckConstraint, Text, UniqueConstraint
 from sqlalchemy.orm import relationship
 from datetime import date
+from flask_bcrypt import Bcrypt
 
-
-delete_schema()
-create_schema()
-
+bcrypt = Bcrypt()
+Base = declarative_base()
 
 class Neighborhood(Base):
     __tablename__ = 'neighborhoods'
@@ -39,6 +37,7 @@ class User(Base, UserMixin):
     house_type = Column(String, nullable=False)
     token = Column(String, nullable=False)
     id_neighborhoods = Column(ForeignKey(Neighborhood.id, ondelete='CASCADE'), nullable=False)
+    last_access = Column(Date, nullable=True)
 
     neigh = relationship('Neighborhood', backref='user')
     services = relationship('Service', backref='creator')
@@ -147,8 +146,3 @@ class Need(Base):
     def get_all_elements(self):
         return {'id': self.id, 'title': self.title, 'postdate': self.postdate, 'creator': self.creator.username,
                 'assistant': self.assistant.username if self.assistant else "", 'desc': self.desc, 'address': self.address}
-
-
-Base.metadata.create_all(engine)
-create_neigh(Neighborhood)
-populate()

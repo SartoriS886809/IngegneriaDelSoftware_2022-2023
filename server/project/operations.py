@@ -1,6 +1,8 @@
-from project.models import User, Neighborhood, Service, Report, Need
-from project.engine import session
+from project.engine import Engine, User, Neighborhood, Service, Report, Need
 from sqlalchemy.exc import IntegrityError
+
+engine = Engine()
+session = engine.session
 
 tables = {'users': User,
           'neighborhoods': Neighborhood,
@@ -78,23 +80,31 @@ def update_tuple(table, code, **kwargs):
         raise e
 
 
-def get_all(table='needs', creator=None, not_creator=None, assistant=None):
+def get_all(table, user='', mylist=False, assistant_list=False):
     table = convert_table(table)
 
-    if not_creator and assistant:
-        return session.query(table).where(table.id_creator != not_creator and table.id_assistant != assistant).all()
+    if table not in [Need, Service, Report]:
+        return session.query(table).all()
 
-    if creator is not None:
-        return session.query(table).filter(table.id_creator == creator).all()
+    neigh = get_table(User, user).id_neighborhoods
 
-    if not_creator is not None:
-        return session.query(table).where(table.id_creator != not_creator).all()
+    if mylist:
+        q = session.query(table).filter(table.id_creator == user).all()
+    elif assistant_list:
+        q = session.query(table).filter(table.id_assistant == user).all()
+    else:
+        q = session.query(table).all()
 
-    if assistant is not None:
-        return session.query(table).where(table.id_assistant == assistant).all()
+    ans = []
 
-    return session.query(table).all()
+    for x in q:
+        if x.creator.id_neighborhoods != neigh:
+            continue
+        if not mylist and not assistant_list and (x.id_creator == user or (table == Need and x.id_assistant == user)):
+            continue
+        ans.append(x)
 
+    return ans
 
 def get_table(table, code):
     table = convert_table(table)
