@@ -56,52 +56,44 @@ class _ProfileState extends State<Profile> {
     }
 
     return ListView(
-      //return Column(
       children: [
-        //const Text("Il tuo profilo:"),
         ListTile(title: const Text("Username"), subtitle: Text(user!.username)),
         ListTile(title: const Text("E-mail"), subtitle: Text(user!.email)),
-        //Text("Email: ${user!.email}"),
         ListTile(title: const Text("Nome"), subtitle: Text(user!.name)),
-        //Text("Nome: ${user!.name}"),
         ListTile(title: const Text("Cognome"), subtitle: Text(user!.lastname)),
-        //Text("Cognome: ${user!.lastname}"),
         ListTile(
             title: const Text("Data di nascita"),
             subtitle: Text(
                 "${user!.birth_date.day}-${user!.birth_date.month}-${user!.birth_date.year}")),
-        //Text("Data di nascita: ${user!.birth_date.day}-${user!.birth_date.month}-${user!.birth_date.year}"),
         ListTile(title: const Text("Indirizzo"), subtitle: Text(user!.address)),
-        //Text("Indirizzo: ${user!.address}"),
         ListTile(
             title: const Text("Nucleo familiare"),
             subtitle: Text("${user!.family}")),
-        //Text("Nucleo familiare: ${user!.family}"),
         ListTile(
             title: const Text("Tipologia abitazione"),
             subtitle: Text(user!.house_type)),
-        //Text("Tipologia abitazione: ${user!.house_type}"),
         ListTile(
             title: const Text("Quartiere"), subtitle: Text(user!.neighborhood)),
-        //Text("Quartiere: ${user!.neighborhood}"),
         Container(
             //height: 50,
             ),
         Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: ElevatedButton(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 50),
+            child: ElevatedButton.icon(
+              icon:const Icon(Icons.home),
               onPressed: () {
                 widget.switchBody("Dashboard");
               },
-              child: const Center(
+              label: const Center(
                   child: Padding(
                 padding: EdgeInsets.only(top: 16, bottom: 16),
                 child: Text('Vai alla dashboard'),
               )),
             )),
         Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: ElevatedButton(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 50),
+            child: ElevatedButton.icon(
+              icon:const Icon(Icons.edit),
               onPressed: () {
                 Navigator.push(
                         context,
@@ -109,15 +101,16 @@ class _ProfileState extends State<Profile> {
                             builder: (context) => ModifyProfile(user: user!)))
                     .then((value) => setState(() {}));
               },
-              child: const Center(
+              label: const Center(
                   child: Padding(
                 padding: EdgeInsets.only(top: 16, bottom: 16),
                 child: Text('Modifica profilo'),
               )),
             )),
         Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: ElevatedButton(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 50),
+            child: ElevatedButton.icon(
+              icon:const Icon(Icons.logout_outlined),
               onPressed: () {
                 advancedAlertDialog(
                     buttonMessage: "Disconnettiti",
@@ -126,15 +119,16 @@ class _ProfileState extends State<Profile> {
                     f: logout,
                     context: context);
               },
-              child: const Center(
+              label: const Center(
                   child: Padding(
                 padding: EdgeInsets.only(top: 16, bottom: 16),
                 child: Text('Disconnetti'),
               )),
             )),
         Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: ElevatedButton(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 50),
+            child: ElevatedButton.icon(
+              icon:const Icon(Icons.delete_forever),
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
               onPressed: () {
                 advancedAlertDialog(
@@ -145,7 +139,7 @@ class _ProfileState extends State<Profile> {
                     f: deleteAccount,
                     context: context);
               },
-              child: const Center(
+              label: const Center(
                   child: Padding(
                 padding: EdgeInsets.only(top: 16, bottom: 16),
                 child: Text('Elimina profilo'),

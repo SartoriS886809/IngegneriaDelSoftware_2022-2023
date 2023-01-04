@@ -3,6 +3,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/API_Manager/api_manager.dart';
+import 'package:friendly_neighborhood/First_Page/policy.dart';
 import 'package:friendly_neighborhood/configuration/configuration.dart';
 import 'package:friendly_neighborhood/first_page/login_screen.dart';
 import 'package:friendly_neighborhood/model/localuser.dart';
@@ -49,6 +50,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   String _choice_house_type = "Scegliere una tipologia";
   late Neighborhood _choice_neighborhood;
   late bool alreadyOpenAlertDialog = false;
+  late bool policyChecked;
+  late String policyUncheckedMessage; //widget dove verrà inserito un messaggio di errore in caso di tentativo di registrazione senza accettare la policy sulla privacy
 
   //Dati scelta utente
   static const _house_types = [
@@ -147,6 +150,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     _confirmPasswordVisible = false;
     _confirmIconPassword = Icons.visibility;
     _choice_neighborhood = _voidNeighborhood;
+    policyChecked=false;
+    policyUncheckedMessage='';
   }
 
   @override
@@ -160,7 +165,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              //Expanded(child: Container()),
               Expanded(
                   child: SingleChildScrollView(
                 child: Form(
@@ -490,12 +494,69 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                   }
                                 }),
                           ),
+                          const SizedBox(height: 8),
+                          ListTile(
+                            leading: Checkbox(
+                              checkColor: Colors.white,
+                              value: policyChecked,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  policyChecked = value!;
+                                });
+                              },
+                            ),
+                            title: RichText(
+                                        text: TextSpan(children: [
+                                          TextSpan(
+                                            text: 'Ho letto e accetto la  ',
+                                            style: TextStyle(
+                                              color: Colors.grey.shade600,
+                                            ),
+                                          ),
+                                          TextSpan(
+                                              text: 'politica sulla privacy',
+                                              style: const TextStyle(
+                                                color: Colors.blue,
+                                              ),
+                                              //Se il testo viene cliccato
+                                              recognizer: TapGestureRecognizer()
+                                                ..onTap = () {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) => PrivacyPolicy()));
+                                                }),
+                                        ]),
+                                      ),
+                          ),
+                          Center(
+                            child: RichText(
+                                        text: 
+                                          TextSpan(
+                                            text: policyUncheckedMessage,
+                                            style: const TextStyle(
+                                              color: Colors.red,
+                                            ),
+                                          )
+                                      )
+                          ),
                           //Pulsante Registrati
+                          Center(child:
                           Padding(
                               padding:
                                   const EdgeInsets.symmetric(vertical: 16.0),
                               child: ElevatedButton(
+                                style:ElevatedButton.styleFrom(fixedSize: Size.fromWidth(150)),
                                 onPressed: () async {
+                                  if(!policyChecked){
+                                    setState(() {
+                                      policyUncheckedMessage='accetta la politica sulla privacy per registrarti';
+                                            });
+                                  }else{
+                                    setState(() {
+                                              policyUncheckedMessage='';
+                                            });
+                                  }
                                   //Controllo se il form è valido
                                   if (_formKey.currentState!.validate()) {
                                     //Controllo connessione internet
@@ -515,17 +576,20 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                           _choice_neighborhood.id,
                                           "");
                                       try {
-                                        bool c = await API_Manager.signup(
-                                            newUser, _controllerPassword.text);
-                                        if (c) {
-                                          Navigator.pop(context);
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      LoginScreen.withMessage(
-                                                          message:
-                                                              "Creazione account avvenuta con successo. Si prega di eseguire l'accesso")));
+                                        if(policyChecked){
+                                          bool c = await API_Manager.signup(
+                                              newUser, _controllerPassword.text);
+                                          if (c) {
+                                            Navigator.pop(context);
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        LoginScreen.withMessage(
+                                                            message:
+                                                                "Creazione account avvenuta con successo. Si prega di eseguire l'accesso")));
+                                            
+                                          }
                                         }
                                       } catch (e) {
                                         notificationAlertDialog(
@@ -546,6 +610,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                   child: Text('Registrati'),
                                 )),
                               ))
+                          )
                         ])),
               )),
               //Elemento in fondo alla pagina

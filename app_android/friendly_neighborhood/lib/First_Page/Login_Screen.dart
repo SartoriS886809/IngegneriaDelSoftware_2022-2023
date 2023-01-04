@@ -124,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         //messaggio di errore
                         Center(
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                             child: Text.rich(TextSpan(
                               text: widget.message,
                               style: TextStyle(
@@ -137,9 +137,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
 
                         //Pulsante Accedi
+                        Center(child: 
                         Padding(
                             padding: const EdgeInsets.symmetric(vertical: 16.0),
                             child: ElevatedButton(
+                              style:ElevatedButton.styleFrom(fixedSize: Size.fromWidth(150)),
                               onPressed: () async {
                                 widget.message = "";
                                 //Controllo se il form è valido
@@ -184,6 +186,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 child: Text('Accedi'),
                               )),
                             ))
+                        )
                       ])),
               //Elemento in fondo alla pagina
               Expanded(child: Container()),

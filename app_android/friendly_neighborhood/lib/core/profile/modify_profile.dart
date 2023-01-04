@@ -421,8 +421,9 @@ class _ModifyProfileState extends State<ModifyProfile> {
                           //Pulsante Aggiorna dati
                           Padding(
                               padding:
-                                  const EdgeInsets.symmetric(vertical: 16.0),
-                              child: ElevatedButton(
+                                  const EdgeInsets.symmetric(vertical: 16.0, horizontal: 50),
+                              child: ElevatedButton.icon(
+                                icon:Icon(Icons.upload),
                                 onPressed: () async {
                                   //Controllo se il form è valido
                                   if (_formKey.currentState!.validate()) {
@@ -435,7 +436,7 @@ class _ModifyProfileState extends State<ModifyProfile> {
                                         context: context);
                                   }
                                 },
-                                child: const Center(
+                                label: const Center(
                                     child: Padding(
                                   padding: EdgeInsets.only(top: 16, bottom: 16),
                                   child: Text('Aggiorna profilo'),
@@ -443,12 +444,13 @@ class _ModifyProfileState extends State<ModifyProfile> {
                               )),
                           Padding(
                               padding:
-                                  const EdgeInsets.symmetric(vertical: 16.0),
-                              child: ElevatedButton(
+                                  const EdgeInsets.symmetric(vertical: 16.0, horizontal: 50),
+                              child: ElevatedButton.icon(
+                                icon:Icon(Icons.cancel),
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
-                                child: const Center(
+                                label: const Center(
                                     child: Padding(
                                   padding: EdgeInsets.only(top: 16, bottom: 16),
                                   child: Text('Annulla'),
