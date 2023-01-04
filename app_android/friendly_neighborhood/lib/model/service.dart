@@ -6,6 +6,10 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../utils/elaborate_data.dart';
 
+/*
+* Classe Service:
+* Modello per rappresentare un Service
+*/
 class Service {
   late int _id;
   late DateTime _postDate;
@@ -59,8 +63,10 @@ class Service {
         'desc': _description,
       };
 
-  //Il campo link sarà strutturato come segue:
-  //ContactMethodsType:data     (formato csv)
+/*
+* Metodo getContactMethodsFromLink
+* Trasforma la stringa _link (che è in formato csv) in una lista di Pair (metodo di contatto:dati)
+*/
   List<Pair<String, String>> getContactMethodsFromLink() {
     List<String> data = link.split(",");
     List<Pair<String, String>> contactMethods = [];
@@ -74,6 +80,10 @@ class Service {
     return contactMethods;
   }
 
+/*
+* Metodo getLinkFromContactMethods
+* Trasforma una lista di Pair (metodo di contatto:dati) in una stringa (che è in formato csv)
+*/
   static String getLinkFromContactMethods(List<Pair<String, String>> contact) {
     String c = "";
     for (Pair<String, String> s in contact) {
@@ -82,6 +92,11 @@ class Service {
     return c;
   }
 
+/*
+* Metodo getWidgetFromContactMethods
+* Data una lista di Pair contenente i metodi di contatto genera una lista di pulsanti per avviare l'applicazione
+* corrispondente al metodo di contatto
+*/
   static Widget getWidgetFromContactMethods(Pair<String, String> contact) {
     if (!Configuration.supportedContactMethods.containsKey(contact.first)) {
       throw "Metodo non supportato";

@@ -5,6 +5,12 @@ import 'package:friendly_neighborhood/core/need/need_show.dart';
 
 import '../../utils/elaborate_data.dart';
 
+
+// ignore: slash_for_doc_comments
+/** 
+ * La classe NeedCard rappresenta il riquadro relativo ad un bisogno visualizzato in una delle liste della sezione dei bisogni.
+ * Il contenuto varia in base alla lista di appartenenza
+*/
 class NeedCard extends StatelessWidget {
   final DownloadNewDataFunction downloadNewDataFunction;
   final Need need;
@@ -37,7 +43,7 @@ class NeedCard extends StatelessWidget {
       assistedByMe: assistedByMe,
     );
 
-    final TextButton showNeedButton = TextButton(
+    final TextButton showNeedButton = TextButton( //pulsante per la visualizzazione del bisogno
         child: const Text('Apri descrizione'),
         onPressed: () {
           Navigator.push(context,
@@ -45,7 +51,7 @@ class NeedCard extends StatelessWidget {
               .then((value) => downloadNewDataFunction(true));
         });
 
-    final TextButton satisfyButton = TextButton(
+    final TextButton satisfyButton = TextButton(  //pulsante per prendere in carico il bisogno
         style: TextButton.styleFrom(
             backgroundColor: Colors.blue,
             foregroundColor: Colors.white,
@@ -57,7 +63,7 @@ class NeedCard extends StatelessWidget {
         },
         child: const Text('Soddisfa'));
 
-    final TextButton withdrawButton = TextButton(
+    final TextButton withdrawButton = TextButton( //pulsante per ritirare la disponibilità   
         style: TextButton.styleFrom(
             backgroundColor: Colors.blue,
             foregroundColor: Colors.white,

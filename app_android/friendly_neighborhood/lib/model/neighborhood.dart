@@ -1,3 +1,7 @@
+/*
+* Classe Neighborhood:
+* Modello per rappresentare un Neighborhood
+*/
 class Neighborhood {
   late int id;
   late double area;

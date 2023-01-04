@@ -7,14 +7,21 @@ import 'package:friendly_neighborhood/first_page/login_screen.dart';
 import 'package:friendly_neighborhood/model/localuser.dart';
 import 'package:friendly_neighborhood/model/need.dart';
 
+// ignore: slash_for_doc_comments
+/**
+ * La classe CreationOrModificationNeed rappresenta la pagina di creazione o di modifica di un bisogno. La struttura della pagina rimane uguale
+ * in entrambi i contesti, ma il riferimento al bisogno modificato e l'autoriempimento delle informazioni vengono aggiunti in caso di modifica
+ */
 // ignore: must_be_immutable
 class CreationOrModificationNeed extends StatefulWidget {
   Need? need;
   late bool modification;
+  //costruttre pagina creazione
   CreationOrModificationNeed({super.key}) {
     need = null;
     modification = false;
   }
+  //costruttore pagina modifica
   CreationOrModificationNeed.modification({super.key, this.need}) {
     modification = true;
   }
@@ -35,6 +42,7 @@ class _CreationOrModificationNeedState
   String token = "";
   LocalUserManager lum = LocalUserManager();
 
+  //controllo validità sessione
   Future<bool> checkSession() async {
     LocalUser? user = await lum.getUser();
     if (user == null) {
@@ -98,6 +106,7 @@ class _CreationOrModificationNeedState
     Navigator.pop(_context);
   }
 
+  //Finestra di dialogo per la conferma dell'operazione
   Future<void> _showAlertDialog() async {
     String title = (widget.modification) ? "Aggiornamento" : "Creazione";
     String message = (widget.modification)

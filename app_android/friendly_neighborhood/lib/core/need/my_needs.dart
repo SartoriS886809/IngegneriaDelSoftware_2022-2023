@@ -9,6 +9,10 @@ import 'package:friendly_neighborhood/model/localuser.dart';
 import 'package:friendly_neighborhood/model/need.dart';
 import 'package:friendly_neighborhood/utils/exception_widget.dart';
 
+// ignore: slash_for_doc_comments
+/**
+ * La classe MyNeeds rappresenta la sezione della pagina dei bisogni relativa alle richieste create dall'utente corrente
+ */
 class MyNeeds extends StatefulWidget {
   const MyNeeds({super.key});
 
@@ -20,29 +24,13 @@ class _MyNeedsState extends State<MyNeeds> {
   String token = "";
   LocalUserManager lum = LocalUserManager();
   List<Need> needslist = [];
-  /*  Need(
-        id: 4,
-        postDate: new DateTime(2022, 11, 27, 17, 30),
-        title: "esempio mio bisogno 1",
-        address: "via carlevaris 10",
-        description: "descrizione mio bisogno 1",
-        assistant: "",
-        creator: "Sebastiano Sartori"),
-    Need(
-        id: 5,
-        postDate: new DateTime(2022, 11, 27, 17, 30),
-        title: "esempio mio bisogno 2",
-        address: "via carlevaris 10",
-        description: "descrizione mio bisogno 2",
-        assistant: "Mario Rossi",
-        creator: "Sebastiano Sartori"),
-  ];*/
   //initState() è il costruttore delle classi stato
   @override
   void initState() {
     super.initState();
   }
 
+  //funzione di aggiornamento della lista locale
   Future downloadData(bool needRefreshGUI) async {
     if (token == "") {
       LocalUser? user = await lum.getUser();
@@ -68,6 +56,7 @@ class _MyNeedsState extends State<MyNeeds> {
     if (needRefreshGUI) setState(() {});
   }
 
+  //funzione che genera il widget della lista
   Future<Widget> generateList() async {
     await downloadData(false);
     return (needslist.isNotEmpty)

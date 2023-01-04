@@ -24,12 +24,7 @@ class _NeedPageState extends State<NeedPage> {
     "Richieste": Icons.supervised_user_circle,
     "Mie richieste": Icons.account_circle,
     "Miei incarichi": Icons.assignment_turned_in
-  };
-  /*final List<Type super Widget> pagesWidgets = [
-    NeighborsNeeds,
-    MyNeeds,
-    MyAssignments
-  ];*/
+  }; 
 
   late Widget _currentPage;
   late int _currentIndex;
@@ -42,7 +37,7 @@ class _NeedPageState extends State<NeedPage> {
     super.initState();
     _currentIndex = 0;
     bnb = _createBottomNavigationBar();
-    _currentPage = NeighborsNeeds(); //pagesWidgets[0];
+    _currentPage = NeighborsNeeds(); 
     _createNewNeed = FloatingActionButton.extended(
       onPressed: () {
         Navigator.push(
@@ -60,6 +55,7 @@ class _NeedPageState extends State<NeedPage> {
     });
   }
 
+  //crea la lista di sezioni selezionabili dalla barra di navigazione
   List<BottomNavigationBarItem> _createListBNB(
       Map<String, IconData> pagesList) {
     List<BottomNavigationBarItem> l = [];
@@ -69,7 +65,7 @@ class _NeedPageState extends State<NeedPage> {
     return l;
   }
 
-  //Cambia la pagina visualizzata in base al indice
+  //Cambia la pagina visualizzata in base all'indice
   void _changeCurrentPage(int index) {
     _currentPage = Container();
     _currentIndex = index;
@@ -81,7 +77,6 @@ class _NeedPageState extends State<NeedPage> {
       } else {
         _currentPage = MyAssignments();
       }
-      //_currentPage = pagesWidgets[index];
     });
   }
 

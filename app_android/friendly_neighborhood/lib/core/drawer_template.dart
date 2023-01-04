@@ -1,6 +1,11 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
 
-// ignore: must_be_immutable
+/*
+* Classe ConstructDrawer:
+* La seguente classe gestisce il drawer per la navigazione tra le varie schermate dell'applicazione
+*/
 class ConstructDrawer extends StatelessWidget {
   late List<String> _routes;
   late List<Icon> _icons;
@@ -53,19 +58,5 @@ class ConstructDrawer extends StatelessWidget {
         }
       },
     ));
-
-    /*  child: ListView.builder(
-      itemCount: _routes.length,
-      itemBuilder: (context, index) {
-        final value = _routes.elementAt(index);
-        return ListTile(
-          title: Text(value),
-          onTap: () {
-            _currentRoute = value;
-            Navigator.pop(context);
-          },
-        );
-      },
-    ));*/
   }
 }

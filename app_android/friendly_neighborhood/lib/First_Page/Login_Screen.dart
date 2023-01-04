@@ -9,6 +9,10 @@ import 'package:friendly_neighborhood/core/core.dart';
 import 'package:friendly_neighborhood/utils/alertdialog.dart';
 import 'package:friendly_neighborhood/utils/check_connection.dart';
 
+/*
+* Classe LoginScreen e _LoginScreenState:
+* La seguente classe gestisce la pagina di accesso al sistema
+*/
 class LoginScreen extends StatefulWidget {
   String message = "";
   LoginScreen({super.key}) {
@@ -33,9 +37,6 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
     _passwordVisible = false;
     _iconPassword = Icons.visibility;
-    //TODO TEMP
-    _controllerEmail.text = "a@a.a";
-    _controllerPassword.text = "passpass";
   }
 
   @override
@@ -123,18 +124,24 @@ class _LoginScreenState extends State<LoginScreen> {
                         //messaggio di errore
                         Center(
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                             child: Text.rich(TextSpan(
                               text: widget.message,
-                              style: const TextStyle(color: Colors.red),
+                              style: TextStyle(
+                                  color: widget.message !=
+                                          "Creazione account avvenuta con successo. Si prega di eseguire l'accesso"
+                                      ? Colors.red
+                                      : Colors.green),
                             )),
                           ),
                         ),
 
                         //Pulsante Accedi
+                        Center(child: 
                         Padding(
                             padding: const EdgeInsets.symmetric(vertical: 16.0),
                             child: ElevatedButton(
+                              style:ElevatedButton.styleFrom(fixedSize: Size.fromWidth(150)),
                               onPressed: () async {
                                 widget.message = "";
                                 //Controllo se il form è valido
@@ -179,6 +186,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 child: Text('Accedi'),
                               )),
                             ))
+                        )
                       ])),
               //Elemento in fondo alla pagina
               Expanded(child: Container()),

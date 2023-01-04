@@ -45,45 +45,6 @@ class ShowNeed extends StatefulWidget {
               changeAssistanceAvailability(context, callFromMyAssignments);
             },
             context: context);
-    /*return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // L'utente deve premere il pulsante
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: (assistedByMe)
-              ? const Text('Ritiro disponibilità')
-              : const Text('Soddisfazione richiesta'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                (assistedByMe)
-                    ? const Text(
-                        "Sei sicuro di voler ritirare la disponibilità all'assistenza?")
-                    : const Text(
-                        "Sei sicuro di voler soddisfare la richiesta?"),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Annulla'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: (assistedByMe)
-                  ? const Text('Ritira disponibilità')
-                  : const Text('Soddisfa'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                changeAssistanceAvailability(context, callFromMyAssignments);
-              },
-            ),
-          ],
-        );
-      },
-    );*/
   }
 
 //questa funzione si occupa della richiesta al server di modifica del campo relativo all'assistente del bisogno visualizzato
@@ -120,47 +81,16 @@ class _ShowNeedState extends State<ShowNeed> {
     Navigator.pop(_context);
   }
 
+  //finestra di dialogo per conferma eliminazione 
   Future<void> _showConfirmDeleteDialog(BuildContext context) async {
     return advancedAlertDialog(
         title: "Eliminazione bisogno",
         message: "Sei sicuro di voler eliminare la richiesta?",
         buttonMessage: "Elimina",
         f: () {
-          //Navigator.of(context).pop();
           removeNeed();
         },
         context: context);
-    /*return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // L'utente deve premere il pulsante
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Eliminazione bisogno'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: const <Widget>[
-                Text("Sei sicuro di voler eliminare la richiesta?"),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Annulla'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Elimina'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                removeNeed();
-              },
-            ),
-          ],
-        );
-      },
-    );*/
   }
 
   @override
@@ -174,32 +104,26 @@ class _ShowNeedState extends State<ShowNeed> {
             ListTile(
                 title: const Text("Autore"),
                 subtitle: Text(widget.need.creator)),
-            //Text('Creato da: ${widget.need.creator}'),
             ListTile(
                 title: const Text("Data pubblicazione"),
                 subtitle: Text(
                     "${widget.need.postDate.day}-${widget.need.postDate.month}-${widget.need.postDate.year}")),
-            //Text('Pubblicato il: ${widget.need.postDate.day}-${widget.need.postDate.month}-${widget.need.postDate.year}'),
             ListTile(
                 title: const Text("Luogo"),
                 subtitle: Text(widget.need.address)),
-            //Text('Luogo associato: ${widget.need.address}'),
             if (widget.isItMine && widget.need.assistant != "")
               ListTile(
                   title: const Text("Assistente volontario"),
                   subtitle: Text(widget.need.assistant)),
-            //Text('Richiesta presa in carico da: ${widget.need.assistant}'),
             if (widget.isItMine && widget.need.assistant == "")
               const ListTile(
                   title: Text("Autore"),
                   subtitle:
                       Text("La richiesta non è ancora stata presa in carico")),
-            //const Text('La richiesta non è ancora stata presa in carico'),
             ListTile(
               title: const Text("Descrizione"),
               subtitle: Text(widget.need.description),
             ),
-            //Text('Descrizione: ${widget.need.description}'),
 
             Expanded(child: Container()),
             Row(
