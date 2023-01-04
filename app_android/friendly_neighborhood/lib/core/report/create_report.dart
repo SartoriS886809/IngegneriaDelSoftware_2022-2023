@@ -9,6 +9,11 @@ import '../../cache_manager/profile_db.dart';
 import '../../first_page/login_screen.dart';
 import '../../model/localuser.dart';
 
+// ignore: slash_for_doc_comments
+/**
+ * La classe CreationReport rappresenta la pagina di creazione di una segnalazione.
+ */
+
 //ignore: must_be_immutable
 class CreationReport extends StatefulWidget {
   Report? report;
@@ -53,6 +58,7 @@ class _CreationReportState extends State<CreationReport> {
     Navigator.pop(_context);
   }
 
+  //controllo validità sessione
   Future<bool> checkSession() async {
     LocalUser? user = await lum.getUser();
     if (user == null) {
@@ -235,8 +241,6 @@ class _CreationReportState extends State<CreationReport> {
                                       vertical: 16.0),
                                   child: ElevatedButton(
                                     onPressed: () async {
-                                      //debug
-                                      debugPrint(_valueChoose?.toLowerCase());
                                       //Controllo se il form è valido
                                       if (_formKey.currentState!.validate()) {
                                         bool check = await checkSession();

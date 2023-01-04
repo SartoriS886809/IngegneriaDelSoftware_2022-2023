@@ -10,6 +10,11 @@ import '../../first_page/login_screen.dart';
 import '../../model/localuser.dart';
 import '../../utils/elaborate_data.dart';
 
+// ignore: slash_for_doc_comments
+/**
+ * La classe MyReports rappresenta la sezione della pagina delle segnalazioni create dall'utente corrente
+ */
+
 class MyReports extends StatefulWidget {
   const MyReports({super.key});
 
@@ -20,27 +25,14 @@ class MyReports extends StatefulWidget {
 class _MyReportsState extends State<MyReports> {
   String token = "";
   LocalUserManager lum = LocalUserManager();
-  // API
-
-  // test list
-
   List<Report> reportList = [];
-  /*
-    Report(
-        postDate: DateTime(2022),
-        title: 'cane randagio',
-        priority: 2,
-        category: 'animali',
-        address: 'via F. Pannofino',
-        creator: 'test')
-  ];
-  */
-
+  //initState() è il costruttore delle classi stato
   @override
   void initState() {
     super.initState();
   }
 
+  //funzione di aggiornamento della lista locale
   Future downloadData(bool needRefreshGUI) async {
     if (token == "") {
       LocalUser? user = await lum.getUser();
@@ -64,14 +56,15 @@ class _MyReportsState extends State<MyReports> {
     if (needRefreshGUI) setState(() {});
   }
 
+  //funzione che genera il widget della lista
   Future<Widget> generateList() async {
     await downloadData(false);
     return (reportList.isNotEmpty)
         ? ListView.builder(
-            itemCount: reportList.length+1,
+            itemCount: reportList.length + 1,
             itemBuilder: (context, index) {
-              if(index==0) return Container(height:40);
-              final Report reportIter = reportList.elementAt(index-1);
+              if (index == 0) return Container(height: 40);
+              final Report reportIter = reportList.elementAt(index - 1);
               final String dateIter =
                   convertDateTimeToDate(reportIter.postDate);
               return Card(
@@ -80,7 +73,6 @@ class _MyReportsState extends State<MyReports> {
                   children: <Widget>[
                     Row(children: [
                       Expanded(
-                        //width: 150,
                         child: ListTile(
                           //controllare la funzione delle icone ( il colore non va)
                           leading: reportIter.getIconFromCategory(
@@ -183,15 +175,13 @@ class _MyReportsState extends State<MyReports> {
             }
           }),
       Align(
-              alignment: Alignment.topRight,
-              child:
-              IconButton(
+          alignment: Alignment.topRight,
+          child: IconButton(
               iconSize: 35,
-                onPressed: (() {
-                  downloadData(true);
-                }),
-                icon: const Icon(Icons.refresh))
-          ),
+              onPressed: (() {
+                downloadData(true);
+              }),
+              icon: const Icon(Icons.refresh))),
     ]);
   }
 }
