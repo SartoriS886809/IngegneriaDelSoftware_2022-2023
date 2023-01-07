@@ -5,6 +5,10 @@ import 'package:path/path.dart';
 
 //Documentazione: https://docs.flutter.dev/cookbook/persistence/sqlite
 
+/*
+* Classe ReportDataManager:
+* La seguente classe gestisce il database locale di Report
+*/
 //Singlenton class
 class ReportDataManager {
   static final ReportDataManager _instance = ReportDataManager._internal();
@@ -13,21 +17,19 @@ class ReportDataManager {
   Database? _db = null;
   bool _isOpen = false;
 
-  // using a factory is important
-  // because it promises to return _an_ object of this type
-  // but it doesn't promise to make a new one.
+  //factory constructor
   factory ReportDataManager() {
     return _instance;
   }
 
-  // This named constructor is the "real" constructor
-  // It'll be called exactly once, by the static property assignment above
-  // it's also private, so it can only be called in this class
   ReportDataManager._internal() {
     open();
   }
 
-  //La funzione serve per chiudere il database
+/*
+* funzione close
+* La funzione serve per chiudere il database
+*/
   Future close() async {
     if (_db != null) {
       _db!.close();
@@ -35,7 +37,10 @@ class ReportDataManager {
     _isOpen = false;
   }
 
-  //La funzione serve per aprire il database
+/*
+* funzione open
+* La funzione serve per aprire il database
+*/
   Future open() async {
     _db = await openDatabase(
       join(await getDatabasesPath(), dbName),
@@ -49,12 +54,20 @@ class ReportDataManager {
     _isOpen = true;
   }
 
+/*
+* funzione insertListOfReports
+* La funzione serve per aggiungere una lista di report nel db
+*/
   Future insertListOfReports(List<Report> list) async {
     for (Report r in list) {
       await insertReport(r);
     }
   }
 
+/*
+* funzione insertReport
+* La funzione serve per aggiungere un report al db
+*/
   Future<void> insertReport(Report rep) async {
     if (!_isOpen) {
       await open();
@@ -67,6 +80,10 @@ class ReportDataManager {
     );
   }
 
+/*
+* funzione updateReport
+* La funzione serve per aggiornare un report nel db
+*/
   Future<void> updateReport(Report rep) async {
     if (!_isOpen) {
       await open();
@@ -80,6 +97,10 @@ class ReportDataManager {
     );
   }
 
+/*
+* funzione deleteReport
+* La funzione serve per eliminare un report nel db
+*/
   Future<void> deleteReport(Report rep) async {
     if (!_isOpen) {
       await open();
@@ -92,6 +113,10 @@ class ReportDataManager {
     );
   }
 
+/*
+* funzione cleanDB
+* La funzione svuota il db
+*/
   Future<void> cleanDB() async {
     if (!_isOpen) {
       await open();
@@ -100,6 +125,10 @@ class ReportDataManager {
     await _db!.delete(tableName);
   }
 
+/*
+* funzione getReport
+* La funzione restituisce una lista di report salvati nel db
+*/
   Future<List<Report>> getReport() async {
     if (!_isOpen) {
       await open();

@@ -19,6 +19,10 @@ enum HTTP_Method { POST, GET, DELETE }
 
 enum ELEMENT_TYPE { SERVICES, NEEDS, REPORTS }
 
+/*
+* Classe API_Manager:
+* La seguente classe gestisce tutte le operazioni tra app e server
+*/
 class API_Manager {
   //Funzione per castare un elemento
   static T? _cast<T>(x) => x is T ? x : null;
@@ -42,6 +46,11 @@ class API_Manager {
     return true;
   }
 
+  /*
+  Funzione di login, richiede in ingresso l'email e la password dell'utente
+  Se l'esito del login è positivo verrà creato l'utente nel database locale, in caso
+  di errore verrà lanciata un'eccezione
+  */
   static Future<String> login(String email, String password) async {
     String link = '${Configuration.API_link}/login';
     try {
@@ -147,6 +156,12 @@ class API_Manager {
     return list;
   }
 
+  /*
+  La funzione getProfile() richiede in input una stringa token. Se l'operazione
+  va a buon fine verrà ritornata una mappa contenente le informazioni dell'utente
+  corrente
+  In caso di errore verrà lanciata un eccezione
+  */
   static Future<Map<String, dynamic>> getProfile(String token) async {
     String link = '${Configuration.API_link}/profile';
     try {
@@ -164,6 +179,11 @@ class API_Manager {
     }
   }
 
+  /*
+  Funzione di aggiornamento del profilo, richiede in ingresso un localuser
+  Se l'esito dell'aggiornamento è positivo verrà ritornato true, in caso
+  di errore verrà lanciata un'eccezione
+  */
   static Future<bool> updateProfile(LocalUser user) async {
     String link = '${Configuration.API_link}/profile';
     try {

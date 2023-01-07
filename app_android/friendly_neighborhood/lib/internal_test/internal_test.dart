@@ -4,6 +4,10 @@ import 'package:friendly_neighborhood/internal_test/stress_test.dart';
 import 'package:friendly_neighborhood/model/localuser.dart';
 import 'package:friendly_neighborhood/model/neighborhood.dart';
 
+/*
+* Classe Test:
+* La seguente classe esegue dei test sulle varie operazioni con il server
+*/
 class Test extends StatefulWidget {
   const Test({super.key});
 
@@ -21,6 +25,10 @@ class _TestState extends State<Test> {
   String deleteResult = "in attesa di essere avviato";
   String getProfileResult = "in attesa di essere avviato";
 
+/*
+* funzione testNeighborhoods
+* Prova ad eseguire il download dei vari neighborhoods 
+*/
   Future<Widget> testNeighborhoods() async {
     List<Neighborhood> l = await API_Manager.getNeighborhoods();
     String s = "";
@@ -30,6 +38,10 @@ class _TestState extends State<Test> {
     return Text(s);
   }
 
+/*
+* funzione testAccountCreation
+* Prova a creare un nuovo account
+*/
   void testAccountCreation() async {
     setState(() {
       creationResult = "test avviato";
@@ -53,6 +65,10 @@ class _TestState extends State<Test> {
     testLogin();
   }
 
+/*
+* funzione testAccountCreation
+* Prova ad accedere con l'account appena creato
+*/
   void testLogin() async {
     setState(() {
       loginResult = "test avviato";
@@ -73,6 +89,10 @@ class _TestState extends State<Test> {
     testgetProfile();
   }
 
+/*
+* funzione testgetProfile
+* Prova a scaricare le informazioni del profilo appena creato
+*/
   void testgetProfile() async {
     try {
       await API_Manager.getProfile(token);
@@ -88,6 +108,10 @@ class _TestState extends State<Test> {
     testremoveProfile();
   }
 
+/*
+* funzione testremoveProfile
+* Prova ad eliminare il profilo creato
+*/
   void testremoveProfile() async {
     try {
       await API_Manager.deleteAccount(token);

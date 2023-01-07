@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
+/*
+* Classe PrivacyPolicy:
+* La seguente classe si occupa di mostrare all'utente i termini della policy relativa alla privacy:
+* per la visualizzazione si appoggia ad un plug-in chiamato SfPdfViewer
+*/
 class PrivacyPolicy extends StatefulWidget {
   const PrivacyPolicy({super.key});
 

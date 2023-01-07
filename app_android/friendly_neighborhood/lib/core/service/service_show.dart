@@ -10,6 +10,11 @@ import '../../API_Manager/api_manager.dart';
 import '../../model/localuser.dart';
 import '../../utils/elaborate_data.dart';
 
+/*
+* Classe ShowService:
+* La seguente classe si occupa di visualizzare un servizio. Inoltre crea l'interfaccia
+* in base al fatto se l'utente corrente è il creatore di quest'ultimo.
+*/
 class ShowService extends StatefulWidget {
   final Service service;
   final bool myService;

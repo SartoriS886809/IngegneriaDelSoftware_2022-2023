@@ -6,7 +6,13 @@ import 'package:friendly_neighborhood/core/service/create_modify_service.dart';
 import 'package:friendly_neighborhood/core/service/my_service.dart';
 import 'package:friendly_neighborhood/core/service/neighborhood_service.dart';
 
-//gli StatefulWidget devono essere gestiticon due classi, una per il widget ed una privata per lo stato
+//gli StatefulWidget devono essere gestiti con due classi, una per il widget ed una privata per lo stato
+
+/*
+* Classe ServicePage:
+* La seguente classe corrisponde ad uno dei moduli dell'applicazione. Si occupa della navigazione
+* tra le sotto schermate e mette a disposizione una bottom navigation bar e un floating action button.
+*/
 class ServicePage extends StatefulWidget {
   final NavigationBarCallback navCallback;
   final FloatingCallback fabCallback;
@@ -19,6 +25,7 @@ class ServicePage extends StatefulWidget {
 }
 
 class _ServicePageState extends State<ServicePage> {
+  //Definizione delle route
   final Map<String, IconData> pages = {
     "Servizi": Icons.supervised_user_circle,
     "Miei servizi": Icons.account_circle
@@ -57,6 +64,11 @@ class _ServicePageState extends State<ServicePage> {
     });
   }
 
+/*
+* funzione _createListBNB
+* la seguente funzione si occupa di generare in modo dinamico i pulsanti per la bottom navigation bar
+* in base alle route create
+*/
   List<BottomNavigationBarItem> _createListBNB(
       Map<String, IconData> pagesList) {
     List<BottomNavigationBarItem> l = [];
@@ -66,7 +78,11 @@ class _ServicePageState extends State<ServicePage> {
     return l;
   }
 
-  //Cambia la pagina visualizzata in base al indice
+/*
+* funzione _changeCurrentPage
+* la seguente funzione si occupa di cambiare e generare la pagina corrente in base all'indice
+* passato per parametro
+*/
   void _changeCurrentPage(int index) {
     _currentPage = Container();
     if (index == 0) {
@@ -79,6 +95,10 @@ class _ServicePageState extends State<ServicePage> {
     setState(() {});
   }
 
+/*
+* funzione _createBottomNavigationBar
+* la seguente funzione si occupa di generare  la bottom navigation bar
+*/
   BottomNavigationBar _createBottomNavigationBar() {
     return BottomNavigationBar(
         type: BottomNavigationBarType.fixed,

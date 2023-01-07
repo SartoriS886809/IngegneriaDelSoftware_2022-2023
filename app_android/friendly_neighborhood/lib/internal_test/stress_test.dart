@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/API_Manager/api_manager.dart';
 import 'package:friendly_neighborhood/internal_test/internal_test.dart';
 
+/*
+* Classe StressTest:
+* La seguente classe esegue dei stress test sul server
+*/
 class StressTest extends StatefulWidget {
   const StressTest({super.key});
 
@@ -15,6 +19,10 @@ class _StressTestState extends State<StressTest> {
   String result = "";
   bool started = false;
 
+/*
+* funzione stressTestNeighborhoods
+* Esegue il download dei vari neighborhoods 5000 volte
+*/
   void stressTestNeighborhoods() async {
     if (started) return;
     started = true;

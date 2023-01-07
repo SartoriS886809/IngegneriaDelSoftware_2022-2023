@@ -13,6 +13,12 @@ import '../../configuration/configuration.dart';
 import '../../model/neighborhood.dart';
 import '../../utils/elaborate_data.dart';
 
+/*
+* Classe ModifyProfile:
+* La seguente classe si occupa di generare l'interfaccia e gestisce le operazioni
+* di modifica del profilo
+*/
+
 class ModifyProfile extends StatefulWidget {
   LocalUser user;
   ModifyProfile({super.key, required this.user});
@@ -60,6 +66,10 @@ class _ModifyProfileState extends State<ModifyProfile> {
         name: widget.user.neighborhood);
   }
 
+/*
+* funzione setChoiceNeighborhood
+* la seguente funzione si occupa di selezionare il quartiere in base all'id 
+*/
   void setChoiceNeighborhood() {
     for (Neighborhood n in _neighborhood) {
       if (n.id == _choice_neighborhood.id) {
@@ -69,6 +79,10 @@ class _ModifyProfileState extends State<ModifyProfile> {
     }
   }
 
+/*
+* funzione updateProfile
+* la seguente funzione si occupa di aggiornare le informazioni sul server
+*/
   void updateProfile() async {
     LocalUser updatedUser = LocalUser(
         _controllerEmail.text,
@@ -96,10 +110,19 @@ class _ModifyProfileState extends State<ModifyProfile> {
     }
   }
 
+/*
+* funzione retry
+* la seguente funzione si occupa di rigenerare la pagina
+*/
   void retry() {
     setState(() {});
   }
 
+/*
+* funzione makeNeighborhoodMenu
+* la seguente funzione si occupa di scaricare e generare il menu con i vari
+* quartieri
+*/
   Future<Widget> makeNeighborhoodMenu() async {
     try {
       _neighborhood = await API_Manager.getNeighborhoods();
@@ -145,6 +168,11 @@ class _ModifyProfileState extends State<ModifyProfile> {
     );
   }
 
+/*
+* funzione _popupSearchBox
+* la seguente funzione si occupa di mostrare a schermo un pop-up per selezionare
+* il quartiere desiderato
+*/
   Widget _popupSearchBox(
     BuildContext context,
     Neighborhood? item,
@@ -420,10 +448,10 @@ class _ModifyProfileState extends State<ModifyProfile> {
                           ),
                           //Pulsante Aggiorna dati
                           Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 16.0, horizontal: 50),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 16.0, horizontal: 50),
                               child: ElevatedButton.icon(
-                                icon:Icon(Icons.upload),
+                                icon: const Icon(Icons.upload),
                                 onPressed: () async {
                                   //Controllo se il form è valido
                                   if (_formKey.currentState!.validate()) {
@@ -443,10 +471,10 @@ class _ModifyProfileState extends State<ModifyProfile> {
                                 )),
                               )),
                           Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 16.0, horizontal: 50),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 16.0, horizontal: 50),
                               child: ElevatedButton.icon(
-                                icon:Icon(Icons.cancel),
+                                icon: const Icon(Icons.cancel),
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },

@@ -6,10 +6,16 @@ import 'package:friendly_neighborhood/core/profile/profile.dart';
 import 'package:friendly_neighborhood/core/report/report_page.dart';
 import 'package:friendly_neighborhood/core/service/service_page.dart';
 
+//Definizioni di funzioni per chiamate callback
 typedef NavigationBarCallback = void Function(BottomNavigationBar bnb);
 typedef FloatingCallback = void Function(FloatingActionButton fab);
 typedef DownloadNewDataFunction = void Function(bool refreshWidget);
 
+/*
+* Classe Core:
+* La seguente classe gestisce le varie schermate presenti nell'applicazioni e mette in comunicazioni
+* i vari moduli (funzionalità)
+*/
 class Core extends StatefulWidget {
   const Core({super.key});
 
@@ -20,6 +26,7 @@ class Core extends StatefulWidget {
 class _CoreState extends State<Core> {
   late String _currentPage;
   late ConstructDrawer _drawer;
+  //Definizione delle varie route
   final List<String> _routes = [
     "Dashboard",
     "Segnalazioni",
@@ -27,6 +34,7 @@ class _CoreState extends State<Core> {
     "Servizi",
     "Profilo"
   ];
+  //Icone per il drawer
   final List<Icon> _icons = [
     const Icon(Icons.home),
     const Icon(Icons.announcement),
@@ -48,6 +56,10 @@ class _CoreState extends State<Core> {
     _bottomNavbar = null;
   }
 
+/*
+* funzione _switchManualBody
+* Funzione per cambiare la pagina corrente
+*/
   void _switchManualBody(String newRoute) {
     setState(() {
       _openPage = _getBodyPage(newRoute);
@@ -56,18 +68,32 @@ class _CoreState extends State<Core> {
     });
   }
 
+/*
+* funzione _setNavigationBar
+* Funzione per inserire o rimuovere la bottom navigation bar
+*/
   void _setNavigationBar(BottomNavigationBar? bnb) {
     setState(() {
       _bottomNavbar = bnb;
     });
   }
 
+/*
+* funzione _setFloatingButton
+* Funzione per inserire o rimuovere il floating action button
+*/
   void _setFloatingButton(FloatingActionButton? fab) {
     setState(() {
       _floatingButton = fab;
     });
   }
 
+/*
+* funzione _getBodyPage
+* La seguente funzione genera la pagina corrispondente alla route selezionata.
+* Inoltre si occupa di collegare (o rimuovere) i vari elementi connesse alla pagina corrente:
+* floating action button o bottom navigation bar
+*/
   //Genera la pagina da cambiare
   Widget _getBodyPage(String newRoute) {
     switch (newRoute) {

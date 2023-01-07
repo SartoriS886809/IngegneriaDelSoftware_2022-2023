@@ -10,6 +10,11 @@ import 'package:friendly_neighborhood/utils/alertdialog.dart';
 
 import '../dashboard/dashboard.dart';
 
+/*
+* Classe Profile:
+* La seguente classe si occupa di generare l'interfaccia con le informazioni
+* del profilo dell'utente corrente
+*/
 class Profile extends StatefulWidget {
   final CoreCallback switchBody;
   const Profile({super.key, required this.switchBody});
@@ -22,6 +27,11 @@ class _ProfileState extends State<Profile> {
   late LocalUser? user;
   final LocalUserManager luManager = LocalUserManager();
 
+/*
+* funzione logout
+* la seguente funzione si occupa eseguire il logout e di cambiare la pagina
+* tornando a quella di login
+*/
   void logout() async {
     await luManager.deleteUser(user!);
     await API_Manager.logout(user!.email);
@@ -30,6 +40,11 @@ class _ProfileState extends State<Profile> {
         context, MaterialPageRoute(builder: (context) => LoginScreen()));
   }
 
+/*
+* funzione deleteAccount
+* la seguente funzione di eliminare l'account corrente e di cambiare la pagina
+* tornando a quella di login
+*/
   void deleteAccount() async {
     await luManager.deleteUser(user!);
     await API_Manager.deleteAccount(user!.token);
@@ -38,6 +53,10 @@ class _ProfileState extends State<Profile> {
         context, MaterialPageRoute(builder: (context) => LoginScreen()));
   }
 
+/*
+* funzione _asyncBuilder
+* la seguente genera la pagina una volta completate le operazioni di caricamento dei dati
+*/
   Future<Widget> _asyncBuilder(BuildContext context) async {
     user = await luManager.getUser();
     if (user == null) {
@@ -80,7 +99,7 @@ class _ProfileState extends State<Profile> {
         Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 50),
             child: ElevatedButton.icon(
-              icon:const Icon(Icons.home),
+              icon: const Icon(Icons.home),
               onPressed: () {
                 widget.switchBody("Dashboard");
               },
@@ -93,7 +112,7 @@ class _ProfileState extends State<Profile> {
         Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 50),
             child: ElevatedButton.icon(
-              icon:const Icon(Icons.edit),
+              icon: const Icon(Icons.edit),
               onPressed: () {
                 Navigator.push(
                         context,
@@ -110,7 +129,7 @@ class _ProfileState extends State<Profile> {
         Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 50),
             child: ElevatedButton.icon(
-              icon:const Icon(Icons.logout_outlined),
+              icon: const Icon(Icons.logout_outlined),
               onPressed: () {
                 advancedAlertDialog(
                     buttonMessage: "Disconnettiti",
@@ -128,7 +147,7 @@ class _ProfileState extends State<Profile> {
         Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 50),
             child: ElevatedButton.icon(
-              icon:const Icon(Icons.delete_forever),
+              icon: const Icon(Icons.delete_forever),
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
               onPressed: () {
                 advancedAlertDialog(

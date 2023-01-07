@@ -12,6 +12,11 @@ import 'package:friendly_neighborhood/utils/alertdialog.dart';
 import '../../first_page/login_screen.dart';
 import '../../utils/elaborate_data.dart';
 
+/*
+* Classe CreationOrModificationService:
+* La seguente classe si occupa di gestire l'interfaccia e le operazioni
+* per creare o modificare un servizio
+*/
 // ignore: must_be_immutable
 class CreationOrModificationService extends StatefulWidget {
   Service? service;
@@ -40,6 +45,11 @@ class _CreationOrModificationServiceState
   LocalUserManager lum = LocalUserManager();
   LocalUser? user;
 
+/*
+* funzione updateService
+* la seguente funzione si occupa di aggiornare un il servizio appena modificato
+* utilizzando API_Manager
+*/
   void updateService() async {
     user ??= await lum.getUser();
     widget.service!.title = _controllerTitle.text;
@@ -59,6 +69,11 @@ class _CreationOrModificationServiceState
     }
   }
 
+/*
+* funzione createService
+* la seguente funzione si occupa di inserire nel server il servizio appena creato 
+* utilizzando API_Manager
+*/
   void createService() async {
     user ??= await lum.getUser();
     widget.service = Service(
@@ -81,6 +96,11 @@ class _CreationOrModificationServiceState
     }
   }
 
+/*
+* funzione makeList
+* la seguente funzione si occupa di generare una lista modificabile con i contatti
+* inserite dall'utente
+*/
   Widget makeList() {
     List<String> contactTypes =
         Configuration.supportedContactMethods.keys.toList();
@@ -162,6 +182,10 @@ class _CreationOrModificationServiceState
         });
   }
 
+/*
+* funzione checkSession
+* la seguente funzione si occupa di controllare la validità della sessione corrente
+*/
   Future<bool> checkSession() async {
     user ??= await lum.getUser();
     if (user == null) {
