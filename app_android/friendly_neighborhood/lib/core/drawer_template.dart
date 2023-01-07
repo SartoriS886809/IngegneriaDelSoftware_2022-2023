@@ -41,10 +41,7 @@ class ConstructDrawer extends StatelessWidget {
               ))),
               Expanded(child: Text("Friendly Neighborhood"))
             ],
-          )
-              //decoration:
-              //child: Text('Drawer Header'),
-              );
+          ));
         } else {
           final value = _routes.elementAt(index - 1);
           return ListTile(

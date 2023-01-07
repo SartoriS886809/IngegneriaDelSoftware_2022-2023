@@ -10,6 +10,10 @@ import '../../first_page/login_screen.dart';
 import '../../model/localuser.dart';
 import '../../model/service.dart';
 
+/*
+* Classe MyServicePage:
+* La seguente classe si occupa di visualizzare la lista dei servizi creati dall'utente corrente
+*/
 class MyServicePage extends StatefulWidget {
   const MyServicePage({super.key});
 
@@ -20,7 +24,11 @@ class MyServicePage extends StatefulWidget {
 class _MyServicePageState extends State<MyServicePage> {
   String token = "";
   LocalUserManager lum = LocalUserManager();
-
+/*
+* funzione downloadData
+* la seguente funzione si occupa di scaricare i dati relativi ai servizi
+* creati dai vicini
+*/
   Future downloadData(bool needRefreshGUI) async {
     if (token == "") {
       LocalUser? user = await lum.getUser();
@@ -45,6 +53,11 @@ class _MyServicePageState extends State<MyServicePage> {
     if (needRefreshGUI) setState(() {});
   }
 
+/*
+* funzione generateList
+* la seguente funzione si occupa di generare una ListView sulla base
+* dei dati scaricata dalla funzione downloadData
+*/
   Future<Widget> generateList() async {
     await downloadData(false);
     if (data.isEmpty) {
@@ -56,11 +69,11 @@ class _MyServicePageState extends State<MyServicePage> {
     return SizedBox(
       height: double.infinity,
       child: ListView.builder(
-        itemCount: data.length+1,
+        itemCount: data.length + 1,
         itemBuilder: (context, index) {
-          if(index==0) return Container(height:40);
+          if (index == 0) return Container(height: 40);
           return ServiceCardMe(
-              service: data[index-1], downloadNewDataFunction: downloadData);
+              service: data[index - 1], downloadNewDataFunction: downloadData);
         },
       ),
     );
@@ -89,15 +102,13 @@ class _MyServicePageState extends State<MyServicePage> {
               }
             }),
         Align(
-              alignment: Alignment.topRight,
-              child:
-              IconButton(
-              iconSize: 35,
+            alignment: Alignment.topRight,
+            child: IconButton(
+                iconSize: 35,
                 onPressed: (() {
                   downloadData(true);
                 }),
-                icon: const Icon(Icons.refresh))
-          ),
+                icon: const Icon(Icons.refresh))),
       ],
     );
   }

@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:friendly_neighborhood/icon_manager/report__icons_icons.dart';
 import 'package:intl/intl.dart';
 
+/*
+* Classe Report:
+* Modello per rappresentare un Report
+*/
 class Report {
   late int _id;
   late DateTime _postDate;
@@ -20,6 +24,7 @@ class Report {
     'lavori in corso': Report_Icons.icons_construction
   };
 
+  //Il campo id verrà assegnato dal server, usare il valore di default a -1 se creata dall'applicazione
   Report(
       {int id = -1,
       required DateTime postDate,
@@ -36,7 +41,7 @@ class Report {
     _address = address;
     _creator = creator;
   }
-
+  //JSON constructor
   Report.fromJSON(Map<String, dynamic> json) {
     _id = json["id"];
     _postDate = DateFormat('dd-MM-yyyy').parse(json["postdate"]);
@@ -57,6 +62,7 @@ class Report {
     _creator = map["creator"];
   }
   //METHODS
+
   /*
     Il metodo prende in ingresso un colore e un double che possono essere anche null. In tal caso l'icona assumerà il colore e dimensione di default
     Se la categoria non è presente restituisce l'icona error

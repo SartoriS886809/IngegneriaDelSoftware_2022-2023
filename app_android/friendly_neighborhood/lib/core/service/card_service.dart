@@ -3,6 +3,11 @@ import 'package:friendly_neighborhood/core/core.dart';
 import 'package:friendly_neighborhood/core/service/service_show.dart';
 import 'package:friendly_neighborhood/model/service.dart';
 
+/*
+* Classe ServiceCardNeighborhood:
+* La seguente classe si occupa di generare una card con i pulsanti per un servizio
+* creato da un vicino
+*/
 class ServiceCardNeighborhood extends StatelessWidget {
   final DownloadNewDataFunction downloadNewDataFunction;
   final Service service;
@@ -38,6 +43,11 @@ class ServiceCardNeighborhood extends StatelessWidget {
   }
 }
 
+/*
+* Classe ServiceCardMe:
+* La seguente classe si occupa di generare una card con i pulsanti per un servizio
+* creato dall'utente corrente
+*/
 class ServiceCardMe extends StatelessWidget {
   final Service service;
   final DownloadNewDataFunction downloadNewDataFunction;

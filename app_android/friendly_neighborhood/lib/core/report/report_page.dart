@@ -23,11 +23,7 @@ class _ReportPageState extends State<ReportPage> {
     "Segnalazioni": Icons.supervised_user_circle,
     "Mie segnalazioni": Icons.account_circle
   };
-/*
-  final List<Widget> pagesWidgets = [
-    const NeighborsReports(),
-    const MyReports()
-  ];*/
+
   late Widget _currentPage;
   late int _currentIndex;
   late final BottomNavigationBar bnb;
@@ -90,7 +86,6 @@ class _ReportPageState extends State<ReportPage> {
         unselectedFontSize: 14,
         currentIndex: _currentIndex,
         onTap: (value) {
-          //VALUE => 0 o 1
           _currentIndex = value;
           _changeCurrentPage(value);
           widget.navCallback(_createBottomNavigationBar());

@@ -7,6 +7,10 @@ import 'package:path/path.dart';
 //Documentazione: https://docs.flutter.dev/cookbook/persistence/sqlite
 
 //Singlenton class
+/*
+* Classe LocalUserManager:
+* La seguente classe gestisce il database locale di LocalUser
+*/
 class LocalUserManager {
   static final LocalUserManager _instance = LocalUserManager._internal();
   static const String dbName = "localUser.db";
@@ -14,21 +18,18 @@ class LocalUserManager {
   Database? _db;
   bool _isOpen = false;
 
-  // using a factory is important
-  // because it promises to return _an_ object of this type
-  // but it doesn't promise to make a new one.
   factory LocalUserManager() {
     return _instance;
   }
 
-  // This named constructor is the "real" constructor
-  // It'll be called exactly once, by the static property assignment above
-  // it's also private, so it can only be called in this class
   LocalUserManager._internal() {
     open();
   }
 
-  //La funzione serve per chiudere il database
+/*
+* funzione close
+* La funzione serve per chiudere il database
+*/
   Future close() async {
     if (_db != null) {
       _db!.close();
@@ -36,7 +37,10 @@ class LocalUserManager {
     _isOpen = false;
   }
 
-  //La funzione serve per aprire il database
+/*
+* funzione open
+* La funzione serve per aprire il database
+*/
   Future open() async {
     _db = await openDatabase(
       join(await getDatabasesPath(), dbName),
@@ -50,6 +54,10 @@ class LocalUserManager {
     _isOpen = true;
   }
 
+/*
+* funzione insertUser
+* La funzione serve per aggiungere un LocalUser al db
+*/
   Future<void> insertUser(LocalUser user) async {
     if (!_isOpen) {
       await open();
@@ -66,6 +74,10 @@ class LocalUserManager {
     );
   }
 
+/*
+* funzione updateUser
+* La funzione serve per aggiornare un LocalUser nel db
+*/
   Future<void> updateUser(LocalUser user) async {
     if (!_isOpen) {
       await open();
@@ -79,6 +91,10 @@ class LocalUserManager {
     insertUser(user);
   }
 
+/*
+* funzione deleteUser
+* La funzione serve per eliminare un LocalUser nel db
+*/
   Future<void> deleteUser(LocalUser user) async {
     if (!_isOpen) {
       await open();
@@ -91,6 +107,10 @@ class LocalUserManager {
     );
   }
 
+/*
+* funzione getUser
+* La funzione restituisce il LocalUser salvato nel db
+*/
   Future<LocalUser?> getUser() async {
     // Get a reference to the database.
     if (!_isOpen) {
