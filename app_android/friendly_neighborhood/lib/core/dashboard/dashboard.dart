@@ -26,6 +26,7 @@ class DashBoard extends StatelessWidget {
       const Icon(Icons.assignment),
       const Icon(Icons.business_center_rounded),
       const Icon(Icons.account_circle),
+      const Icon(Icons.help)
     ];
     List<String> routesFiltered = [...routes];
     routesFiltered.removeAt(0);
