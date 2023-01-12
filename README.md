@@ -14,23 +14,23 @@
 ----------------------------
 
 ## Frontend: 
-### Aspetti implementati:
 * Struttura di base dell'applicazione, con navigazione tra le pagine;
-#### Pagina segnalazioni:
+### Pagina segnalazioni:
 * visualizzazione della lista dell'utente e della lista del quartiere
 * creazione e cancellazione di segnalazioni;
-#### Pagina bisogni:
+### Pagina bisogni:
 * visualizzazione della lista dell'utente, della lista del quartiere e della lista di richieste prese in carico dall'utente
 * creazione, cancellazione, aggiornamento e visualizzazione delle singole richieste
 * possibilità di Soddisfare le richieste
-#### Pagina servizi:
+### Pagina servizi:
 * visualizzazione della lista dell'utente e della lista del quartiere
 *reazione, cancellazione, aggiornamento e visualizzazione dei singoli servizi;
-#### Pagina profilo:
+### Pagina profilo:
 * visualizzazione informazioni del profilo
 * modifica del profilo
+* eliminazione profilo
 * logout;
-#### Dashboard:
+### Dashboard:
 * pagina iniziale 
 * reindirizzamento alle altre pagine. 
 
