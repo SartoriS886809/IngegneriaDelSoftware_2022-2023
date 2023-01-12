@@ -6,6 +6,8 @@ import 'package:friendly_neighborhood/core/profile/profile.dart';
 import 'package:friendly_neighborhood/core/report/report_page.dart';
 import 'package:friendly_neighborhood/core/service/service_page.dart';
 
+import 'guide/guide.dart';
+
 //Definizioni di funzioni per chiamate callback
 typedef NavigationBarCallback = void Function(BottomNavigationBar bnb);
 typedef FloatingCallback = void Function(FloatingActionButton fab);
@@ -32,7 +34,8 @@ class _CoreState extends State<Core> {
     "Segnalazioni",
     "Bisogni",
     "Servizi",
-    "Profilo"
+    "Profilo",
+    "Guida"
   ];
   //Icone per il drawer
   final List<Icon> _icons = [
@@ -41,6 +44,7 @@ class _CoreState extends State<Core> {
     const Icon(Icons.assignment),
     const Icon(Icons.business_center_rounded),
     const Icon(Icons.account_circle),
+    const Icon(Icons.help)
   ];
 
   late Widget _openPage;
@@ -103,6 +107,11 @@ class _CoreState extends State<Core> {
         return DashBoard(
             switchBody: (String route) => _switchManualBody(route),
             routes: _routes);
+      case "Guida":
+        _setNavigationBar(null);
+        _setFloatingButton(null);
+        return GuidePage(
+            switchBody: (String route) => _switchManualBody(route));
       case "Segnalazioni":
         _setFloatingButton(null);
         return ReportPage(
