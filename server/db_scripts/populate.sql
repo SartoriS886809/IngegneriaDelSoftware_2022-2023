@@ -1,13 +1,13 @@
 CREATE EXTENSION pgcrypto;
 
-INSERT INTO users VALUES ('mdr@gmail.com', crypt('passpass', gen_salt('bf', 8)), 'mdr', 'Mattia', 'Dei Rossi', '1998-11-02', 'Corte dei Cordami, Giudecca', 1, 'villa', 'token1', 7);
-INSERT INTO users VALUES ('ec@gmail.com', crypt('passpass', gen_salt('bf', 8)), 'ec', 'Edoardo', 'Cecchinato', '2000-03-01', 'Corte dei Cordami, Giudecca', 1, 'villa', 'token2', 7);
-INSERT INTO users VALUES ('adl@gmail.com', crypt('passpass', gen_salt('bf', 8)), 'adl', 'Andrea', 'Da Lio', '2001-08-31', 'Junghas, Giudecca', 2, 'appartamento', 'token3', 7);
-INSERT INTO users VALUES ('ss@gmail.com', crypt('passpass', gen_salt('bf', 8)), 'ss', 'Sebastiano', 'Sartori', '2002-01-05', 'Junghas, Giudecca', 2, 'appartamento', 'token4', 7);
-INSERT INTO users VALUES ('gb@gmail.com', crypt('passpass', gen_salt('bf', 8)), 'gb', 'Giovanni', 'Berto', '2001-09-23', 'Junghas, Giudecca', 2, 'appartamento', 'token5', 7);
+INSERT INTO users VALUES ('mdr@gmail.com', crypt('passpass', gen_salt('bf', 8)), 'mdr', 'Mattia', 'Dei Rossi', '1998-11-02', 'Corte dei Cordami, Giudecca', 1, 'Casa singola', 'token1', 7);
+INSERT INTO users VALUES ('ec@gmail.com', crypt('passpass', gen_salt('bf', 8)), 'ec', 'Edoardo', 'Cecchinato', '2000-03-01', 'Corte dei Cordami, Giudecca', 1, 'Casa singola', 'token2', 7);
+INSERT INTO users VALUES ('adl@gmail.com', crypt('passpass', gen_salt('bf', 8)), 'adl', 'Andrea', 'Da Lio', '2001-08-31', 'Junghas, Giudecca', 2, 'Appartamento', 'token3', 7);
+INSERT INTO users VALUES ('ss@gmail.com', crypt('passpass', gen_salt('bf', 8)), 'ss', 'Sebastiano', 'Sartori', '2002-01-05', 'Junghas, Giudecca', 2, 'Appartamento', 'token4', 7);
+INSERT INTO users VALUES ('gb@gmail.com', crypt('passpass', gen_salt('bf', 8)), 'gb', 'Giovanni', 'Berto', '2001-09-23', 'Junghas, Giudecca', 2, 'Appartamento', 'token5', 7);
 
-INSERT INTO users VALUES ('mr@gmail.com', crypt('passpass', gen_salt('bf', 8)), 'mr', 'Mario', 'Rossi', '2002-01-05', 'Calle del Vento, Dorsoduro', 3, 'condominio', 'token6', 2);
-INSERT INTO users VALUES ('gg@gmail.com', crypt('passpass', gen_salt('bf', 8)), 'gb', 'Giacomo', 'Giusti', '2001-09-23', 'Calle del Vento, Dorsoduro', 3, 'condominio', 'token7', 2);
+INSERT INTO users VALUES ('mr@gmail.com', crypt('passpass', gen_salt('bf', 8)), 'mr', 'Mario', 'Rossi', '2002-01-05', 'Calle del Vento, Dorsoduro', 3, 'Appartamento', 'token6', 2);
+INSERT INTO users VALUES ('gg@gmail.com', crypt('passpass', gen_salt('bf', 8)), 'gb', 'Giacomo', 'Giusti', '2001-09-23', 'Calle del Vento, Dorsoduro', 3, 'Appartamento', 'token7', 2);
 
 INSERT INTO reports VALUES (1000, 'Incendio', '2023-01-02', 'mdr@gmail.com', 3, 'problemi ambientali', 'Calle del forno');
 INSERT INTO reports VALUES (2000, 'Furto', '2023-01-02', 'ec@gmail.com', 3, 'crimine', 'Calle Ariani');
